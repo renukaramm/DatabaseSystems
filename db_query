@@ -1,0 +1,58 @@
+CREATE DATABASE fitmATE;
+USE fitmATE;
+CREATE TABLE users (
+    user_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	name VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    password VARCHAR(20) NOT NULL,
+    height DOUBLE NOT NULL,
+    weight DOUBLE NOT NULL,
+    date_of_birth DATE NOT NULL,
+    PRIMARY KEY (user_id)
+);
+CREATE TABLE goals (
+    goal_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id INT UNSIGNED NOT NULL,
+    goal_type VARCHAR(50) NOT NULL,
+    target_weight DOUBLE NOT NULL,
+    target_calories DOUBLE NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    PRIMARY KEY (goal_id),
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
+);
+CREATE TABLE daily_plan (
+    daily_plan_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	goal_id INT UNSIGNED NOT NULL,
+	date DATE NOT NULL,
+    net_calories DOUBLE NOT NULL,
+    PRIMARY KEY (daily_plan_id),
+    FOREIGN KEY (goal_id) REFERENCES goals (goal_id)
+);
+CREATE TABLE meal (
+    meal_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    daily_plan_id INT UNSIGNED NOT NULL,
+    meal_type VARCHAR(50) NOT NULL,
+    food_name VARCHAR(100) NOT NULL,
+    calories_gained DOUBLE NOT NULL,
+    meal_timeframe VARCHAR(50) NOT NULL,
+    PRIMARY KEY (meal_id, daily_plan_id),
+    FOREIGN KEY (daily_plan_id) REFERENCES daily_plan (daily_plan_id) ON DELETE CASCADE
+);
+CREATE TABLE exercise (
+    exercise_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    daily_plan_id INT UNSIGNED NOT NULL,
+    exercise_type VARCHAR(50) NOT NULL,
+    activity VARCHAR(100) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    calories_burnt DOUBLE NOT NULL,
+    PRIMARY KEY (exercise_id, daily_plan_id),
+    FOREIGN KEY (daily_plan_id) REFERENCES daily_plan (daily_plan_id) ON DELETE CASCADE
+);
+
+
+
+'---------------------------------------------------------------------------------------------------------------------------
+	QUERY FOR DERIVED ATTRIBUTE WHEN RETRIEVING DATA 
+	weight / (height * height) AS bmi,
+    TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) AS age
