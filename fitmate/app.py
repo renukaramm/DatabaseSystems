@@ -55,8 +55,44 @@ def exercise():
 
 @app.route('/goal')
 def goal():
-    return render_template('goal.html')
+    # Dummy goals data for testing, replace with your logic to retrieve goals
+    goals = [
+        {
+            'name': 'Goal 1',
+            'type': 'Bulk',
+            'start_date': '2023-06-21',
+            'end_date': '2023-06-30',
+            'target_weight': 70,
+            'target_calories': 2000
+        },
+        {
+            'name': 'Goal 2',
+            'type': 'Weight gain',
+            'start_date': '2023-07-01',
+            'end_date': '2023-07-10',
+            'target_weight': 75,
+            'target_calories': 2500
+        }
+    ]
+    
+    return render_template('goal.html', goals=goals)
 
+@app.route('/add_goal', methods=['GET', 'POST'])
+def add_goal():
+    if request.method == 'POST':
+        goal_name = request.form['goal-name']
+        goal_type = request.form['goal-type']
+        start_date = request.form['start-date']
+        end_date = request.form['end-date']
+        target_weight = request.form['target-weight']
+        target_calories = request.form['target-calories']
+        
+        # Perform the necessary actions with the submitted goal data
+        # (e.g., store it in a database, update the user's goals, etc.)
+        
+        return redirect('/goal')  # Redirect to the goal page after submission
+    
+    return render_template('add_goal.html')
 @app.route('/records')
 def records():
     return render_template('records.html')
