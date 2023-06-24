@@ -1,0 +1,6 @@
+{
+  "verbose": true,
+  "watch": ["app.py"],
+  "ext": "py",
+  "exec": "python -u app.py"
+}
