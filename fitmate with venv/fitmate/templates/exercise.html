@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+    <title>Exercise</title>
+</head>
+<body>
+  <div class="logo">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="FitmATE Logo">
+  </div>
+  <div class="navbar">
+    <div>
+        <a href="/">Home</a>
+        <a href="/food">Food</a>
+        <a href="/exercise">Exercise</a>
+        <a href="/goal">Goal</a>
+        <div class="dropdown">
+            <button class="dropbtn">Records
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="/records_goals">Goals</a>
+              <a href="/dailyplan">Daily Plan</a>
+            </div>
+        </div>
+    </div>
+    <a href="/profile" class="user-icon">User Icon</a>
+</div>
+    
+    <h1>Welcome to the Exercise Page!</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Activity, Exercise or Sport (1 hour)</th>
+            <th>130 lb</th>
+            <th>502</th>
+            <th>155 lb</th>
+            <th>598</th>
+            <th>180 lb</th>
+            <th>695</th>
+            <th>205 lb</th>
+            <th>791</th>
+            <th>Calories per kg</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for exercise in exercise_data %}
+        <tr>
+            <td>{{ exercise['Activity'] }}</td>
+            <td>{{ exercise['130 lb'] }}</td>
+            <td>{{ exercise['502'] }}</td>
+            <td>{{ exercise['155 lb'] }}</td>
+            <td>{{ exercise['598'] }}</td>
+            <td>{{ exercise['180 lb'] }}</td>
+            <td>{{ exercise['695'] }}</td>
+            <td>{{ exercise['205 lb'] }}</td>
+            <td>{{ exercise['791'] }}</td>
+            <td>{{ exercise['Calories per kg'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>
