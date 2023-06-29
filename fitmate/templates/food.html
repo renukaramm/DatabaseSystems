@@ -29,5 +29,40 @@
 </div>
     
     <h1>Welcome to the Food page!</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Food</th>
+            <th>Measure</th>
+            <th>Grams</th>
+            <th>Calories</th>
+            <th>Protein</th>
+            <th>Fat</th>
+            <th>SatFat</th>
+            <th>Fiber</th>
+            <th>Carbs</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for food in food_data %}
+        <tr>
+            <td>{{ food.Food }}</td>
+            <td>{{ food.Measure }}</td>
+            <td>{{ food.Grams }}</td>
+            <td>{{ food.Calories }}</td>
+            <td>{{ food.Protein }}</td>
+            <td>{{ food.Fat }}</td>
+            <td>{{ food.SatFat }}</td>
+            <td>{{ food.Fiber }}</td>
+            <td>{{ food.Carbs }}</td>
+            <td>{{ food.Category }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
 </body>
 </html>
