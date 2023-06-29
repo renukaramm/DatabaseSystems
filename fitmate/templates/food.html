@@ -25,6 +25,27 @@
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .category-filter {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 150px;
+        }
     </style>
 
     <script>
@@ -41,6 +62,16 @@
                     $("tbody tr").hide();
                     $("tbody tr[data-category*='" + category + "']").show();
                 }
+            });
+
+            // Function to search the table based on the input value
+            $("#search-input").on("keyup", function() {
+                var searchText = $(this).val().toLowerCase();
+
+                // Filter rows based on search text
+                $("tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1)
+                });
             });
         });
     </script>
@@ -70,26 +101,31 @@
     
   <h1>Welcome to the Food page!</h1>
 
-  <div>
-    <select id="category-filter">
-      <option value="All">All</option>
-      <option value="Dairy products">Dairy products</option>
-      <option value="Fats">Fats, Oils, Shortenings</option>
-      <option value="Meat">Meat</option>
-      <option value="Poultry">Poultry</option>
-      <option value="Vegetables A-E">Vegetables A-E</option>
-      <option value="Vegetables F-P">Vegetables F-P</option>
-      <option value="Vegetables R-Z">Vegetables R-Z</option>
-      <option value="Fruits A-F">Fruits A-F</option>
-      <option value="Fruits G-P">Fruits G-P</option>
-      <option value="Fruits R-Z">Fruits R-Z</option>
-      <option value="Breads, cereals, fastfood,grains">Breads, cereals, fastfood,grains</option>
-      <option value="Jams, Jellies">Jams, Jellies</option>
-      <option value="Seeds and Nuts">Seeds and Nuts</option>
-      <option value="Drinks,Alcohol, Beverages">Drinks, Alcohol, Beverages</option>
-    </select>
+  <div class="search-filter-container">
+    <div>
+      <input type="text" id="search-input" class="search-input" placeholder="Search food...">
+    </div>
+    <div>
+      <select id="category-filter" class="category-filter">
+        <option value="All">All</option>
+        <option value="Dairy products">Dairy products</option>
+        <option value="Fats">Fats, Oils, Shortenings</option>
+        <option value="Meat">Meat</option>
+        <option value="Poultry">Poultry</option>
+        <option value="Vegetables A-E">Vegetables A-E</option>
+        <option value="Vegetables F-P">Vegetables F-P</option>
+        <option value="Vegetables R-Z">Vegetables R-Z</option>
+        <option value="Fruits A-F">Fruits A-F</option>
+        <option value="Fruits G-P">Fruits G-P</option>
+        <option value="Fruits R-Z">Fruits R-Z</option>
+        <option value="Breads, cereals, fastfood,grains">Breads, cereals, fastfood,grains</option>
+        <option value="Jams, Jellies">Jams, Jellies</option>
+        <option value="Seeds and Nuts">Seeds and Nuts</option>
+        <option value="Drinks,Alcohol, Beverages">Drinks, Alcohol, Beverages</option>
+      </select>
+    </div>
   </div>
-<br>
+
   <table>
     <thead>
       <tr>

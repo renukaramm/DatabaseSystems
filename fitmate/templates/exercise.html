@@ -2,8 +2,10 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <title>Exercise</title>
+
     <style>
         table {
             border-collapse: collapse;
@@ -23,9 +25,36 @@
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .calories-filter {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 200px;
+        }
+
+        .search-container-left {
+            margin-right: auto;
+        }
+
+        .search-container-right {
+            margin-left: auto;
+        }
     </style>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
             // Function to filter the table based on calories per kg
@@ -41,39 +70,54 @@
                     $("tbody tr[data-calories<=1.00000]").show();
                 }
             });
+
+            // Function to search the table based on the input value
+            $("#search-input").on("keyup", function() {
+                var searchText = $(this).val().toLowerCase();
+
+                // Filter rows based on search text
+                $("tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1)
+                });
+            });
         });
     </script>
 </head>
 <body>
-  <div class="logo">
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="FitmATE Logo">
-  </div>
-  <div class="navbar">
-    <div>
-        <a href="/">Home</a>
-        <a href="/food">Food</a>
-        <a href="/exercise">Exercise</a>
-        <a href="/goal">Goal</a>
-        <div class="dropdown">
-            <button class="dropbtn">Records
-                <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown-content">
-              <a href="/records_goals">Goals</a>
-              <a href="/dailyplan">Daily Plan</a>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="FitmATE Logo">
+    </div>
+    <div class="navbar">
+        <div>
+            <a href="/">Home</a>
+            <a href="/food">Food</a>
+            <a href="/exercise">Exercise</a>
+            <a href="/goal">Goal</a>
+            <div class="dropdown">
+                <button class="dropbtn">Records
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="/records_goals">Goals</a>
+                    <a href="/dailyplan">Daily Plan</a>
+                </div>
             </div>
         </div>
+        <a href="/profile" class="user-icon">User Icon</a>
     </div>
-    <a href="/profile" class="user-icon">User Icon</a>
-</div>
     
     <h1>Welcome to the Exercise Page!</h1>
 
-    <div>
-        <select id="calories-filter">
-            <option value="All">All</option>
-            <option value="lessThan1">Calories <= 1.00000</option>
-        </select>
+    <div class="search-container">
+        <div class="search-container-left">
+            <input type="text" id="search-input" class="search-input" placeholder="Search...">
+        </div>
+        <div class="search-container-right">
+            <select id="calories-filter" class="calories-filter">
+                <option value="All">All</option>
+                <option value="lessThan1">Calories <= 1.00000</option>
+            </select>
+        </div>
     </div>
 
     <table>
