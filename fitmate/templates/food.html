@@ -2,8 +2,48 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <title>Food</title>
+
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid black;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function() {
+            // Function to filter the table based on category
+            $("#category-filter").change(function() {
+                var category = $(this).val();
+
+                // Show all rows if category is "All"
+                if (category === "All") {
+                    $("tbody tr").show();
+                } else {
+                    // Hide rows that don't match the selected category
+                    $("tbody tr").hide();
+                    $("tbody tr[data-category*='" + category + "']").show();
+                }
+            });
+        });
+    </script>
 </head>
 <body>
   <div class="logo">
@@ -26,43 +66,61 @@
         </div>
     </div>
     <a href="/profile" class="user-icon">User Icon</a>
-</div>
+  </div>
     
-    <h1>Welcome to the Food page!</h1>
+  <h1>Welcome to the Food page!</h1>
 
-<table>
+  <div>
+    <select id="category-filter">
+      <option value="All">All</option>
+      <option value="Dairy products">Dairy products</option>
+      <option value="Fats">Fats, Oils, Shortenings</option>
+      <option value="Meat">Meat</option>
+      <option value="Poultry">Poultry</option>
+      <option value="Vegetables A-E">Vegetables A-E</option>
+      <option value="Vegetables F-P">Vegetables F-P</option>
+      <option value="Vegetables R-Z">Vegetables R-Z</option>
+      <option value="Fruits A-F">Fruits A-F</option>
+      <option value="Fruits G-P">Fruits G-P</option>
+      <option value="Fruits R-Z">Fruits R-Z</option>
+      <option value="Breads, cereals, fastfood,grains">Breads, cereals, fastfood,grains</option>
+      <option value="Jams, Jellies">Jams, Jellies</option>
+      <option value="Seeds and Nuts">Seeds and Nuts</option>
+      <option value="Drinks,Alcohol, Beverages">Drinks, Alcohol, Beverages</option>
+    </select>
+  </div>
+<br>
+  <table>
     <thead>
-        <tr>
-            <th>Food</th>
-            <th>Measure</th>
-            <th>Grams</th>
-            <th>Calories</th>
-            <th>Protein</th>
-            <th>Fat</th>
-            <th>SatFat</th>
-            <th>Fiber</th>
-            <th>Carbs</th>
-            <th>Category</th>
-        </tr>
+      <tr>
+        <th>Food</th>
+        <th>Measure</th>
+        <th>Grams</th>
+        <th>Calories</th>
+        <th>Protein</th>
+        <th>Fat</th>
+        <th>SatFat</th>
+        <th>Fiber</th>
+        <th>Carbs</th>
+        <th>Category</th>
+      </tr>
     </thead>
     <tbody>
-        {% for food in food_data %}
-        <tr>
-            <td>{{ food.Food }}</td>
-            <td>{{ food.Measure }}</td>
-            <td>{{ food.Grams }}</td>
-            <td>{{ food.Calories }}</td>
-            <td>{{ food.Protein }}</td>
-            <td>{{ food.Fat }}</td>
-            <td>{{ food.SatFat }}</td>
-            <td>{{ food.Fiber }}</td>
-            <td>{{ food.Carbs }}</td>
-            <td>{{ food.Category }}</td>
-        </tr>
-        {% endfor %}
+      {% for food in food_data %}
+      <tr data-category="{{ food.Category }}">
+        <td>{{ food.Food }}</td>
+        <td>{{ food.Measure }}</td>
+        <td>{{ food.Grams }}</td>
+        <td>{{ food.Calories }}</td>
+        <td>{{ food.Protein }}</td>
+        <td>{{ food.Fat }}</td>
+        <td>{{ food.SatFat }}</td>
+        <td>{{ food.Fiber }}</td>
+        <td>{{ food.Carbs }}</td>
+        <td>{{ food.Category }}</td>
+      </tr>
+      {% endfor %}
     </tbody>
-</table>
-
-
+  </table>
 </body>
 </html>
