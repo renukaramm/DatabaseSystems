@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect
+import mysql.connector
 from pymongo import MongoClient
 
 app = Flask(__name__)
@@ -18,23 +19,45 @@ users = {
 client = MongoClient()
 
 # Connect to the 'fitmATE' database
-db = client.fitmATE
+db_mongo = client.fitmATE
 
 # Get a reference to the collections
-exercise_collection = db.exercise
-food_collection = db.food
+exercise_collection = db_mongo.exercise
+food_collection = db_mongo.food
+
+# MySQL database connection details
+db_host = 'localhost'
+db_user = 'root'
+db_password = '1234'
+db_name = 'fitmATE'
+
+# Create a MySQL connection and cursor
+db_mysql = mysql.connector.connect(
+    host=db_host,
+    user=db_user,
+    password=db_password,
+    database=db_name
+)
+cursor = db_mysql.cursor()
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
+        name = request.form['name']
         password = request.form['password']
 
-        # FOR TESING USE "ADMIN" GUYS
-        if username == 'admin' and password == 'admin':
-            return 'Login successful!'
+        # Check the user's credentials in the MySQL database
+        select_query = "SELECT * FROM users WHERE name = %s AND password = %s"
+        values = (name, password)
+        cursor.execute(select_query, values)
+        user = cursor.fetchone()
+
+        if user:
+            # User credentials are correct, redirect to the homepage
+            return redirect('/')
         else:
+            # Invalid username or password, show an error message
             return 'Invalid username or password'
 
     return render_template('login.html')
@@ -46,11 +69,17 @@ def register():
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
-        dob = request.form['dob']
         height = request.form['height']
         weight = request.form['weight']
+        date_of_birth = request.form['date_of_birth']
 
-        return 'Registration successful!'
+        # Insert the user registration data into the database
+        insert_query = "INSERT INTO users (name, email, password, height, weight, date_of_birth) VALUES (%s, %s, %s, %s, %s, %s)"
+        values = (name, email, password, height, weight, date_of_birth)
+        cursor.execute(insert_query, values)
+        db_mysql.commit()
+
+        return redirect('/') 
 
     return render_template('register.html')
 
@@ -138,7 +167,7 @@ def daily_plan():
 
 @app.route('/profile')
 def profile():
-    user = users['user1']  # Retrieve the user data, hange later guys
+    user = users['user1']  # Retrieve the user data, change later guys
     return render_template('profile.html', user=user)
 
 
