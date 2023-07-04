@@ -84,6 +84,11 @@
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
+
+        .dropdown-content.dropdown-right {
+            right: 0;
+            left: auto;
+        }
     </style>
 </head>
 
@@ -107,7 +112,15 @@
                 </div>
             </div>
         </div>
-        <a href="/profile" class="user-icon">{{ user['name'] }}</a>
+        <div class="dropdown">
+            <button class="dropbtn"> {{ user['name'] }}
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content dropdown-right">
+                <a href="/profile">Profile</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
     </div>
     <div class="welcome-container">
         <h1 class="welcome-message">Welcome, {{ user['name'] }}</h1>

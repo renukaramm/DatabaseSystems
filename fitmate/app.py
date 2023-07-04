@@ -1,19 +1,11 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for, session
 import mysql.connector
 from pymongo import MongoClient
 
 app = Flask(__name__)
+app.secret_key = 'G\x11\xd9\x9aC\xafi\xe8^.hf\x81PDb}4M\xea\x8e\x7f\xa9\x90'
 
-users = {
-    'user1': {
-        'name': 'Renuka',
-        'email': 'renuka@example.com',
-        'height': 180,
-        'weight': 4,
-        'bmi': 23.15,
-        'age': 300
-    }
-}
+# b'G\x11\xd9\x9aC\xafi\xe8^.hf\x81PDb}4M\xea\x8e\x7f\xa9\x90'
 
 # Create a MongoClient and connect to your MongoDB server
 client = MongoClient()
@@ -54,13 +46,25 @@ def login():
         user = cursor.fetchone()
 
         if user:
-            # User credentials are correct, redirect to the homepage
+            # User credentials are correct, store the user data in the session
+            session['user'] = {
+                'name': user[1],
+                'email': user[2],
+                'height': user[3],  # Update the index if necessary
+                'weight': user[4],  # Update the index if necessary
+                'bmi': user[5],     # Update the index if necessary
+                'age': user[6]      # Update the index if necessary
+            }
+
+            # Redirect to the homepage
             return redirect('/')
         else:
             # Invalid username or password, show an error message
             return 'Invalid username or password'
 
     return render_template('login.html')
+
+
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -79,14 +83,23 @@ def register():
         cursor.execute(insert_query, values)
         db_mysql.commit()
 
-        return redirect('/') 
+        return redirect('/')
 
     return render_template('register.html')
 
 
+@app.route('/logout')
+def logout():
+    # Clear the session data
+    session.clear()
+    # Redirect to the login page
+    return redirect(url_for('login'))
+
+
 @app.route('/')
 def home():
-    return render_template('home.html')
+    user = session.get('user')  # Retrieve the user data from the session
+    return render_template('home.html', user=user)
 
 
 @app.route('/food')
@@ -94,8 +107,10 @@ def food():
     # Retrieve the data from the 'food' collection
     food_data = food_collection.find()
 
+    user = session.get('user')  # Retrieve the user data from the session
+
     # Pass the data to the template
-    return render_template('food.html', food_data=food_data)
+    return render_template('food.html', food_data=food_data, user=user)
 
 
 @app.route('/exercise')
@@ -103,8 +118,10 @@ def exercise():
     # Retrieve the data from the 'exercise' collection
     exercise_data = exercise_collection.find()
 
+    user = session.get('user')  # Retrieve the user data from the session
+
     # Pass the data to the template
-    return render_template('exercise.html', exercise_data=exercise_data)
+    return render_template('exercise.html', exercise_data=exercise_data, user=user)
 
 
 @app.route('/goal')
@@ -129,7 +146,9 @@ def goal():
         }
     ]
 
-    return render_template('goal.html', goals=goals)
+    user = session.get('user')  # Retrieve the user data from the session
+
+    return render_template('goal.html', goals=goals, user=user)
 
 
 @app.route('/add_goal', methods=['GET', 'POST'])
@@ -147,27 +166,32 @@ def add_goal():
 
         return redirect('/goal')  # Redirect to the goal page after submission
 
-    return render_template('add_goal.html')
+    user = session.get('user')  # Retrieve the user data from the session
+
+    return render_template('add_goal.html', user=user)
 
 
 @app.route('/records')
 def records():
-    return render_template('records.html')
+    user = session.get('user')  # Retrieve the user data from the session
+    return render_template('records.html', user=user)
 
 
 @app.route('/records_goals')
 def goals():
-    return render_template('records_goals.html')
+    user = session.get('user')  # Retrieve the user data from the session
+    return render_template('records_goals.html', user=user)
 
 
 @app.route('/dailyplan')
 def daily_plan():
-    return render_template('dailyplan.html')
+    user = session.get('user')  # Retrieve the user data from the session
+    return render_template('dailyplan.html', user=user)
 
 
 @app.route('/profile')
 def profile():
-    user = users['user1']  # Retrieve the user data, change later guys
+    user = session.get('user')  # Retrieve the user data from the session
     return render_template('profile.html', user=user)
 
 
@@ -179,11 +203,13 @@ def update_profile():
     height = request.form['height']
     weight = request.form['weight']
 
-    # Update the user's profile data, change later guys
-    users['user1']['name'] = name
-    users['user1']['email'] = email
-    users['user1']['height'] = height
-    users['user1']['weight'] = weight
+    # Update the user's profile data in the session
+    user = session.get('user')
+    if user:
+        user['name'] = name
+        user['email'] = email
+        user['height'] = height
+        user['weight'] = weight
 
     return redirect('/profile')
 

@@ -13,21 +13,24 @@ body {
     width: 200px; /* Adjust the width as needed */
 }
   
-  .navbar {
+.navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #13355b;
     overflow: hidden;
+    width: 100%;
 }
-  .navbar a {
+
+.navbar a {
     float: left;
     font-size: 16px;
     color: white;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
-  }
+}
+
   
   .dropdown {
     float: left;
@@ -120,4 +123,10 @@ input[type="submit"] {
 
 input[type="submit"]:hover {
   background-color: #45a049;
+}
+
+
+.dropdown-content.dropdown-right {
+  right: 0;
+  left: auto;
 }

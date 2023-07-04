@@ -25,7 +25,15 @@
             </div>
         </div>
     </div>
-    <a href="/profile" class="user-icon">User Icon</a>
+    <div class="dropdown">
+        <button class="dropbtn"> {{ user['name'] }}
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content dropdown-right">
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>     
 </div>
     
     <h1>Welcome to the Daily Plan Page!</h1>

@@ -103,7 +103,15 @@
                 </div>
             </div>
         </div>
-        <a href="/profile" class="user-icon">User Icon</a>
+        <div class="dropdown">
+            <button class="dropbtn"> {{ user['name'] }}
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content dropdown-right">
+                <a href="/profile">Profile</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </div>    
     </div>
     
     <h1>Welcome to the Exercise Page!</h1>
@@ -125,13 +133,9 @@
             <tr>
                 <th>Activity, Exercise or Sport (1 hour)</th>
                 <th>130 lb</th>
-                <th>502</th>
                 <th>155 lb</th>
-                <th>598</th>
                 <th>180 lb</th>
-                <th>695</th>
                 <th>205 lb</th>
-                <th>791</th>
                 <th>Calories per kg</th>
             </tr>
         </thead>
@@ -140,13 +144,9 @@
             <tr data-calories="{{ exercise['Calories per kg'] }}">
                 <td>{{ exercise['Activity'] }}</td>
                 <td>{{ exercise['130 lb'] }}</td>
-                <td>{{ exercise['502'] }}</td>
                 <td>{{ exercise['155 lb'] }}</td>
-                <td>{{ exercise['598'] }}</td>
                 <td>{{ exercise['180 lb'] }}</td>
-                <td>{{ exercise['695'] }}</td>
                 <td>{{ exercise['205 lb'] }}</td>
-                <td>{{ exercise['791'] }}</td>
                 <td>{{ exercise['Calories per kg'] }}</td>
             </tr>
             {% endfor %}
