@@ -107,7 +107,38 @@ def logout():
 @login_required
 def home():
     user = session.get('user')  # Retrieve the user data from the session
-    return render_template('home.html', user=user)
+
+    user_id = user['id']
+    # Fetch the daily plans from the database
+    select_query = """
+            SELECT dp.*, CASE WHEN m.meal_id IS NOT NULL THEN 1 ELSE 0 END AS has_actual_meal, m.food_name, m.meal_timeframe
+            FROM daily_plan dp
+            JOIN goals g ON dp.goal_id = g.goal_id
+            LEFT JOIN meal m ON dp.daily_plan_id = m.daily_plan_id
+            WHERE g.user_id = %s
+        """
+    values = (user_id,)
+    cursor.execute(select_query, values)
+    daily_plans = cursor.fetchall()
+
+    return render_template('home.html', user=user, daily_plans=daily_plans)
+
+
+@app.route('/add_actual_meal', methods=['POST'])
+def add_actual_meal():
+    meal_timeframe = request.form['mealTimeframe']
+    food_name = request.form['foodName']
+    calories_gained = request.form['caloriesGained']
+    daily_plan_id = int(request.form.get('dailyPlanId'))
+
+    # Insert the actual meal into the database
+    insert_query = "INSERT INTO meal (daily_plan_id, meal_type, food_name, calories_gained, meal_timeframe) " \
+                   "VALUES (%s, %s, %s, %s, %s)"
+    values = (daily_plan_id, 'actual', food_name, calories_gained, meal_timeframe)
+    cursor.execute(insert_query, values)
+    db_mysql.commit()
+
+    return redirect('/')
 
 
 @app.route('/food')
@@ -224,4 +255,4 @@ def update_profile():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=True)

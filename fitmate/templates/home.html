@@ -4,6 +4,82 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 
     <title>Home</title>
+
+    <style>
+        /* CSS styling for the table */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .add-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 2px 0;
+            cursor: pointer;
+        }
+
+        .add-button:hover {
+            background-color: #45a049;
+        }
+
+        /* CSS styling for the pop-up form */
+        .form-popup {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            right: 15px;
+            border: 1px solid #ccc;
+            z-index: 9;
+            background-color: #f9f9f9;
+            padding: 20px;
+            max-width: 300px;
+        }
+
+        .form-container {
+            text-align: center;
+        }
+
+        .form-container input[type=text],
+        .form-container textarea {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        .form-container button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .form-container button:hover {
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body>
   <div class="logo">
@@ -35,6 +111,120 @@
       </div>
   </div>    
 </div>
-    <h1>Welcome to the Homepage!</h1>
+    <h1>Daily Meal and Exercise Planner</h1>
+
+    <!-- Replace the existing table with a loop to display multiple daily plan tables -->
+    {% for daily_plan in daily_plans %}
+  <div>{{daily_plan}}</div>
+        <table>
+            <tr>
+                <th>Daily Plan</th>
+                <th>Meal Plan</th>
+                <th>Actual Meal</th>
+                <th>Exercise</th>
+            </tr>
+<tr>
+    <td rowspan="3">Breakfast</td>
+    <td rowspan="3">Empty</td>
+    <td rowspan="3">
+        {% if daily_plan[4] == 0 or daily_plan[6] != 'Breakfast' %}
+            <button class="add-button" onclick="openForm('actualMeal', 'Breakfast', {{ daily_plan[0] }})">Add Actual Meal</button>
+        {% else %}
+            {{ daily_plan[5] }}
+        {% endif %}
+    </td>
+    <th rowspan="4">
+        <button class="add-button" onclick="openForm('exercise')">Add Exercise</button>
+    </th>
+</tr>
+<tr></tr>
+<tr></tr>
+<tr>
+    <td rowspan="3">Lunch</td>
+    <td rowspan="3">Empty</td>
+    <td rowspan="3">
+        {% if daily_plan[4] == 0 or daily_plan[6] != 'Lunch' %}
+            <button class="add-button" onclick="openForm('actualMeal', 'Lunch', {{ daily_plan[0] }})">Add Actual Meal</button>
+        {% else %}
+            {{ daily_plan[5] }}
+        {% endif %}
+    </td>
+</tr>
+<tr></tr>
+<tr></tr>
+<tr>
+    <td rowspan="3">Dinner</td>
+    <td rowspan="3">Empty</td>
+    <td rowspan="3">
+        {% if daily_plan[4] == 0 or daily_plan[6] != 'Dinner' %}
+            <button class="add-button" onclick="openForm('actualMeal', 'Dinner', {{ daily_plan[0] }})">Add Actual Meal</button>
+        {% else %}
+            {{ daily_plan[5] }}
+        {% endif %}
+    </td>
+</tr>
+<tr></tr>
+<tr></tr>
+<tr>
+
+                <td colspan="4" style="text-align: center">Net Calories</td>
+            </tr>
+        </table>
+    {% endfor %}
+
+
+    <!-- Pop-up form for adding actual meal -->
+    <div class="form-popup" id="actualMealForm">
+        <form action="/add_actual_meal" method="post" class="form-container">
+            <h2>Add Actual Meal</h2>
+            <input type="hidden" id="actualMealTimeframe" name="mealTimeframe" value="">
+            <input type="hidden" id="dailyPlanId" name="dailyPlanId" value="">
+            <label for="foodName"><b>Food Name</b></label>
+            <input type="text" placeholder="Enter food name" name="foodName" required>
+            <label for="caloriesGained"><b>Calories Gained</b></label>
+            <input type="text" placeholder="Enter calories gained" name="caloriesGained" required>
+            <button type="submit" class="add-button">Add Meal</button>
+            <button type="button" class="add-button" onclick="closeForm('actualMeal')">Cancel</button>
+        </form>
+    </div>
+
+
+
+    <!-- Pop-up form for adding exercise -->
+    <div class="form-popup" id="exerciseForm">
+        <form action="/add_exercise" method="post" class="form-container">
+            <h2>Add Exercise</h2>
+            <label for="exerciseType"><b>Exercise Type</b></label>
+            <input type="text" placeholder="Enter exercise type" name="exerciseType" required>
+            <label for="activity"><b>Activity</b></label>
+            <input type="text" placeholder="Enter activity" name="activity" required>
+            <label for="description"><b>Description</b></label>
+            <textarea placeholder="Enter description" name="description" required></textarea>
+            <label for="caloriesBurnt"><b>Calories Burnt</b></label>
+            <input type="text" placeholder="Enter calories burnt" name="caloriesBurnt" required>
+            <button type="submit" class="add-button">Add Exercise</button>
+            <button type="button" class="add-button" onclick="closeForm('exercise')">Cancel</button>
+        </form>
+    </div>
+
+    <script>
+        // Open the pop-up form and set the form type, meal timeframe, and daily plan ID value
+        function openForm(formType, mealTimeframe, dailyPlanId) {
+            document.getElementById(formType + "Form").style.display = "block";
+            if (mealTimeframe) {
+                document.getElementById("actualMealTimeframe").value = mealTimeframe;
+            }
+            if (dailyPlanId) {
+                document.getElementById("dailyPlanId").value = dailyPlanId;
+            }
+        }
+
+        // Close the pop-up form
+        function closeForm(formType) {
+            document.getElementById(formType + "Form").style.display = "none";
+        }
+    </script>
+
+
 </body>
 </html>
