@@ -1,11 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import mysql.connector
 from pymongo import MongoClient
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = 'G\x11\xd9\x9aC\xafi\xe8^.hf\x81PDb}4M\xea\x8e\x7f\xa9\x90'
-
-# b'G\x11\xd9\x9aC\xafi\xe8^.hf\x81PDb}4M\xea\x8e\x7f\xa9\x90'
 
 # Create a MongoClient and connect to your MongoDB server
 client = MongoClient()
@@ -33,6 +32,15 @@ db_mysql = mysql.connector.connect(
 cursor = db_mysql.cursor()
 
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -48,12 +56,13 @@ def login():
         if user:
             # User credentials are correct, store the user data in the session
             session['user'] = {
+                'id': user[0],
                 'name': user[1],
                 'email': user[2],
-                'height': user[3],  # Update the index if necessary
-                'weight': user[4],  # Update the index if necessary
-                'bmi': user[5],     # Update the index if necessary
-                'age': user[6]      # Update the index if necessary
+                'height': user[3],
+                'weight': user[4],
+                'bmi': user[5],
+                'age': user[6]
             }
 
             # Redirect to the homepage
@@ -63,8 +72,6 @@ def login():
             return 'Invalid username or password'
 
     return render_template('login.html')
-
-
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -97,14 +104,16 @@ def logout():
 
 
 @app.route('/')
+@login_required
 def home():
     user = session.get('user')  # Retrieve the user data from the session
     return render_template('home.html', user=user)
 
 
 @app.route('/food')
+@login_required
 def food():
-    # Retrieve the data from the 'food' collection
+    # Retrieve the data from the 'foodcollection
     food_data = food_collection.find()
 
     user = session.get('user')  # Retrieve the user data from the session
@@ -114,6 +123,7 @@ def food():
 
 
 @app.route('/exercise')
+@login_required
 def exercise():
     # Retrieve the data from the 'exercise' collection
     exercise_data = exercise_collection.find()
@@ -125,33 +135,22 @@ def exercise():
 
 
 @app.route('/goal')
+@login_required
 def goal():
-    # Dummy goals data for testing, replace with your logic to retrieve goals
-    goals = [
-        {
-            'name': 'Goal 1',
-            'type': 'Bulk',
-            'start_date': '2023-06-21',
-            'end_date': '2023-06-30',
-            'target_weight': 70,
-            'target_calories': 2000
-        },
-        {
-            'name': 'Goal 2',
-            'type': 'Weight gain',
-            'start_date': '2023-07-01',
-            'end_date': '2023-07-10',
-            'target_weight': 75,
-            'target_calories': 2500
-        }
-    ]
-
     user = session.get('user')  # Retrieve the user data from the session
+
+    # Retrieve the user's goals from the database
+    user_id = user['id']
+    select_query = "SELECT * FROM goals WHERE user_id = %s"
+    values = (user_id,)
+    cursor.execute(select_query, values)
+    goals = cursor.fetchall()
 
     return render_template('goal.html', goals=goals, user=user)
 
 
 @app.route('/add_goal', methods=['GET', 'POST'])
+@login_required
 def add_goal():
     if request.method == 'POST':
         goal_name = request.form['goal-name']
@@ -161,10 +160,15 @@ def add_goal():
         target_weight = request.form['target-weight']
         target_calories = request.form['target-calories']
 
-        # Perform the necessary actions with the submitted goal data
-        # (e.g., store it in a database, update the user's goals, etc.)
+        # Insert the goal into the database
+        user = session.get('user')
+        user_id = user['id']
+        insert_query = "INSERT INTO goals (user_id, goal_type, target_weight, target_calories, start_date, end_date) VALUES (%s, %s, %s, %s, %s, %s)"
+        values = (user_id, goal_type, target_weight, target_calories, start_date, end_date)
+        cursor.execute(insert_query, values)
+        db_mysql.commit()
 
-        return redirect('/goal')  # Redirect to the goal page after submission
+        return redirect('/goal')
 
     user = session.get('user')  # Retrieve the user data from the session
 
@@ -172,30 +176,35 @@ def add_goal():
 
 
 @app.route('/records')
+@login_required
 def records():
     user = session.get('user')  # Retrieve the user data from the session
     return render_template('records.html', user=user)
 
 
 @app.route('/records_goals')
+@login_required
 def goals():
     user = session.get('user')  # Retrieve the user data from the session
     return render_template('records_goals.html', user=user)
 
 
 @app.route('/dailyplan')
+@login_required
 def daily_plan():
     user = session.get('user')  # Retrieve the user data from the session
     return render_template('dailyplan.html', user=user)
 
 
 @app.route('/profile')
+@login_required
 def profile():
     user = session.get('user')  # Retrieve the user data from the session
     return render_template('profile.html', user=user)
 
 
 @app.route('/update-profile', methods=['POST'])
+@login_required
 def update_profile():
     # Get the updated profile information from the form
     name = request.form['name']
