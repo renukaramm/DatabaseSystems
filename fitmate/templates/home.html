@@ -2,9 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-
     <title>Home</title>
-
     <style>
         /* CSS styling for the table */
         table {
@@ -82,96 +80,101 @@
     </style>
 </head>
 <body>
-  <div class="logo">
-  <img src="{{ url_for('static', filename='logo.png') }}" alt="FitmATE Logo">
-</div>
-  <div class="navbar">
-    <div>
-        <a href="/">Home</a>
-        <a href="/food">Food</a>
-        <a href="/exercise">Exercise</a>
-        <a href="/goal">Goal</a>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="FitmATE Logo">
+    </div>
+    <div class="navbar">
+        <div>
+            <a href="/">Home</a>
+            <a href="/food">Food</a>
+            <a href="/exercise">Exercise</a>
+            <a href="/goal">Goal</a>
+            <div class="dropdown">
+                <button class="dropbtn">Records
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="/records_goals">Goals</a>
+                    <a href="/dailyplan">Daily Plan</a>
+                </div>
+            </div>
+        </div>
         <div class="dropdown">
-            <button class="dropbtn">Records
+            <button class="dropbtn"> {{ user['name'] }}
                 <i class="fa fa-caret-down"></i>
             </button>
-            <div class="dropdown-content">
-              <a href="/records_goals">Goals</a>
-              <a href="/dailyplan">Daily Plan</a>
+            <div class="dropdown-content dropdown-right">
+                <a href="/profile">Profile</a>
+                <a href="/logout">Logout</a>
             </div>
         </div>
     </div>
-    <div class="dropdown">
-      <button class="dropbtn"> {{ user['name'] }}
-          <i class="fa fa-caret-down"></i>
-      </button>
-      <div class="dropdown-content dropdown-right">
-          <a href="/profile">Profile</a>
-          <a href="/logout">Logout</a>
-      </div>
-  </div>    
-</div>
+
     <h1>Daily Meal and Exercise Planner</h1>
 
     <!-- Replace the existing table with a loop to display multiple daily plan tables -->
     {% for daily_plan in daily_plans %}
-  <div>{{daily_plan}}</div>
-        <table>
-            <tr>
-                <th>Daily Plan</th>
-                <th>Meal Plan</th>
-                <th>Actual Meal</th>
-                <th>Exercise</th>
-            </tr>
-<tr>
-    <td rowspan="3">Breakfast</td>
-    <td rowspan="3">Empty</td>
-    <td rowspan="3">
-        {% if daily_plan[4] == 0 or daily_plan[6] != 'Breakfast' %}
-            <button class="add-button" onclick="openForm('actualMeal', 'Breakfast', {{ daily_plan[0] }})">Add Actual Meal</button>
-        {% else %}
-            {{ daily_plan[5] }}
-        {% endif %}
-    </td>
-    <th rowspan="4">
-        <button class="add-button" onclick="openForm('exercise')">Add Exercise</button>
-    </th>
-</tr>
-<tr></tr>
-<tr></tr>
-<tr>
-    <td rowspan="3">Lunch</td>
-    <td rowspan="3">Empty</td>
-    <td rowspan="3">
-        {% if daily_plan[4] == 0 or daily_plan[6] != 'Lunch' %}
-            <button class="add-button" onclick="openForm('actualMeal', 'Lunch', {{ daily_plan[0] }})">Add Actual Meal</button>
-        {% else %}
-            {{ daily_plan[5] }}
-        {% endif %}
-    </td>
-</tr>
-<tr></tr>
-<tr></tr>
-<tr>
-    <td rowspan="3">Dinner</td>
-    <td rowspan="3">Empty</td>
-    <td rowspan="3">
-        {% if daily_plan[4] == 0 or daily_plan[6] != 'Dinner' %}
-            <button class="add-button" onclick="openForm('actualMeal', 'Dinner', {{ daily_plan[0] }})">Add Actual Meal</button>
-        {% else %}
-            {{ daily_plan[5] }}
-        {% endif %}
-    </td>
-</tr>
-<tr></tr>
-<tr></tr>
-<tr>
-
-                <td colspan="4" style="text-align: center">Net Calories</td>
-            </tr>
-        </table>
+    <div>{{daily_plan}}</div>
+    <table>
+        <tr>
+            <th>Daily Plan</th>
+            <th>Meal Plan</th>
+            <th>Actual Meal</th>
+            <th>Exercise</th>
+        </tr>
+        <tr>
+            <td rowspan="3">Breakfast</td>
+            <td rowspan="3">Empty</td>
+            <td rowspan="3">
+                {% for meal in daily_plan.breakfast_meals %}
+                    {{ meal.food_name }} ({{ meal.calories_gained }} calories)
+                    <button class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}')">Edit</button>
+                    <button class="add-button" onclick="openDeleteForm('{{ meal.id }}')">Delete</button>
+                    <br>
+                {% endfor %}
+                <button class="add-button" onclick="openForm('actualMeal', 'Breakfast', {{ daily_plan.id }})">Add Actual Meal</button>
+            </td>
+            <th rowspan="4">
+                <button class="add-button" onclick="openForm('exercise')">Add Exercise</button>
+            </th>
+        </tr>
+        <tr></tr>
+        <tr></tr>
+        <tr>
+            <td rowspan="3">Lunch</td>
+            <td rowspan="3">Empty</td>
+            <td rowspan="3">
+                {% for meal in daily_plan.lunch_meals %}
+                    {{ meal.food_name }} ({{ meal.calories_gained }} calories)
+                    <button class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}')">Edit</button>
+                    <button class="add-button" onclick="openDeleteForm('{{ meal.id }}')">Delete</button>
+                    <br>
+                {% endfor %}
+                <button class="add-button" onclick="openForm('actualMeal', 'Lunch', {{ daily_plan.id }})">Add Actual Meal</button>
+            </td>
+        </tr>
+        <tr></tr>
+        <tr></tr>
+        <tr>
+            <td rowspan="3">Dinner</td>
+            <td rowspan="3">Empty</td>
+            <td rowspan="3">
+                {% for meal in daily_plan.dinner_meals %}
+                    {{ meal.food_name }} ({{ meal.calories_gained }} calories)
+                    <button class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}')">Edit</button>
+                    <button class="add-button" onclick="openDeleteForm('{{ meal.id }}')">Delete</button>
+                    <br>
+                {% endfor %}
+                <button class="add-button" onclick="openForm('actualMeal', 'Dinner', {{ daily_plan.id }})">Add Actual Meal</button>
+            </td>
+        </tr>
+        <tr></tr>
+        <tr></tr>
+        <tr>
+            <td colspan="4" style="text-align: center">Net Calories: {{ daily_plan.net_calories }}</td>
+        </tr>
+    </table>
     {% endfor %}
-
 
     <!-- Pop-up form for adding actual meal -->
     <div class="form-popup" id="actualMealForm">
@@ -188,6 +191,30 @@
         </form>
     </div>
 
+    <!-- Pop-up form for editing actual meal -->
+<div class="form-popup" id="editActualMealForm">
+    <form action="/update_actual_meal" method="post" class="form-container">
+        <h2>Edit Actual Meal</h2>
+        <input type="hidden" id="editMealId" name="mealId" value="">
+        <label for="editFoodName"><b>Food Name</b></label>
+        <input type="text" id="editFoodName" name="foodName" placeholder="Enter food name" required>
+        <label for="editCaloriesGained"><b>Calories Gained</b></label>
+        <input type="text" id="editCaloriesGained" name="caloriesGained" placeholder="Enter calories gained" required>
+        <button type="submit" class="add-button">Update Meal</button>
+        <button type="button" class="add-button" onclick="closeForm('editActualMeal')">Cancel</button>
+    </form>
+</div>
+
+<!-- Pop-up form for deleting actual meal -->
+<div class="form-popup" id="deleteActualMealForm">
+    <form action="/delete_actual_meal" method="post" class="form-container">
+        <h2>Delete Actual Meal</h2>
+        <p>Are you sure you want to delete this meal?</p>
+        <input type="hidden" id="deleteMealId" name="mealId" value="">
+        <button type="submit" class="add-button">Delete Meal</button>
+        <button type="button" class="add-button" onclick="closeForm('deleteActualMeal')">Cancel</button>
+    </form>
+</div>
 
 
     <!-- Pop-up form for adding exercise -->
@@ -208,7 +235,7 @@
     </div>
 
     <script>
-        // Open the pop-up form and set the form type, meal timeframe, and daily plan ID value
+        // Open the pop-up form and set the form type, meal timeframe, and meal ID value
         function openForm(formType, mealTimeframe, dailyPlanId) {
             document.getElementById(formType + "Form").style.display = "block";
             if (mealTimeframe) {
@@ -223,8 +250,24 @@
         function closeForm(formType) {
             document.getElementById(formType + "Form").style.display = "none";
         }
-    </script>
 
+        // Populate the edit form with the existing meal's data
+        function openEditForm(mealId, foodName, caloriesGained) {
+            document.getElementById("editActualMealForm").style.display = "block";
+            document.getElementById("editMealId").value = mealId;
+            document.getElementById("editFoodName").value = foodName;
+            document.getElementById("editCaloriesGained").value = caloriesGained;
+        }
+
+        // Open the confirmation pop-up for deleting a meal
+        function openDeleteForm(mealId) {
+            document.getElementById("deleteActualMealForm").style.display = "block";
+            document.getElementById("deleteMealId").value = mealId;
+        }
+
+
+
+    </script>
 
 </body>
 </html>

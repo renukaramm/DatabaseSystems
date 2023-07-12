@@ -109,26 +109,57 @@ def home():
     user = session.get('user')  # Retrieve the user data from the session
 
     user_id = user['id']
-    # Fetch the daily plans from the database
+    # Fetch the daily plans with associated meals and calories gained from the database
     select_query = """
-            SELECT dp.*, CASE WHEN m.meal_id IS NOT NULL THEN 1 ELSE 0 END AS has_actual_meal, m.food_name, m.meal_timeframe
-            FROM daily_plan dp
-            JOIN goals g ON dp.goal_id = g.goal_id
-            LEFT JOIN meal m ON dp.daily_plan_id = m.daily_plan_id
-            WHERE g.user_id = %s
-        """
-    values = (user_id,)
+        SELECT dp.daily_plan_id, dp.goal_id, dp.date, dp.net_calories,
+               m.calories_gained, m.food_name, m.meal_timeframe
+        FROM daily_plan dp
+        JOIN goals g ON dp.goal_id = g.goal_id
+        LEFT JOIN meal m ON dp.daily_plan_id = m.daily_plan_id AND m.meal_type = 'actual'
+        WHERE g.user_id = %s
+    """
+
+    values = (user_id,)  # Pass user_id as a tuple
     cursor.execute(select_query, values)
-    daily_plans = cursor.fetchall()
+    rows = cursor.fetchall()
+
+    daily_plans = {}
+    for row in rows:
+        daily_plan_id = row[0]  # Access the column value by index
+        if daily_plan_id not in daily_plans:
+            daily_plans[daily_plan_id] = {
+                'id': daily_plan_id,
+                'goal_id': row[1],  # Access the column value by index
+                'date': row[2],  # Access the column value by index
+                'net_calories': row[3],  # Access the column value by index
+                'breakfast_meals': [],
+                'lunch_meals': [],
+                'dinner_meals': []
+            }
+
+        meal_timeframe = row[6]  # Access the column value by index
+        food_name = row[5]  # Access the column value by index
+        calories_gained = row[4]  # Access the column value by index
+
+        meal = {'food_name': food_name, 'calories_gained': calories_gained}
+        if meal_timeframe == 'Breakfast':
+            daily_plans[daily_plan_id]['breakfast_meals'].append(meal)
+        elif meal_timeframe == 'Lunch':
+            daily_plans[daily_plan_id]['lunch_meals'].append(meal)
+        elif meal_timeframe == 'Dinner':
+            daily_plans[daily_plan_id]['dinner_meals'].append(meal)
+
+    daily_plans = list(daily_plans.values())
 
     return render_template('home.html', user=user, daily_plans=daily_plans)
 
 
 @app.route('/add_actual_meal', methods=['POST'])
+@login_required
 def add_actual_meal():
     meal_timeframe = request.form['mealTimeframe']
     food_name = request.form['foodName']
-    calories_gained = request.form['caloriesGained']
+    calories_gained = float(request.form['caloriesGained'])
     daily_plan_id = int(request.form.get('dailyPlanId'))
 
     # Insert the actual meal into the database
@@ -136,7 +167,49 @@ def add_actual_meal():
                    "VALUES (%s, %s, %s, %s, %s)"
     values = (daily_plan_id, 'actual', food_name, calories_gained, meal_timeframe)
     cursor.execute(insert_query, values)
+
+    # Update the net_calories in the daily_plan table
+    update_query = "UPDATE daily_plan SET net_calories = net_calories + %s WHERE daily_plan_id = %s"
+    values = (calories_gained, daily_plan_id)
+    cursor.execute(update_query, values)
+
     db_mysql.commit()
+
+    return redirect('/')
+
+
+@app.route('/update_actual_meal', methods=['POST'])
+def update_actual_meal():
+    meal_id = request.form.get('mealId')
+    if meal_id:
+        meal_id = int(meal_id)
+        food_name = request.form['foodName']
+        calories_gained = float(request.form['caloriesGained'])
+        meal_timeframe = request.form['mealTimeframe']
+
+        # Update the actual meal in the database
+        update_query = "UPDATE meal SET food_name = %s, calories_gained = %s WHERE meal_id = %s"
+        values = (food_name, calories_gained, meal_id)
+        cursor.execute(update_query, values)
+        db_mysql.commit()
+
+        return redirect('/')
+    else:
+        return redirect('/food')
+
+
+@app.route('/delete_actual_meal', methods=['POST'])
+def delete_actual_meal():
+    meal_id = request.form['mealId']
+
+    if meal_id:
+        meal_id = int(meal_id)
+
+        # Delete the actual meal from the database
+        delete_query = "DELETE FROM meal WHERE meal_id = %s"
+        values = (meal_id,)
+        cursor.execute(delete_query, values)
+        db_mysql.commit()
 
     return redirect('/')
 
@@ -224,7 +297,51 @@ def goals():
 @login_required
 def daily_plan():
     user = session.get('user')  # Retrieve the user data from the session
-    return render_template('dailyplan.html', user=user)
+
+    user_id = user['id']
+    # Fetch the daily plans with associated meals and calories gained from the database
+    select_query = """
+        SELECT dp.daily_plan_id, dp.goal_id, dp.date, dp.net_calories,
+               m.calories_gained, m.food_name, m.meal_timeframe
+        FROM daily_plan dp
+        JOIN goals g ON dp.goal_id = g.goal_id
+        LEFT JOIN meal m ON dp.daily_plan_id = m.daily_plan_id AND m.meal_type = 'actual'
+        WHERE g.user_id = %s
+    """
+
+    values = (user_id,)  # Pass user_id as a tuple
+    cursor.execute(select_query, values)
+    rows = cursor.fetchall()
+
+    daily_plans = {}
+    for row in rows:
+        daily_plan_id = row[0]  # Access the column value by index
+        if daily_plan_id not in daily_plans:
+            daily_plans[daily_plan_id] = {
+                'id': daily_plan_id,
+                'goal_id': row[1],  # Access the column value by index
+                'date': row[2],  # Access the column value by index
+                'net_calories': row[3],  # Access the column value by index
+                'breakfast_meals': [],
+                'lunch_meals': [],
+                'dinner_meals': []
+            }
+
+        meal_timeframe = row[6]  # Access the column value by index
+        food_name = row[5]  # Access the column value by index
+        calories_gained = row[4]  # Access the column value by index
+
+        meal = {'food_name': food_name, 'calories_gained': calories_gained}
+        if meal_timeframe == 'Breakfast':
+            daily_plans[daily_plan_id]['breakfast_meals'].append(meal)
+        elif meal_timeframe == 'Lunch':
+            daily_plans[daily_plan_id]['lunch_meals'].append(meal)
+        elif meal_timeframe == 'Dinner':
+            daily_plans[daily_plan_id]['dinner_meals'].append(meal)
+
+    daily_plans = list(daily_plans.values())
+
+    return render_template('dailyplan.html', user=user, daily_plans=daily_plans)
 
 
 @app.route('/profile')

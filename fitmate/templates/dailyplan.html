@@ -4,11 +4,87 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 
     <title>Daily Plan</title>
+
+    <style>
+        /* CSS styling for the table */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .add-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 2px 0;
+            cursor: pointer;
+        }
+
+        .add-button:hover {
+            background-color: #45a049;
+        }
+
+        /* CSS styling for the pop-up form */
+        .form-popup {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            right: 15px;
+            border: 1px solid #ccc;
+            z-index: 9;
+            background-color: #f9f9f9;
+            padding: 20px;
+            max-width: 300px;
+        }
+
+        .form-container {
+            text-align: center;
+        }
+
+        .form-container input[type=text],
+        .form-container textarea {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        .form-container button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .form-container button:hover {
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body>
-    <div class="logo">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="FitmATE Logo">
-      </div>
+  <div class="logo">
+  <img src="{{ url_for('static', filename='logo.png') }}" alt="FitmATE Logo">
+</div>
   <div class="navbar">
     <div>
         <a href="/">Home</a>
@@ -20,22 +96,75 @@
                 <i class="fa fa-caret-down"></i>
             </button>
             <div class="dropdown-content">
-                <a href="/records_goals">Goals</a>
-                <a href="/dailyplan">Daily Plan</a>
+              <a href="/records_goals">Goals</a>
+              <a href="/dailyplan">Daily Plan</a>
             </div>
         </div>
     </div>
     <div class="dropdown">
-        <button class="dropbtn"> {{ user['name'] }}
-            <i class="fa fa-caret-down"></i>
-        </button>
-        <div class="dropdown-content dropdown-right">
-            <a href="/profile">Profile</a>
-            <a href="/logout">Logout</a>
-        </div>
-    </div>     
+      <button class="dropbtn"> {{ user['name'] }}
+          <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content dropdown-right">
+          <a href="/profile">Profile</a>
+          <a href="/logout">Logout</a>
+      </div>
+  </div>
 </div>
-    
-    <h1>Welcome to the Daily Plan Page!</h1>
+    <h1>Daily Meal and Exercise History</h1>
+
+    <!-- Replace the existing table with a loop to display multiple daily plan tables -->
+    {% for daily_plan in daily_plans %}
+    <table>
+        <tr>
+            <th>Daily Plan {{daily_plan.date}}</th>
+            <th>Meal Plan</th>
+            <th>Actual Meal</th>
+            <th>Exercise</th>
+        </tr>
+        <tr>
+            <td rowspan="3">Breakfast</td>
+            <td rowspan="3">Empty</td>
+            <td rowspan="3">
+                {% for meal in daily_plan.breakfast_meals %}
+                    {{ meal.food_name }} ({{ meal.calories_gained }} calories)
+                    <br>
+                {% endfor %}
+            </td>
+            <th rowspan="4">
+            </th>
+        </tr>
+        <tr></tr>
+        <tr></tr>
+        <tr>
+            <td rowspan="3">Lunch</td>
+            <td rowspan="3">Empty</td>
+            <td rowspan="3">
+                {% for meal in daily_plan.lunch_meals %}
+                    {{ meal.food_name }} ({{ meal.calories_gained }} calories)
+                    <br>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr></tr>
+        <tr></tr>
+        <tr>
+            <td rowspan="3">Dinner</td>
+            <td rowspan="3">Empty</td>
+            <td rowspan="3">
+                {% for meal in daily_plan.dinner_meals %}
+                    {{ meal.food_name }} ({{ meal.calories_gained }} calories)
+                    <br>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr></tr>
+        <tr></tr>
+        <tr>
+            <td colspan="4" style="text-align: center">Net Calories: {{daily_plan.net_calories}}</td>
+        </tr>
+    </table>
+  <br><br>
+{% endfor %}
 </body>
 </html>
