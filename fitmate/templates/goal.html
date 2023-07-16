@@ -12,9 +12,18 @@
       margin-top: 100px;
     }
 
-    .goal-form-container,
-    .submitted-goals-container {
+    .goal-form-container {
       width: 400px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin-right: 20px;
+    }
+    
+    .submitted-goals-container {
+      width: 600px;
       padding: 20px;
       border: 1px solid #ccc;
       border-radius: 4px;
@@ -69,6 +78,42 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 20% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 400px;
+      border-radius: 4px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -100,7 +145,7 @@
           <a href="/profile">Profile</a>
           <a href="/logout">Logout</a>
       </div>
-  </div>    
+  </div>
   </div>
 
   <div class="goal-container">
@@ -129,31 +174,105 @@
     <div class="submitted-goals-container">
       <h2>Submitted Goals</h2>
       {% if goals %}
-      <ul>
-        {% for goal in goals %}
-        <li>
-          <strong>Goal Name:</strong> {{ goal.name }}<br>
-          <strong>Goal Type:</strong> {{ goal.type }}<br>
-          <strong>Start Date:</strong> {{ goal.start_date }}<br>
-          <strong>End Date:</strong> {{ goal.end_date }}<br>
-          <strong>Target Weight:</strong> {{ goal.target_weight }}<br>
-          <strong>Target Calories per Day:</strong> {{ goal.target_calories }}
-          <br>
-          <button onclick="showEditGoalForm('{{ goal.id }}')">Edit</button>
-        </li>
-        <br>
-        {% endfor %}
-      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>Goal Name</th>
+            <th>Goal Type</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Target Weight</th>
+            <th>Target Calories per Day</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for goal in goals %}
+          <tr>
+            <td>{{ goal[1] }}</td>
+            <td>{{ goal[2] }}</td>
+            <td>{{ goal[3] }}</td>
+            <td>{{ goal[4] }}</td>
+            <td>{{ goal[5] }}</td>
+            <td>{{ goal[6] }}</td>
+            <td>
+              <button class="btn btn-primary btn-sm"
+        onclick="showEditGoalForm('{{ goal[0] }}', '{{ goal[1] }}', '{{ goal[2] }}', '{{ goal[3] }}', '{{ goal[4] }}', '{{ goal[5] }}', '{{ goal[6] }}')">
+  Edit
+</button>
+
+              <form action="/delete_goal" method="POST" style="display: inline;">
+                <input type="hidden" name="goalId" value="{{ goal[0] }}">
+                <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
       {% else %}
       <p>No goals submitted yet.</p>
       {% endif %}
     </div>
   </div>
 
+  <!-- Edit Goal Modal -->
+  <div id="editGoalModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Edit Goal</h2>
+      <form action="/update_goal" method="POST">
+        <input type="hidden" id="edit-goal-id" name="goalId">
+        <label for="edit-goal-name">Goal Name:</label>
+        <input type="text" id="edit-goal-name" name="goalName" required>
+        <label for="edit-goal-type">Goal Type:</label>
+        <select id="edit-goal-type" name="goalType" required>
+          <option value="Bulk">Bulk</option>
+          <option value="Weight gain">Weight gain</option>
+        </select>
+        <label for="edit-start-date">Start Date:</label>
+        <input type="date" id="edit-start-date" name="startDate" required>
+        <label for="edit-end-date">End Date:</label>
+        <input type="date" id="edit-end-date" name="endDate" required>
+        <label for="edit-target-weight">Target Weight:</label>
+        <input type="number" id="edit-target-weight" name="targetWeight" step="any" required>
+        <label for="edit-target-calories">Target Calories per Day:</label>
+        <input type="number" id="edit-target-calories" name="targetCalories" step="any" required>
+        <input type="submit" value="Update">
+      </form>
+    </div>
+  </div>
+
   <script>
-    function showEditGoalForm(goalId) {
+    // Modal script
+    // Modal script
+    var modal = document.getElementById('editGoalModal');
+    var span = document.getElementsByClassName('close')[0];
+
+    span.onclick = function () {
+      modal.style.display = 'none';
     }
-  </script>
+
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    // Show edit goal form with pre-filled values
+// Show edit goal form with pre-filled values
+function showEditGoalForm(goalId, goalName, goalType, startDate, endDate, targetWeight, targetCalories) {
+  document.getElementById('edit-goal-id').value = goalId;
+  document.getElementById('edit-goal-name').value = goalName;
+  document.getElementById('edit-goal-type').value = goalType;
+  document.getElementById('edit-start-date').value = startDate;
+  document.getElementById('edit-end-date').value = endDate;
+  document.getElementById('edit-target-weight').value = targetWeight;
+  document.getElementById('edit-target-calories').value = targetCalories;
+
+  modal.style.display = 'block';
+
+    }  </script>
 </body>
 
 </html>

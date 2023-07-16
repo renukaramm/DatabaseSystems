@@ -237,7 +237,6 @@ def exercise():
     # Pass the data to the template
     return render_template('exercise.html', exercise_data=exercise_data, user=user)
 
-
 @app.route('/goal')
 @login_required
 def goal():
@@ -259,10 +258,11 @@ def add_goal():
     if request.method == 'POST':
         goal_name = request.form['goal-name']
         goal_type = request.form['goal-type']
-        start_date = request.form['start-date']
-        end_date = request.form['end-date']
         target_weight = request.form['target-weight']
         target_calories = request.form['target-calories']
+        start_date = request.form['start-date']
+        end_date = request.form['end-date']
+
 
         # Insert the goal into the database
         user = session.get('user')
@@ -277,6 +277,44 @@ def add_goal():
     user = session.get('user')  # Retrieve the user data from the session
 
     return render_template('add_goal.html', user=user)
+
+
+@app.route('/update_goal', methods=['POST'])
+@login_required
+def update_goal():
+    goal_id = request.form.get('goalId')
+    goal_name = request.form['goalName']
+    goal_type = request.form['goalType']
+    target_weight = request.form['targetWeight']
+    target_calories = request.form['targetCalories']
+    start_date = request.form['startDate']
+    end_date = request.form['endDate']
+
+
+    # Update the goal in the database
+    update_query = "UPDATE goals SET goal_name = %s, goal_type = %s, target_weight = %s, target_calories = %s, start_date = %s, end_date = %s WHERE goal_id = %s"
+    values = (goal_name, goal_type, target_weight, target_calories, start_date, end_date, goal_id)
+    cursor.execute(update_query, values)
+    db_mysql.commit()
+
+    return redirect('/goal')
+
+
+@app.route('/delete_goal', methods=['POST'])
+@login_required
+def delete_goal():
+    goal_id = request.form['goalId']
+
+    if goal_id:
+        goal_id = int(goal_id)
+
+        # Delete the goal from the database
+        delete_query = "DELETE FROM goals WHERE goal_id = %s"
+        values = (goal_id,)
+        cursor.execute(delete_query, values)
+        db_mysql.commit()
+
+    return redirect('/goal')
 
 
 @app.route('/records')
