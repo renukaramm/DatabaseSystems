@@ -21,7 +21,7 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       margin-right: 20px;
     }
-    
+
     .submitted-goals-container {
       width: 600px;
       padding: 20px;
@@ -114,6 +114,11 @@
       text-decoration: none;
       cursor: pointer;
     }
+
+    table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
   </style>
 </head>
 
@@ -139,13 +144,13 @@
     </div>
     <div class="dropdown">
       <button class="dropbtn"> {{ user['name'] }}
-          <i class="fa fa-caret-down"></i>
+        <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content dropdown-right">
-          <a href="/profile">Profile</a>
-          <a href="/logout">Logout</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
       </div>
-  </div>
+    </div>
   </div>
 
   <div class="goal-container">
@@ -170,7 +175,7 @@
         <input type="submit" value="Submit">
       </form>
     </div>
-    
+
     <div class="submitted-goals-container">
       <h2>Submitted Goals</h2>
       {% if goals %}
@@ -179,10 +184,10 @@
           <tr>
             <th>Goal Name</th>
             <th>Goal Type</th>
-            <th>Start Date</th>
-            <th>End Date</th>
             <th>Target Weight</th>
             <th>Target Calories per Day</th>
+            <th>Start Date</th>
+            <th>End Date</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -197,9 +202,9 @@
             <td>{{ goal[6] }}</td>
             <td>
               <button class="btn btn-primary btn-sm"
-        onclick="showEditGoalForm('{{ goal[0] }}', '{{ goal[1] }}', '{{ goal[2] }}', '{{ goal[3] }}', '{{ goal[4] }}', '{{ goal[5] }}', '{{ goal[6] }}')">
-  Edit
-</button>
+                onclick="showEditGoalForm('{{ goal[0] }}', '{{ goal[1] }}', '{{ goal[2] }}', '{{ goal[3] }}', '{{ goal[4] }}', '{{ goal[5] }}', '{{ goal[6] }}')">
+                Edit
+              </button>
 
               <form action="/delete_goal" method="POST" style="display: inline;">
                 <input type="hidden" name="goalId" value="{{ goal[0] }}">
@@ -225,19 +230,25 @@
         <input type="hidden" id="edit-goal-id" name="goalId">
         <label for="edit-goal-name">Goal Name:</label>
         <input type="text" id="edit-goal-name" name="goalName" required>
+        <br><br>
         <label for="edit-goal-type">Goal Type:</label>
         <select id="edit-goal-type" name="goalType" required>
           <option value="Bulk">Bulk</option>
           <option value="Weight gain">Weight gain</option>
         </select>
+        <br><br>
         <label for="edit-start-date">Start Date:</label>
         <input type="date" id="edit-start-date" name="startDate" required>
+        <br><br>
         <label for="edit-end-date">End Date:</label>
         <input type="date" id="edit-end-date" name="endDate" required>
+        <br><br>
         <label for="edit-target-weight">Target Weight:</label>
         <input type="number" id="edit-target-weight" name="targetWeight" step="any" required>
+        <br><br>
         <label for="edit-target-calories">Target Calories per Day:</label>
         <input type="number" id="edit-target-calories" name="targetCalories" step="any" required>
+        <br><br>
         <input type="submit" value="Update">
       </form>
     </div>
@@ -260,17 +271,17 @@
     }
 
     // Show edit goal form with pre-filled values
-// Show edit goal form with pre-filled values
-function showEditGoalForm(goalId, goalName, goalType, startDate, endDate, targetWeight, targetCalories) {
-  document.getElementById('edit-goal-id').value = goalId;
-  document.getElementById('edit-goal-name').value = goalName;
-  document.getElementById('edit-goal-type').value = goalType;
-  document.getElementById('edit-start-date').value = startDate;
-  document.getElementById('edit-end-date').value = endDate;
-  document.getElementById('edit-target-weight').value = targetWeight;
-  document.getElementById('edit-target-calories').value = targetCalories;
+    // Show edit goal form with pre-filled values
+    function showEditGoalForm(goalId, goalName, goalType, startDate, endDate, targetWeight, targetCalories) {
+      document.getElementById('edit-goal-id').value = goalId;
+      document.getElementById('edit-goal-name').value = goalName;
+      document.getElementById('edit-goal-type').value = goalType;
+      document.getElementById('edit-start-date').value = startDate;
+      document.getElementById('edit-end-date').value = endDate;
+      document.getElementById('edit-target-weight').value = targetWeight;
+      document.getElementById('edit-target-calories').value = targetCalories;
 
-  modal.style.display = 'block';
+      modal.style.display = 'block';
 
     }  </script>
 </body>
