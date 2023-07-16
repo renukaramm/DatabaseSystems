@@ -112,7 +112,7 @@ def home():
     # Fetch the daily plans with associated meals and calories gained from the database
     select_query = """
         SELECT dp.daily_plan_id, dp.goal_id, dp.date, dp.net_calories,
-               m.calories_gained, m.food_name, m.meal_timeframe
+               m.calories_gained, m.food_name, m.meal_timeframe, m.meal_id
         FROM daily_plan dp
         JOIN goals g ON dp.goal_id = g.goal_id
         LEFT JOIN meal m ON dp.daily_plan_id = m.daily_plan_id AND m.meal_type = 'actual'
@@ -140,8 +140,9 @@ def home():
         meal_timeframe = row[6]  # Access the column value by index
         food_name = row[5]  # Access the column value by index
         calories_gained = row[4]  # Access the column value by index
+        meal_id = row[7]
 
-        meal = {'food_name': food_name, 'calories_gained': calories_gained}
+        meal = {'id': meal_id, 'food_name': food_name, 'calories_gained': calories_gained}
         if meal_timeframe == 'Breakfast':
             daily_plans[daily_plan_id]['breakfast_meals'].append(meal)
         elif meal_timeframe == 'Lunch':
@@ -179,28 +180,42 @@ def add_actual_meal():
 
 
 @app.route('/update_actual_meal', methods=['POST'])
+@login_required
 def update_actual_meal():
-    meal_id = request.form.get('mealId')
-    if meal_id:
-        meal_id = int(meal_id)
-        food_name = request.form['foodName']
-        calories_gained = float(request.form['caloriesGained'])
-        meal_timeframe = request.form['mealTimeframe']
+    meal_id = int(request.form['mealId'])
+    food_name = request.form['foodName']
+    calories_gained = float(request.form['caloriesGained'])
+    daily_plan_id = int(request.form['editDailyPlanId'])
 
-        # Update the actual meal in the database
-        update_query = "UPDATE meal SET food_name = %s, calories_gained = %s WHERE meal_id = %s"
-        values = (food_name, calories_gained, meal_id)
-        cursor.execute(update_query, values)
-        db_mysql.commit()
+    # Get the old calories gained value for the meal
+    get_old_calories_query = "SELECT calories_gained FROM meal WHERE meal_id = %s"
+    cursor.execute(get_old_calories_query, (meal_id,))
+    old_calories_gained = cursor.fetchone()[0]
 
-        return redirect('/')
-    else:
-        return redirect('/food')
+    # Calculate the difference between old and new calories
+    calories_difference = calories_gained - old_calories_gained
+
+    # Update the actual meal in the database
+    update_meal_query = "UPDATE meal SET food_name = %s, calories_gained = %s WHERE meal_id = %s"
+    update_meal_values = (food_name, calories_gained, meal_id)
+    cursor.execute(update_meal_query, update_meal_values)
+
+    # Update the net_calories in the daily_plan table
+    update_dp_query = "UPDATE daily_plan SET net_calories = net_calories + %s WHERE daily_plan_id = %s"
+    update_dp_values = (calories_difference, daily_plan_id)
+    cursor.execute(update_dp_query, update_dp_values)
+
+    db_mysql.commit()
+
+    return redirect('/')
 
 
 @app.route('/delete_actual_meal', methods=['POST'])
+@login_required
 def delete_actual_meal():
     meal_id = request.form['mealId']
+    daily_plan_id = int(request.form['deleteDailyPlanId'])
+    calories_gained = float(request.form['caloriesGained'])
 
     if meal_id:
         meal_id = int(meal_id)
@@ -209,6 +224,12 @@ def delete_actual_meal():
         delete_query = "DELETE FROM meal WHERE meal_id = %s"
         values = (meal_id,)
         cursor.execute(delete_query, values)
+
+        # Update the net_calories in the daily_plan table
+        update_dp = "UPDATE daily_plan SET net_calories = net_calories - %s WHERE daily_plan_id = %s"
+        values = (calories_gained, daily_plan_id)
+        cursor.execute(update_dp, values)
+
         db_mysql.commit()
 
     return redirect('/')

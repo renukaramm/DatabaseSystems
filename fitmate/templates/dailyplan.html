@@ -113,8 +113,8 @@
 </div>
     <h1>Daily Meal and Exercise History</h1>
 
-    <!-- Replace the existing table with a loop to display multiple daily plan tables -->
-    {% for daily_plan in daily_plans %}
+{% if daily_plans %}
+  {% for daily_plan in daily_plans %}
     <table>
         <tr>
             <th>Daily Plan {{daily_plan.date}}</th>
@@ -166,5 +166,8 @@
     </table>
   <br><br>
 {% endfor %}
+{% else %}
+    <p>No daily plan! Create a goal now!</p>
+{% endif %}
 </body>
 </html>
