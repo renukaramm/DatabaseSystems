@@ -110,7 +110,7 @@ def home():
 
     user_id = user['id']
     # Fetch the daily plans with associated meals and calories gained from the database
-    select_query = """
+    actual_meal_query = """
         SELECT dp.daily_plan_id, dp.goal_id, dp.date, dp.net_calories,
                m.calories_gained, m.food_name, m.meal_timeframe, m.meal_id
         FROM daily_plan dp
@@ -119,12 +119,24 @@ def home():
         WHERE g.user_id = %s
     """
 
+    exercise_query = """
+        SELECT dp.daily_plan_id, e.exercise_id, e.exercise_type, e.activity, e.description, e.calories_burnt
+        FROM daily_plan dp
+        JOIN goals g ON dp.goal_id = g.goal_id
+        LEFT JOIN exercise e ON dp.daily_plan_id = e.daily_plan_id
+        WHERE g.user_id = %s
+    """
+
     values = (user_id,)  # Pass user_id as a tuple
-    cursor.execute(select_query, values)
-    rows = cursor.fetchall()
+
+    cursor.execute(actual_meal_query, values)
+    rows1 = cursor.fetchall()
+
+    cursor.execute(exercise_query, values)
+    rows2 = cursor.fetchall()
 
     daily_plans = {}
-    for row in rows:
+    for row in rows1:
         daily_plan_id = row[0]  # Access the column value by index
         if daily_plan_id not in daily_plans:
             daily_plans[daily_plan_id] = {
@@ -134,7 +146,8 @@ def home():
                 'net_calories': row[3],  # Access the column value by index
                 'breakfast_meals': [],
                 'lunch_meals': [],
-                'dinner_meals': []
+                'dinner_meals': [],
+                'exercises': []
             }
 
         meal_timeframe = row[6]  # Access the column value by index
@@ -149,6 +162,27 @@ def home():
             daily_plans[daily_plan_id]['lunch_meals'].append(meal)
         elif meal_timeframe == 'Dinner':
             daily_plans[daily_plan_id]['dinner_meals'].append(meal)
+
+    # Now, let's loop through the exercises and append them to the correct daily plan
+    for row in rows2:
+        daily_plan_id = row[0]  # Access the daily_plan_id from the exercise query
+        exercise_id = row[1]
+        exercise_type = row[2]
+        activity = row[3]
+        description = row[4]
+        calories_burnt = row[5]
+
+        if exercise_id or exercise_type or activity or description or calories_burnt:
+            exercise = {
+                'id': exercise_id,
+                'exercise_type': exercise_type,
+                'activity': activity,
+                'description': description,
+                'calories_burnt': calories_burnt
+            }
+
+            # Append the exercise to the correct daily plan using daily_plan_id as the key
+            daily_plans[daily_plan_id]['exercises'].append(exercise)
 
     daily_plans = list(daily_plans.values())
 
@@ -229,6 +263,72 @@ def delete_actual_meal():
         update_dp = "UPDATE daily_plan SET net_calories = net_calories - %s WHERE daily_plan_id = %s"
         values = (calories_gained, daily_plan_id)
         cursor.execute(update_dp, values)
+
+        db_mysql.commit()
+
+    return redirect('/')
+
+
+@app.route('/add_exercise', methods=['POST'])
+@login_required
+def add_exercise():
+    exercise_type = request.form['exerciseType']
+    activity = request.form['activity']
+    description = request.form['description']
+    calories_burnt = float(request.form['caloriesBurnt'])
+    daily_plan_id = int(request.form.get('dailyPlanId'))
+
+    # Insert the exercise into the database
+    insert_query = "INSERT INTO exercise (daily_plan_id, exercise_type, activity, description, calories_burnt) " \
+                   "VALUES (%s, %s, %s, %s, %s)"
+    values = (daily_plan_id, exercise_type, activity, description, calories_burnt)
+    cursor.execute(insert_query, values)
+
+    # Update the net_calories in the daily_plan table
+    update_query = "UPDATE daily_plan SET net_calories = net_calories - %s WHERE daily_plan_id = %s"
+    values = (calories_burnt, daily_plan_id)
+    cursor.execute(update_query, values)
+
+    db_mysql.commit()
+
+    return redirect('/')
+
+
+@app.route('/update_exercise', methods=['POST'])
+@login_required
+def update_exercise():
+    exercise_id = int(request.form['exerciseId'])
+    exercise_type = request.form['exerciseType']
+    activity = request.form['activity']
+    description = request.form['description']
+    calories_burnt = float(request.form['caloriesBurnt'])
+    daily_plan_id = int(request.form['editDailyPlanId'])
+
+    # Update the exercise in the database
+    update_exercise_query = "UPDATE exercise SET exercise_type = %s, activity = %s, description = %s, " \
+                            "calories_burnt = %s WHERE exercise_id = %s"
+    update_exercise_values = (exercise_type, activity, description, calories_burnt, exercise_id)
+    cursor.execute(update_exercise_query, update_exercise_values)
+
+    db_mysql.commit()
+
+    return redirect('/')
+
+
+@app.route('/delete_exercise', methods=['POST'])
+@login_required
+def delete_exercise():
+    exercise_id = request.form['exerciseId']
+    daily_plan_id = int(request.form['deleteDailyPlanId'])
+    calories_burnt = float(request.form['caloriesBurnt'])
+
+    if exercise_id:
+        exercise_id = int(exercise_id)
+
+        # Delete the exercise from the database
+        delete_query = "DELETE FROM exercise WHERE exercise_id = %s"
+        values = (exercise_id,)
+        cursor.execute(delete_query, values)
 
         db_mysql.commit()
 
