@@ -106,6 +106,8 @@ def logout():
 @app.route('/')
 @login_required
 def home():
+    food_data = food_collection.find()
+
     user = session.get('user')  # Retrieve the user data from the session
 
     user_id = user['id']
@@ -186,7 +188,7 @@ def home():
 
     daily_plans = list(daily_plans.values())
 
-    return render_template('home.html', user=user, daily_plans=daily_plans)
+    return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data)
 
 
 @app.route('/add_actual_meal', methods=['POST'])

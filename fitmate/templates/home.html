@@ -192,9 +192,14 @@
             <input type="hidden" id="actualMealTimeframe" name="mealTimeframe" value="">
             <input type="hidden" id="dailyPlanId" name="dailyPlanId" value="">
             <label for="foodName"><b>Food Name</b></label>
-            <input type="text" placeholder="Enter food name" name="foodName" required>
+            <select name="foodName" onchange="updateCaloriesGained()" required>
+                <option value="" disabled selected>Select a food</option>
+                {% for food in food_data %}
+                    <option value="{{ food.Food }}" data-calories="{{ food.Calories }}">{{ food.Food }}</option>
+                {% endfor %}
+            </select>
             <label for="caloriesGained"><b>Calories Gained</b></label>
-            <input type="text" placeholder="Enter calories gained" name="caloriesGained" required>
+            <input type="text" id="caloriesGainedInput" placeholder="Enter calories gained" name="caloriesGained" required>
             <button type="submit" class="add-button">Add Meal</button>
             <button type="button" class="add-button" onclick="closeForm('actualMeal')">Cancel</button>
         </form>
@@ -341,6 +346,21 @@
             document.getElementById("deleteExerciseId").value = exerciseId;
             document.getElementById("deleteExerciseDailyPlanId").value = dailyPlanId;
             document.getElementById("caloriesBurnt").value = caloriesBurnt;
+        }
+
+        // AUTO UPDATE CALORIES
+        function updateCaloriesGained() {
+            // Get the selected option from the dropdown
+            const selectedOption = document.querySelector('select[name="foodName"] option:checked');
+            if (selectedOption) {
+                // Get the calories data attribute of the selected option
+                const calories = selectedOption.getAttribute('data-calories');
+                // Update the calories gained input field with the calories value
+                document.getElementById('caloriesGainedInput').value = calories;
+            } else {
+                // If no option is selected, clear the calories gained input field
+                document.getElementById('caloriesGainedInput').value = '';
+            }
         }
 
     </script>
