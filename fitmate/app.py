@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import mysql.connector
 from pymongo import MongoClient
 from functools import wraps
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'G\x11\xd9\x9aC\xafi\xe8^.hf\x81PDb}4M\xea\x8e\x7f\xa9\x90'
@@ -534,6 +535,38 @@ def update_profile():
     session['user'] = user
 
     return redirect('/profile')
+
+
+@app.route('/change-password', methods=['POST'])
+@login_required
+def change_password():
+    user = session.get('user')
+
+    # Get the submitted password data from the form
+    current_password = request.form['current_password']
+    new_password = request.form['new_password']
+
+    # Check if the current password matches the stored password
+    if check_password_hash(user['password'], current_password):
+        # Hash the new password before storing it in the database
+        hashed_password = generate_password_hash(new_password)
+
+        # Update the password in the database
+        update_query = "UPDATE users SET password = %s WHERE user_id = %s"
+        values = (hashed_password, user['user_id'])
+        cursor.execute(update_query, values)
+        db_mysql.commit()
+
+        # Update the password in the session
+        user['password'] = hashed_password
+        session['user'] = user
+
+        # Redirect to the profile page with a success message
+        return redirect('/profile')
+
+    else:
+        # Password verification failed, show an error message
+        return 'Incorrect current password'
 
 
 

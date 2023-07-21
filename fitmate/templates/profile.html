@@ -89,6 +89,43 @@
             right: 0;
             left: auto;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #f9f9f9;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Close Button */
+        .close {
+            color: #888;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -151,9 +188,57 @@
                 <label for="weight">Weight:</label>
                 <input type="number" id="weight" name="weight" step="any" value="{{ user['weight'] }}"><br><br>
                 <input type="submit" value="Update">
+                <!-- Add the "Change Password" button -->
+                <button onclick="openModal()">Change Password</button>
+
+                <!-- The Modal -->
+                <div id="myModal" class="modal">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <h2>Change Password</h2>
+                        <form action="/change-password" method="POST">
+                            <label for="current-password">Current Password:</label>
+                            <input type="password" id="current-password" name="current_password" required><br><br>
+                            <label for="new-password">New Password:</label>
+                            <input type="password" id="new-password" name="new_password" required><br><br>
+                            <input type="submit" value="Change Password">
+                        </form>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
+
+    <script>
+        // JavaScript to handle the modal behavior
+
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementsByTagName("button")[0];
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        function openModal() {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+    </script>
 </body>
 
 </html>
