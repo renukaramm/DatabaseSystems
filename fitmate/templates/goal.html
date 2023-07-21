@@ -201,7 +201,6 @@
             <td>{{ goal[5] }}</td>
             <td>{{ goal[6] }}</td>
             <td>
-              <!-- Update onsubmit attribute to use correct field names -->
               <form action="/update_goal" method="POST" onsubmit="showEditGoalForm('{{ goal[0] }}', '{{ goal[7] }}', '{{ goal[2] }}', '{{ goal[5] }}', '{{ goal[6] }}', '{{ goal[3] }}', '{{ goal[4] }}'); return false;">
                 <input type="hidden" name="goalId" value="{{ goal[0] }}">
                 <button class="btn btn-danger btn-sm" type="submit">Edit</button>

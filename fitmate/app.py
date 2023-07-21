@@ -59,10 +59,10 @@ def login():
                 'id': user[0],
                 'name': user[1],
                 'email': user[2],
-                'height': user[3],
-                'weight': user[4],
-                'bmi': user[5],
-                'age': user[6]
+                # 3 is for password
+                'height': user[4],
+                'weight': user[5],
+                'date_of_birth': user[6]
             }
 
             # Redirect to the homepage
@@ -505,6 +505,7 @@ def daily_plan():
     return render_template('dailyplan.html', user=user, daily_plans=daily_plans)
 
 
+# Inside the profile route, pass the user data to the profile.html template.
 @app.route('/profile')
 @login_required
 def profile():
@@ -529,7 +530,11 @@ def update_profile():
         user['height'] = height
         user['weight'] = weight
 
+    # Save the updated user data in the session
+    session['user'] = user
+
     return redirect('/profile')
+
 
 
 if __name__ == '__main__':
