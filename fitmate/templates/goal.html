@@ -194,18 +194,19 @@
         <tbody>
           {% for goal in goals %}
           <tr>
-            <td>{{ goal[1] }}</td>
+            <td>{{ goal[7] }}</td>
             <td>{{ goal[2] }}</td>
             <td>{{ goal[3] }}</td>
             <td>{{ goal[4] }}</td>
             <td>{{ goal[5] }}</td>
             <td>{{ goal[6] }}</td>
             <td>
-              <button class="btn btn-primary btn-sm"
-                onclick="showEditGoalForm('{{ goal[0] }}', '{{ goal[1] }}', '{{ goal[2] }}', '{{ goal[3] }}', '{{ goal[4] }}', '{{ goal[5] }}', '{{ goal[6] }}')">
-                Edit
-              </button>
-
+              <!-- Update onsubmit attribute to use correct field names -->
+              <form action="/update_goal" method="POST" onsubmit="showEditGoalForm('{{ goal[0] }}', '{{ goal[7] }}', '{{ goal[2] }}', '{{ goal[5] }}', '{{ goal[6] }}', '{{ goal[3] }}', '{{ goal[4] }}'); return false;">
+                <input type="hidden" name="goalId" value="{{ goal[0] }}">
+                <button class="btn btn-danger btn-sm" type="submit">Edit</button>
+              </form>
+    
               <form action="/delete_goal" method="POST" style="display: inline;">
                 <input type="hidden" name="goalId" value="{{ goal[0] }}">
                 <button class="btn btn-danger btn-sm" type="submit">Delete</button>
@@ -256,21 +257,19 @@
 
   <script>
     // Modal script
-    // Modal script
     var modal = document.getElementById('editGoalModal');
     var span = document.getElementsByClassName('close')[0];
-
+  
     span.onclick = function () {
       modal.style.display = 'none';
     }
-
+  
     window.onclick = function (event) {
       if (event.target == modal) {
         modal.style.display = 'none';
       }
     }
-
-    // Show edit goal form with pre-filled values
+  
     // Show edit goal form with pre-filled values
     function showEditGoalForm(goalId, goalName, goalType, startDate, endDate, targetWeight, targetCalories) {
       document.getElementById('edit-goal-id').value = goalId;
@@ -280,10 +279,10 @@
       document.getElementById('edit-end-date').value = endDate;
       document.getElementById('edit-target-weight').value = targetWeight;
       document.getElementById('edit-target-calories').value = targetCalories;
-
+  
       modal.style.display = 'block';
-
-    }  </script>
+    }
+  </script>
 </body>
 
 </html>

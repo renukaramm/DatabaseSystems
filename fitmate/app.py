@@ -390,8 +390,8 @@ def add_goal():
         # Insert the goal into the database
         user = session.get('user')
         user_id = user['id']
-        insert_query = "INSERT INTO goals (user_id, goal_type, target_weight, target_calories, start_date, end_date) VALUES (%s, %s, %s, %s, %s, %s)"
-        values = (user_id, goal_type, target_weight, target_calories, start_date, end_date)
+        insert_query = "INSERT INTO goals (user_id, goal_type, target_weight, target_calories, start_date, end_date, goal_name) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        values = (user_id, goal_type, target_weight, target_calories, start_date, end_date, goal_name)
         cursor.execute(insert_query, values)
         db_mysql.commit()
 
