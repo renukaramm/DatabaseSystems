@@ -462,21 +462,33 @@ def daily_plan():
 
     user_id = user['id']
     # Fetch the daily plans with associated meals and calories gained from the database
-    select_query = """
-        SELECT dp.daily_plan_id, dp.goal_id, dp.date, dp.net_calories,
-               m.calories_gained, m.food_name, m.meal_timeframe
-        FROM daily_plan dp
-        JOIN goals g ON dp.goal_id = g.goal_id
-        LEFT JOIN meal m ON dp.daily_plan_id = m.daily_plan_id AND m.meal_type = 'actual'
-        WHERE g.user_id = %s
-    """
+    actual_meal_query = """
+            SELECT dp.daily_plan_id, dp.goal_id, dp.date, dp.net_calories,
+                   m.calories_gained, m.food_name, m.meal_timeframe, m.meal_id
+            FROM daily_plan dp
+            JOIN goals g ON dp.goal_id = g.goal_id
+            LEFT JOIN meal m ON dp.daily_plan_id = m.daily_plan_id AND m.meal_type = 'actual'
+            WHERE g.user_id = %s
+        """
+
+    exercise_query = """
+            SELECT dp.daily_plan_id, e.exercise_id, e.exercise_type, e.activity, e.description, e.calories_burnt
+            FROM daily_plan dp
+            JOIN goals g ON dp.goal_id = g.goal_id
+            LEFT JOIN exercise e ON dp.daily_plan_id = e.daily_plan_id
+            WHERE g.user_id = %s
+        """
 
     values = (user_id,)  # Pass user_id as a tuple
-    cursor.execute(select_query, values)
-    rows = cursor.fetchall()
+
+    cursor.execute(actual_meal_query, values)
+    rows1 = cursor.fetchall()
+
+    cursor.execute(exercise_query, values)
+    rows2 = cursor.fetchall()
 
     daily_plans = {}
-    for row in rows:
+    for row in rows1:
         daily_plan_id = row[0]  # Access the column value by index
         if daily_plan_id not in daily_plans:
             daily_plans[daily_plan_id] = {
@@ -486,20 +498,43 @@ def daily_plan():
                 'net_calories': row[3],  # Access the column value by index
                 'breakfast_meals': [],
                 'lunch_meals': [],
-                'dinner_meals': []
+                'dinner_meals': [],
+                'exercises': []
             }
 
         meal_timeframe = row[6]  # Access the column value by index
         food_name = row[5]  # Access the column value by index
         calories_gained = row[4]  # Access the column value by index
+        meal_id = row[7]
 
-        meal = {'food_name': food_name, 'calories_gained': calories_gained}
+        meal = {'id': meal_id, 'food_name': food_name, 'calories_gained': calories_gained}
         if meal_timeframe == 'Breakfast':
             daily_plans[daily_plan_id]['breakfast_meals'].append(meal)
         elif meal_timeframe == 'Lunch':
             daily_plans[daily_plan_id]['lunch_meals'].append(meal)
         elif meal_timeframe == 'Dinner':
             daily_plans[daily_plan_id]['dinner_meals'].append(meal)
+
+    # Now, let's loop through the exercises and append them to the correct daily plan
+    for row in rows2:
+        daily_plan_id = row[0]  # Access the daily_plan_id from the exercise query
+        exercise_id = row[1]
+        exercise_type = row[2]
+        activity = row[3]
+        description = row[4]
+        calories_burnt = row[5]
+
+        if exercise_id or exercise_type or activity or description or calories_burnt:
+            exercise = {
+                'id': exercise_id,
+                'exercise_type': exercise_type,
+                'activity': activity,
+                'description': description,
+                'calories_burnt': calories_burnt
+            }
+
+            # Append the exercise to the correct daily plan using daily_plan_id as the key
+            daily_plans[daily_plan_id]['exercises'].append(exercise)
 
     daily_plans = list(daily_plans.values())
 

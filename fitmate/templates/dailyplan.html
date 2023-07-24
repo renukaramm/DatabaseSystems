@@ -131,8 +131,12 @@
                     <br>
                 {% endfor %}
             </td>
-            <th rowspan="4">
-            </th>
+            <td rowspan="3">
+                {% for exercise in daily_plan.exercises %}
+                    {{ exercise.exercise_type }} ({{ exercise.calories_burnt }} calories)
+                <br>
+                {% endfor %}
+            </td>
         </tr>
         <tr></tr>
         <tr></tr>
