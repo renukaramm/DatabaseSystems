@@ -450,9 +450,43 @@ def records():
 
 @app.route('/records_goals')
 @login_required
-def goals():
+def records_goals():
     user = session.get('user')  # Retrieve the user data from the session
-    return render_template('records_goals.html', user=user)
+
+    # Retrieve the user's goals from the database
+    user_id = user['id']
+    # user_id = 1
+    select_query = "SELECT * FROM goals WHERE user_id = %s"
+    values = (user_id,)
+    cursor.execute(select_query, values)
+    goals = cursor.fetchall()
+    # Prepare data for the graph
+    graph_data = {}  # A dictionary to hold the graph data for each goal
+
+    for goal in goals:
+        goal_id = goal[0]  # Access the goal_id from the goal tuple
+        goal_name = goal[2]  # Access the goal_name from the goal tuple
+
+        # Fetch the daily plan data for the current goal from the database
+        daily_plan_query = "SELECT date, net_calories FROM daily_plan WHERE goal_id = %s ORDER BY date ASC"
+        cursor.execute(daily_plan_query, (goal_id,))
+        daily_plan_data = cursor.fetchall()
+
+        # Extract dates and net calories for the graph
+        dates = []
+        net_calories = []
+
+        for daily_plan in daily_plan_data:
+            dates.append(daily_plan[0].strftime('%Y-%m-%d'))  # Convert date object to string
+            net_calories.append(daily_plan[1])
+
+        # Add the graph data for the current goal to the graph_data dictionary
+        graph_data[goal_name] = {
+            'dates': dates,
+            'net_calories': net_calories,
+        }
+
+    return render_template('records_goals.html', user=user, goals=goals, graph_data=graph_data)
 
 
 @app.route('/dailyplan')

@@ -2,6 +2,8 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<!-- Place this in the <head> section or just before the closing </body> tag -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.min.js"></script>
 
     <title>Records - Goals</title>
 </head>
@@ -33,9 +35,42 @@
             <a href="/profile">Profile</a>
             <a href="/logout">Logout</a>
         </div>
-    </div>    
+    </div>
 </div>
-    
+
     <h1>Welcome to the Records Goals Page!</h1>
+
+    {% for goal_name, data in graph_data.items() %}
+        <h2>{{ goal_name }}</h2>
+        <canvas id="graph_{{ loop.index }}" width="400" height="200"></canvas>
+
+        <script>
+            // JavaScript to render the graph using Chart.js
+            var ctx = document.getElementById('graph_{{ loop.index }}').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{ data['dates'] | tojson }},
+                    datasets: [{
+                        label: 'Net Calories',
+                        data: {{ data['net_calories'] | tojson }},
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 1,
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: false,  // Set to true if you want the chart to be responsive
+                    maintainAspectRatio: false,  // Set to true to maintain aspect ratio
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+    {% endfor %}
 </body>
 </html>
