@@ -180,6 +180,8 @@
             <p><strong>Height:</strong> {{ user['height'] }} cm</p>
             <p><strong>Weight:</strong> {{ user['weight'] }} kg</p>
             <p><strong>DOB:</strong> {{ user['date_of_birth'] }}</p>
+            <p><strong>BMI:</strong> {{ bmi }}</p>
+            <p><strong>Current Age:</strong> {{ age }}</p>
         </div>
 
         <!-- Update Profile -->
@@ -191,9 +193,9 @@
                 <input type="text" id="name" name="name" value="{{ user['name'] }}"><br><br>
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" value="{{ user['email'] }}"><br><br>
-                <label for="height">Height:</label>
+                <label for="height">Height  (cm):</label>
                 <input type="number" id="height" name="height" step="any" value="{{ user['height'] }}"><br><br>
-                <label for="weight">Weight:</label>
+                <label for="weight">Weight (kg):</label>
                 <input type="number" id="weight" name="weight" step="any" value="{{ user['weight'] }}"><br><br>
                 <input type="submit" value="Update">
                 <!-- Add the "Change Password" button -->

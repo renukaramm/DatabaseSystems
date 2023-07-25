@@ -595,14 +595,36 @@ def daily_plan():
 
     return render_template('dailyplan.html', user=user, daily_plans=daily_plans)
 
+def calculate_bmi(weight, height):
+    try:
+        weight = float(weight)
+        height = float(height) / 100.0  # Convert height from cm to meters
+        bmi = weight / (height ** 2)
+        return round(bmi, 2)
+    except ValueError:
+        return None
 
+def calculate_age(date_of_birth):
+    try:
+        date_of_birth = datetime.strptime(date_of_birth, '%a, %d %b %Y %H:%M:%S %Z')
+        today = datetime.today()
+        age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+        return age
+    except ValueError:
+        return None
+    
 # Inside the profile route, pass the user data to the profile.html template.
 @app.route('/profile')
 @login_required
 def profile():
     user = session.get('user')  # Retrieve the user data from the session
-    print("User data:", user) 
-    return render_template('profile.html', user=user)
+
+    # Calculate BMI using the user's weight and height
+    bmi = calculate_bmi(user['weight'], user['height'])
+
+    # Calculate age using the user's date of birth
+    age = calculate_age(user['date_of_birth'])
+    return render_template('profile.html', user=user, bmi=bmi, age=age)
 
 
 @app.route('/update-profile', methods=['POST'])
