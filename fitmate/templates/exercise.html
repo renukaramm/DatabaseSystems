@@ -10,7 +10,6 @@
         table {
             border-collapse: collapse;
             width: 100%;
-            border: 1px solid black;
         }
 
         th, td {
@@ -19,11 +18,11 @@
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #D8C4B6;
         }
 
         tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #F5EFE7;
         }
 
         .search-container {
@@ -64,10 +63,59 @@
                 // Show all rows if filter option is "All"
                 if (filterOption === "All") {
                     $("tbody tr").show();
-                } else if (filterOption === "lessThan1") {
+                } else if (filterOption === "0to0.5") {
                     // Hide rows with calories per kg greater than 1.00000
                     $("tbody tr").hide();
-                    $("tbody tr[data-calories<=1.00000]").show();
+                    $("tbody tr").filter(function() {
+                        var calories = parseFloat($(this).attr("data-calories"));
+                        return calories > 0.00000 && calories <= 0.50000;
+                    }).show();
+                } else if (filterOption === "0.5to1") {
+                    // Hide rows with calories per kg greater than 1.00000
+                    $("tbody tr").hide();
+                    $("tbody tr").filter(function() {
+                        var calories = parseFloat($(this).attr("data-calories"));
+                        return calories > 0.50000 && calories <= 1.00000;
+                    }).show();
+                } else if (filterOption === "1to1.5") {
+                    // Hide rows with calories per kg greater than 1.00000
+                    $("tbody tr").hide();
+                    $("tbody tr").filter(function() {
+                        var calories = parseFloat($(this).attr("data-calories"));
+                        return calories > 1.00000 && calories <= 1.50000;
+                    }).show();
+                } else if (filterOption === "1.5to2") {
+                    // Hide rows with calories per kg greater than 1.00000
+                    $("tbody tr").hide();
+                    $("tbody tr").filter(function() {
+                        var calories = parseFloat($(this).attr("data-calories"));
+                        return calories > 1.50000 && calories <= 2.00000;
+                    }).show();
+                } else if (filterOption === "2to2.5") {
+                    // Hide rows with calories per kg greater than 1.00000
+                    $("tbody tr").hide();
+                    $("tbody tr").filter(function() {
+                        var calories = parseFloat($(this).attr("data-calories"));
+                        return calories > 2.00000 && calories <= 2.50000;
+                    }).show();
+                } else if (filterOption === "2.5to3") {
+                    // Hide rows with calories per kg greater than 1.00000
+                    $("tbody tr").hide();
+                    $("tbody tr").filter(function() {
+                        var calories = parseFloat($(this).attr("data-calories"));
+                        return calories > 2.50000 && calories <= 3.00000;
+                    }).show();
+                } else if (filterOption === "moreThan3") {
+                    // Hide rows with calories per kg greater than 1.00000
+                    $("tbody tr").hide();
+                    $("tbody tr").filter(function() {
+                        var calories = parseFloat($(this).attr("data-calories"));
+                        return calories > 3.00000;
+                    }).show();
+                }else {
+                    // Hide rows that don't match the selected filter option
+                    $("tbody tr").hide();
+                    $("tbody td:contains('" + filterOption + "')").closest("tr").show();
                 }
             });
 
@@ -123,7 +171,35 @@
         <div class="search-container-right">
             <select id="calories-filter" class="calories-filter">
                 <option value="All">All</option>
-                <option value="lessThan1">Calories <= 1.00000</option>
+                <option value="0to0.5">0 < Calories <= 0.5</option>
+                <option value="0.5to1">0.5 < Calories <= 1</option>
+                <option value="1to1.5">1 < Calories <= 1.5</option>
+                <option value="1.5to2">1.5 < Calories <= 2</option>
+                <option value="2to2.5">2 < Calories <= 2.5</option>
+                <option value="2.5to3">2.5 < Calories <= 3</option>
+                <option value="moreThan3">Calories > 3</option>
+                <option value="Cycling">Cycling</option>
+                <option value="Calisthenics">Calisthenics</option>
+                <option value="training">Training</option>
+                <option value="Weight lifting">Weight lifting</option>
+                <option value="exercise">Exercise</option>
+                <option value="machine">Machine</option>
+                <option value="Aerobics">Aerobics</option>
+                <option value="Ballroom dancing">Ballroom dancing</option>
+                <option value="Running">Running</option>
+                <option value="Track and field">Track and field</option>
+                <option value="Archery">Archery</option>
+                <option value="Badminton">Badminton</option>
+                <option value="Basketball">Basketball</option>
+                <option value="Billiards">Billiards</option>
+                <option value="Bowling">Bowling</option>
+                <option value="Football">Football</option>
+                <option value="Frisbee">Frisbee</option>
+                <option value="Golf">Golf</option>
+                <option value="Handball">Handball</option>
+                <option value="Hockey">Hockey</option>
+                <option value="Horse Riding">Horse Riding</option>
+                <option value="Martial arts">Martial Arts</option>
             </select>
         </div>
     </div>
