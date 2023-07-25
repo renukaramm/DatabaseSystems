@@ -4,7 +4,7 @@ CREATE TABLE users (
     user_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	name VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL,
-    password VARCHAR(20) NOT NULL,
+    password VARCHAR(512) NOT NULL,
     height DOUBLE NOT NULL,
     weight DOUBLE NOT NULL,
     date_of_birth DATE NOT NULL,

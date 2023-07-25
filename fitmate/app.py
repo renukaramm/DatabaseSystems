@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash, get_flashed_messages
 import mysql.connector
 from pymongo import MongoClient
 from functools import wraps
@@ -50,12 +50,11 @@ def login():
         password = request.form['password']
 
         # Check the user's credentials in the MySQL database
-        select_query = "SELECT * FROM users WHERE name = %s AND password = %s"
-        values = (name, password)
-        cursor.execute(select_query, values)
+        select_query = "SELECT * FROM users WHERE name = %s"
+        cursor.execute(select_query, (name,))
         user = cursor.fetchone()
 
-        if user:
+        if user and check_password_hash(user[3], password):
             # User credentials are correct, store the user data in the session
             session['user'] = {
                 'id': user[0],
@@ -71,7 +70,7 @@ def login():
             return redirect('/')
         else:
             # Invalid username or password, show an error message
-            return 'Invalid username or password'
+            flash('Invalid username or password', 'error')
 
     return render_template('login.html')
 
@@ -86,9 +85,11 @@ def register():
         weight = request.form['weight']
         date_of_birth = request.form['date_of_birth']
 
+        hashed_password = generate_password_hash(password)
+
         # Insert the user registration data into the database
         insert_query = "INSERT INTO users (name, email, password, height, weight, date_of_birth) VALUES (%s, %s, %s, %s, %s, %s)"
-        values = (name, email, password, height, weight, date_of_birth)
+        values = (name, email, hashed_password, height, weight, date_of_birth)
         cursor.execute(insert_query, values)
         db_mysql.commit()
 
@@ -600,6 +601,7 @@ def daily_plan():
 @login_required
 def profile():
     user = session.get('user')  # Retrieve the user data from the session
+    print("User data:", user) 
     return render_template('profile.html', user=user)
 
 
@@ -622,7 +624,7 @@ def update_profile():
 
     # Save the updated user data in the session
     session['user'] = user
-
+    flash('User updated successfully', 'success')
     return redirect('/profile')
 
 
@@ -634,28 +636,38 @@ def change_password():
     # Get the submitted password data from the form
     current_password = request.form['current_password']
     new_password = request.form['new_password']
+    confirm_password = request.form['confirm_password']
+
+    # Check if the new password and confirm password match
+    if new_password != confirm_password:
+        flash('New password and confirm password must match', 'error')
+        return redirect('/profile')
+
+    # Retrieve the user's current hashed password from the database
+    select_query = "SELECT password FROM users WHERE user_id = %s"
+    cursor.execute(select_query, (user['id'],))
+    stored_password = cursor.fetchone()[0]
 
     # Check if the current password matches the stored password
-    if check_password_hash(user['password'], current_password):
+    if check_password_hash(stored_password, current_password):
         # Hash the new password before storing it in the database
         hashed_password = generate_password_hash(new_password)
 
         # Update the password in the database
         update_query = "UPDATE users SET password = %s WHERE user_id = %s"
-        values = (hashed_password, user['user_id'])
+        values = (hashed_password, user['id'])
         cursor.execute(update_query, values)
         db_mysql.commit()
-
-        # Update the password in the session
-        user['password'] = hashed_password
-        session['user'] = user
-
+        print(f"Password updated: {new_password}")
         # Redirect to the profile page with a success message
+        flash('Password updated successfully', 'success')
         return redirect('/profile')
 
     else:
         # Password verification failed, show an error message
-        return 'Incorrect current password'
+        flash('Incorrect current password', 'error')
+        print("Flash messages:", get_flashed_messages())
+        return redirect('/profile')
 
 
 
