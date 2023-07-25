@@ -124,7 +124,16 @@
         </tr>
         <tr>
             <td rowspan="3">Breakfast</td>
-            <td rowspan="3">Empty</td>
+            <td rowspan="3">
+                <strong>Breakfast</strong><br>
+                {% if daily_plan.generated_breakfast %}
+                    {% for meal in daily_plan.generated_breakfast %}
+                        {{ meal.food_name }} ({{ meal.calories }} calories)<br>
+                    {% endfor %}
+                {% else %}
+                    No Suggestions!
+                {% endif %}
+            </td>
             <td rowspan="3">
                 {% for meal in daily_plan.breakfast_meals %}
                     {{ meal.food_name }} ({{ meal.calories_gained }} calories)
@@ -148,7 +157,16 @@
         <tr></tr>
         <tr>
             <td rowspan="3">Lunch</td>
-            <td rowspan="3">Empty</td>
+            <td rowspan="3">
+                <strong>Lunch</strong><br>
+                {% if daily_plan.generated_lunch %}
+                    {% for meal in daily_plan.generated_lunch %}
+                        {{ meal.food_name }} ({{ meal.calories }} calories)<br>
+                    {% endfor %}
+                {% else %}
+                    No Suggestions!
+                {% endif %}
+            </td>
             <td rowspan="3">
                 {% for meal in daily_plan.lunch_meals %}
                     {{ meal.food_name }} ({{ meal.calories_gained }} calories)
@@ -163,7 +181,16 @@
         <tr></tr>
         <tr>
             <td rowspan="3">Dinner</td>
-            <td rowspan="3">Empty</td>
+            <td rowspan="3">
+                <strong>Dinner</strong><br>
+                {% if daily_plan.generated_dinner %}
+                    {% for meal in daily_plan.generated_dinner %}
+                        {{ meal.food_name }} ({{ meal.calories }} calories)<br>
+                    {% endfor %}
+                {% else %}
+                    No Suggestions!
+                {% endif %}
+            </td>
             <td rowspan="3">
                 {% for meal in daily_plan.dinner_meals %}
                     {{ meal.food_name }} ({{ meal.calories_gained }} calories)

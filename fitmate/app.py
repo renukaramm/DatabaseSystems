@@ -4,6 +4,7 @@ from pymongo import MongoClient
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
+import random
 
 app = Flask(__name__)
 app.secret_key = 'G\x11\xd9\x9aC\xafi\xe8^.hf\x81PDb}4M\xea\x8e\x7f\xa9\x90'
@@ -105,16 +106,62 @@ def logout():
     # Redirect to the login page
     return redirect(url_for('login'))
 
+def generate_meal_plan(daily_calorie_intake, available_food_items):
+    # The number of meals to generate (breakfast, lunch, and dinner)
+    num_meals = 3
+
+    # Initialize the meal plan
+    meal_plan = {
+        'breakfast': [],
+        'lunch': [],
+        'dinner': []
+    }
+
+    # Calculate the rough target calorie range for each meal
+    target_calories_per_meal = daily_calorie_intake / num_meals
+    min_calories_per_meal = target_calories_per_meal * 0.8
+    max_calories_per_meal = target_calories_per_meal * 1.2
+
+    # Check if there are available food items
+    if not available_food_items:
+        print("No available food items.")
+        return meal_plan
+
+    # Function to calculate the remaining calories for a specific meal
+    def calculate_remaining_calories(meal):
+        return max_calories_per_meal - sum(float(food['calories']) for food in meal)
+
+    # Function to randomly select a food item from available_food_items based on calories
+    def select_food_item(remaining_calories):
+        candidates = [food for food in available_food_items if float(food['calories']) <= remaining_calories]
+        return random.choice(candidates) if candidates else None
+
+    # Generate meal plans for each meal
+    for meal_time in meal_plan.keys():
+        remaining_calories = calculate_remaining_calories(meal_plan[meal_time])
+
+        while remaining_calories > 0:
+            selected_food = select_food_item(remaining_calories)
+
+            if selected_food:
+                meal_plan[meal_time].append(selected_food)
+                remaining_calories = calculate_remaining_calories(meal_plan[meal_time])
+            else:
+                # If there are no more suitable food items, break the loop
+                break
+
+    return meal_plan
+
 
 @app.route('/')
 @login_required
 def home():
     food_data = food_collection.find()
-
-    user = session.get('user')  # Retrieve the user data from the session
+    print("Keys in a sample document:", food_data[0].keys())
+    user = session.get('user')
 
     user_id = user['id']
-    # Fetch the daily plans with associated meals and calories gained from the database
+
     actual_meal_query = """
         SELECT dp.daily_plan_id, dp.goal_id, dp.date, dp.net_calories,
                m.calories_gained, m.food_name, m.meal_timeframe, m.meal_id
@@ -132,7 +179,7 @@ def home():
         WHERE g.user_id = %s
     """
 
-    values = (user_id,)  # Pass user_id as a tuple
+    values = (user_id,)
 
     cursor.execute(actual_meal_query, values)
     rows1 = cursor.fetchall()
@@ -142,22 +189,22 @@ def home():
 
     daily_plans = {}
     for row in rows1:
-        daily_plan_id = row[0]  # Access the column value by index
+        daily_plan_id = row[0]
         if daily_plan_id not in daily_plans:
             daily_plans[daily_plan_id] = {
                 'id': daily_plan_id,
-                'goal_id': row[1],  # Access the column value by index
-                'date': row[2],  # Access the column value by index
-                'net_calories': row[3],  # Access the column value by index
+                'goal_id': row[1],
+                'date': row[2],
+                'net_calories': row[3],
                 'breakfast_meals': [],
                 'lunch_meals': [],
                 'dinner_meals': [],
                 'exercises': []
             }
 
-        meal_timeframe = row[6]  # Access the column value by index
-        food_name = row[5]  # Access the column value by index
-        calories_gained = row[4]  # Access the column value by index
+        meal_timeframe = row[6]
+        food_name = row[5]
+        calories_gained = row[4]
         meal_id = row[7]
 
         meal = {'id': meal_id, 'food_name': food_name, 'calories_gained': calories_gained}
@@ -168,9 +215,8 @@ def home():
         elif meal_timeframe == 'Dinner':
             daily_plans[daily_plan_id]['dinner_meals'].append(meal)
 
-    # Now, let's loop through the exercises and append them to the correct daily plan
     for row in rows2:
-        daily_plan_id = row[0]  # Access the daily_plan_id from the exercise query
+        daily_plan_id = row[0]
         exercise_id = row[1]
         exercise_type = row[2]
         activity = row[3]
@@ -186,12 +232,31 @@ def home():
                 'calories_burnt': calories_burnt
             }
 
-            # Append the exercise to the correct daily plan using daily_plan_id as the key
             daily_plans[daily_plan_id]['exercises'].append(exercise)
 
     daily_plans = list(daily_plans.values())
 
+    # Generate meal plans for each daily plan
+    for dp in daily_plans:
+        goal_id = dp['goal_id']
+
+        # Fetch the goal data to get the target calories
+        goal_query = "SELECT target_calories FROM goals WHERE goal_id = %s"
+        cursor.execute(goal_query, (goal_id,))
+        goal_data = cursor.fetchone()
+        target_calories = goal_data[0] if goal_data else 2000  # Default to 2000 calories if goal data is not available
+        print("Target Calories:", target_calories)
+        # Generate meal plan based on available food data
+        available_food_items = [{'food_name': item['Food'], 'calories': item['Calories']} for item in food_data]
+        generated_meal_plan = generate_meal_plan(target_calories, available_food_items)
+
+        # Assign generated meal plan to the corresponding mealtime
+        dp['generated_breakfast'] = generated_meal_plan['breakfast']
+        dp['generated_lunch'] = generated_meal_plan['lunch']
+        dp['generated_dinner'] = generated_meal_plan['dinner']
+
     return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data)
+
 
 
 @app.route('/add_actual_meal', methods=['POST'])

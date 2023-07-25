@@ -3,7 +3,7 @@ Cows' milk,1 qt.,976,660,32,40,36,0,48,Dairy products
 Milk skim,1 qt.,984,360,36,0.1,0.1,0,52,Dairy products
 Buttermilk,1 cup,246,127,9,5,4,0,13,Dairy products
 "Evaporated, undiluted",1 cup,252,345,16,20,18,0,24,Dairy products
-Fortified milk,6 cups,"1,419","1,373",89,42,23,1.4,119,Dairy products
+Fortified milk,6 cups,1419,1373,89,42,23,1.4,119,Dairy products
 Powdered milk,1 cup,103,515,27,28,24,0,39,Dairy products
 "skim, instant",1 1/3 cups,85,290,30,0.1,0.1,0,42,Dairy products
 "skim, non-instant",2/3 cup,85,290,30,0.1,0.1,1,42,Dairy products
@@ -90,7 +90,7 @@ Shad,3 oz.,85,170,20,10,0,0,0,"Fish, Seafood"
 Shrimp,3 oz.,85,110,23,1,0,0,0,"Fish, Seafood"
 Swordfish,1 steak,100,180,27,6,0,0,0,"Fish, Seafood"
 Tuna,3 oz.,85,170,25,7,3,0,0,"Fish, Seafood"
-Artichoke,1 large,100,Aug-44,2,0.1,0.1,2,10,Vegetables A-E
+Artichoke,1 large,100,44,2,0.1,0.1,2,10,Vegetables A-E
 Asparagus,6 spears,96,18,1,0.1,0.1,0.5,3,Vegetables A-E
 Beans,1 cup,125,25,1,0.1,0.1,0.8,6,Vegetables A-E
 Lima,1 cup,160,140,8,0.1,0.1,3,24,Vegetables A-E
@@ -133,7 +133,7 @@ Parsley,2 T.,50,2,0.1,0.1,0,0.1,0.1,Vegetables F-P
 Parsnips,1 cup,155,95,2,1,0,3,22,Vegetables F-P
 Peas,1 cup,100,66,3,0.1,0,0.1,13,Vegetables F-P
 "Fresh, steamed peas",1 cup,100,70,5,0.1,0,2.2,12,Vegetables R-Z
-Frozen peas,1 cup,100,,5,0.1,0,1.8,12,Vegetables R-Z
+Frozen peas,1 cup,100,64,5,0.1,0,1.8,12,Vegetables R-Z
 Split cooked peas,4 cups,100,115,8,0.1,0,0.4,21,Vegetables R-Z
 heated peas,1 cup,100,53,3,0.1,0,1,10,Vegetables R-Z
 Peppers canned,1 pod,38,10,0.1,0.1,0,0.1,2,Vegetables R-Z
@@ -222,8 +222,8 @@ Biscuits,1,38,130,3,4,3,0.1,18,"Breads, cereals, fastfood,grains"
 Bran flakes,1 cup,25,117,3,0.1,0,0.1,32,"Breads, cereals, fastfood,grains"
 "Bread, cracked wheat",1 slice,23,60,2,1,1,0.1,12,"Breads, cereals, fastfood,grains"
 Rye,1 slice,23,55,2,1,1,0.1,12,"Breads, cereals, fastfood,grains"
-"White, 20 slices, or",1-lb. loaf,454,"1,225",39,15,12,9,229,"Breads, cereals, fastfood,grains"
-Whole-wheat,1-lb. loaf,454,"1,100",48,14,10,67.5,216,"Breads, cereals, fastfood,grains"
+"White, 20 slices, or",1-lb. loaf,454,1225,39,15,12,9,229,"Breads, cereals, fastfood,grains"
+Whole-wheat,1-lb. loaf,454,1100,48,14,10,67.5,216,"Breads, cereals, fastfood,grains"
 Whole-wheat,1 slice,23,55,2,1,0,0.31,11,"Breads, cereals, fastfood,grains"
 Corn bread ground meal,1 serving,50,100,3,4,2,0.3,15,"Breads, cereals, fastfood,grains"
 Cornflakes,1 cup,25,110,2,0.1,0,0.1,25,"Breads, cereals, fastfood,grains"
