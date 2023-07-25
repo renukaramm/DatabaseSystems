@@ -3,6 +3,7 @@ import mysql.connector
 from pymongo import MongoClient
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.secret_key = 'G\x11\xd9\x9aC\xafi\xe8^.hf\x81PDb}4M\xea\x8e\x7f\xa9\x90'
@@ -375,6 +376,22 @@ def goal():
 
     return render_template('goal.html', goals=goals, user=user)
 
+def generate_daily_plans(goal_id, start_date, end_date):
+    current_date = start_date
+    delta = timedelta(days=1)
+
+    while current_date <= end_date:
+        # Calculate net_calories for each daily plan (initially set to 0)
+        net_calories = 0.0
+
+        # Insert the daily plan into the database
+        insert_query = "INSERT INTO daily_plan (goal_id, date, net_calories) VALUES (%s, %s, %s)"
+        values = (goal_id, current_date, net_calories)
+        cursor.execute(insert_query, values)
+        db_mysql.commit()
+
+        # Move to the next date
+        current_date += delta
 
 @app.route('/add_goal', methods=['GET', 'POST'])
 @login_required
@@ -386,7 +403,9 @@ def add_goal():
         target_calories = request.form['target-calories']
         start_date = request.form['start-date']
         end_date = request.form['end-date']
-
+        # Convert start_date and end_date to datetime.date objects
+        start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
 
         # Insert the goal into the database
         user = session.get('user')
@@ -395,7 +414,8 @@ def add_goal():
         values = (user_id, goal_type, target_weight, target_calories, start_date, end_date, goal_name)
         cursor.execute(insert_query, values)
         db_mysql.commit()
-
+        goal_id = cursor.lastrowid
+        generate_daily_plans(goal_id, start_date, end_date)
         return redirect('/goal')
 
     user = session.get('user')  # Retrieve the user data from the session
