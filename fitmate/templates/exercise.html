@@ -52,6 +52,11 @@
         .search-container-right {
             margin-left: auto;
         }
+
+        #calories-th {
+            text-decoration: underline;
+            cursor: pointer;
+        }
     </style>
 
     <script>
@@ -127,6 +132,32 @@
                 $("tbody tr").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1)
                 });
+            });
+
+            // Sort the table based on the "Calories per kg" column when header is clicked
+            var ascending = true; // Flag to keep track of sorting order
+            $("#calories-th").click(function() {
+                var rows = $("tbody tr").get();
+
+                rows.sort(function(a, b) {
+                    var aValue = parseFloat($(a).attr("data-calories"));
+                    var bValue = parseFloat($(b).attr("data-calories"));
+
+                    if (ascending) {
+                        return aValue - bValue;
+                    } else {
+                        return bValue - aValue;
+                    }
+                });
+
+                // Clear the existing table and add the sorted rows back
+                $("tbody").empty();
+                $.each(rows, function(index, row) {
+                    $("tbody").append(row);
+                });
+
+                // Toggle the sorting direction
+                ascending = !ascending;
             });
         });
     </script>
@@ -212,7 +243,7 @@
                 <th>155 lb</th>
                 <th>180 lb</th>
                 <th>205 lb</th>
-                <th>Calories per kg</th>
+                <th id="calories-th">Calories per kg</th>
             </tr>
         </thead>
         <tbody>
