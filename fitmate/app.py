@@ -10,7 +10,7 @@ app.secret_key = 'G\x11\xd9\x9aC\xafi\xe8^.hf\x81PDb}4M\xea\x8e\x7f\xa9\x90'
 # Create a MongoClient and connect to your MongoDB server
 client = MongoClient()
 
-# Connect to the 'fitmATE' database
+# Connect to the 'fitmATE' database YESSSSSSSSSSSSIR
 db_mongo = client.fitmATE
 
 # Get a reference to the collections
