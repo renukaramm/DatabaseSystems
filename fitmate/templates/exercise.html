@@ -205,6 +205,42 @@
         function closeExerciseForm() {
           $("#exerciseFormModal").css("display", "none");
         }
+        function openExerciseUpdateForm(activity, lb130, lb155, lb180, lb205, caloriesPerKg) {
+            $("#exerciseActivityU").val(activity);
+            $("#exercise130lbU").val(lb130);
+            $("#exercise155lbU").val(lb155);
+            $("#exercise180lbU").val(lb180);
+            $("#exercise205lbU").val(lb205);
+            $("#exerciseCaloriesPerKgU").val(caloriesPerKg);
+            $("#exerciseUpdateFormModal").css("display", "block");
+        }
+
+        function closeExerciseUpdateForm() {
+            $("#exerciseUpdateFormModal").css("display", "none");
+        }
+
+        function deleteExerciseItem(exerciseActivity) {
+            // Confirm with the user before proceeding with the deletion
+            if (confirm("Are you sure you want to delete this exercise item?")) {
+                // Make an AJAX POST request to the server
+                $.ajax({
+                    type: "POST",
+                    url: "/delete_exercise_item",
+                    data: { exerciseActivityU: exerciseActivity },
+                    success: function (response) {
+                        // If the deletion is successful, reload the page to update the table
+                        location.reload();
+                    },
+                    error: function (error) {
+                        // If there's an error, show an alert with the error message
+                        alert("Error deleting exercise item: " + error.responseText);
+                    }
+                });
+            }
+            // Print the value of exerciseActivity to the console
+            console.log("Exercise activity:", exerciseActivity);
+        }
+
     </script>
 </head>
 <body>
@@ -304,6 +340,30 @@
             </form>
         </div>
     </div>
+    <div id="exerciseUpdateFormModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close" onclick="closeExerciseUpdateForm()">&times;</span>
+            <h2>Update Exercise Item</h2>
+            <form id="exerciseUpdateForm" action="/update_exercise_item" method="post">
+                <label for="exerciseActivityU">Activity:</label>
+                <input type="text" id="exerciseActivityU" name="exerciseActivityU" required>
+    
+                <label for="exercise130lbU">130 lb:</label>
+                <input type="number" id="exercise130lbU" name="exercise130lbU" required>
+                <label for="exercise155lbU">155 lb:</label>
+                <input type="number" id="exercise155lbU" name="exercise155lbU" required>
+                <label for="exercise180lbU">180 lb:</label>
+                <input type="number" id="exercise180lbU" name="exercise180lbU" required>
+                <label for="exercise205lbU">205 lb:</label>
+                <input type="number" id="exercise205lbU" name="exercise205lbU" required>
+                <label for="exerciseCaloriesPerKgU">Calories per kg:</label>
+                <input type="number" id="exerciseCaloriesPerKgU" name="exerciseCaloriesPerKgU" required>
+    
+                <button type="submit">Edit</button>
+            </form>
+        </div>
+    </div>
     <table>
         <thead>
             <tr>
@@ -313,6 +373,8 @@
                 <th>180 lb</th>
                 <th>205 lb</th>
                 <th id="calories-th">Calories per kg</th>
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -324,6 +386,12 @@
                 <td>{{ exercise['180 lb'] }}</td>
                 <td>{{ exercise['205 lb'] }}</td>
                 <td>{{ exercise['Calories per kg'] }}</td>
+                <td>
+                    <button onclick="openExerciseUpdateForm('{{ exercise['Activity'] }}', '{{ exercise['130 lb'] }}', '{{ exercise['155 lb'] }}', '{{ exercise['180 lb'] }}', '{{ exercise['205 lb'] }}', '{{ exercise['Calories per kg'] }}')">Update</button>
+                </td>
+                <td>
+                    <button onclick="deleteExerciseItem('{{ exercise['Activity'] }}')">Delete</button>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

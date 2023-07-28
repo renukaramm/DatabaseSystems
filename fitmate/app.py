@@ -539,6 +539,49 @@ def add_exercise_item():
     exercise_collection.insert_one(exercise_item)
     return redirect('/exercise')
 
+@app.route('/update_exercise_item', methods=['POST'])
+@login_required
+def update_exercise_item():
+    # Get the form data from the POST request
+    exercise_activity = request.form.get('exerciseActivityU')
+    exercise_lb130 = float(request.form.get('exercise130lbU'))
+    exercise_lb155 = float(request.form.get('exercise155lbU'))
+    exercise_lb180 = float(request.form.get('exercise180lbU'))
+    exercise_lb205 = float(request.form.get('exercise205lbU'))
+    exercise_calories_per_kg = float(request.form.get('exerciseCaloriesPerKgU'))
+    
+    # Find the exercise item in the database based on the unique identifier
+    existing_exercise_item = exercise_collection.find_one({'Activity': exercise_activity})
+    if existing_exercise_item:
+        # Update the exercise item data
+        existing_exercise_item['Activity'] = exercise_activity
+        existing_exercise_item['130 lb'] = exercise_lb130
+        existing_exercise_item['155 lb'] = exercise_lb155
+        existing_exercise_item['180 lb'] = exercise_lb180
+        existing_exercise_item['205 lb'] = exercise_lb205
+        existing_exercise_item['Calories per kg'] = exercise_calories_per_kg
+        
+        # Update the document in the database
+        exercise_collection.update_one({'Activity': exercise_activity}, {'$set': existing_exercise_item})
+        return redirect('/exercise')
+
+@app.route('/delete_exercise_item', methods=['POST'])
+@login_required
+def delete_exercise_item():
+    # Get the form data from the POST request
+    exercise_activity = request.form.get('exerciseActivityU')
+    print("YESSSUIR", exercise_activity)
+    # Find the exercise item in the database based on the unique identifier (exercise_activity)
+    existing_exercise_item = exercise_collection.find_one({'Activity': exercise_activity})
+
+    if existing_exercise_item:
+        # Delete the exercise item from the database
+        exercise_collection.delete_one({'Activity': exercise_activity})
+        return jsonify({'message': 'Exercise item deleted successfully.'})
+    else:
+        # Return an error response to the client
+        return jsonify({'error': 'Exercise item not found.'}), 404
+
 @app.route('/goal')
 @login_required
 def goal():
