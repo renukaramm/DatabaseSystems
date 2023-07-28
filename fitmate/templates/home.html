@@ -205,7 +205,9 @@
             <tr></tr>
             <tr></tr>
             <tr>
-                <td colspan="4" style="text-align: center">Net Calories: {{ daily_plan.net_calories }}</td>
+                <td rowspan="3">Target Calories: {{ target_calories }}</td>
+                <td rowspan="3">Net Calories: {{ daily_plan.net_calories }}</td>
+                <td rowspan="3">Calories Difference: {{ daily_plan.net_calories - target_calories }}</td>
             </tr>
         </table>
         {% endif %}
