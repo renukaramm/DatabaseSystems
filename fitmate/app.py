@@ -466,6 +466,29 @@ def exercise():
     # Pass the data to the template
     return render_template('exercise.html', exercise_data=exercise_data, user=user)
 
+@app.route('/add_exercise_item', methods=['POST'])
+@login_required
+def add_exercise_item():
+    # Get the form data from the POST request
+    exercise_activity = request.form.get('exerciseActivity')
+    exercise_calories_130 = float(request.form.get('exerciseCalories130'))
+    exercise_calories_155 = float(request.form.get('exerciseCalories155'))
+    exercise_calories_180 = float(request.form.get('exerciseCalories180'))
+    exercise_calories_205 = float(request.form.get('exerciseCalories205'))
+    exercise_calories_per_kg = float(request.form.get('exerciseCaloriesPerKg'))
+
+    exercise_item = {
+        'Activity': exercise_activity,
+        '130 lb': exercise_calories_130,
+        '155 lb': exercise_calories_155,
+        '180 lb': exercise_calories_180,
+        '205 lb': exercise_calories_205,
+        'Calories per kg': exercise_calories_per_kg
+    }
+
+    exercise_collection.insert_one(exercise_item)
+    return redirect('/exercise')
+
 @app.route('/goal')
 @login_required
 def goal():
