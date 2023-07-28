@@ -117,17 +117,40 @@ input[type="password"] {
 }
 
 input[type="submit"] {
-  background-color: #4CAF50;
+  background-color: #f26c47;
   color: white;
   cursor: pointer;
 }
 
 input[type="submit"]:hover {
-  background-color: #45a049;
+  background-color: #f26c47;
 }
-
 
 .dropdown-content.dropdown-right {
   right: 0;
   left: auto;
+}
+
+.scroll-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #f26c47;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  padding: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: none;
+  transition: background-color 0.3s ease;
+}
+
+.scroll-to-top i {
+  transform: rotate(-360deg);
+}
+
+.scroll-to-top:hover {
+  background-color: #d64935;
 }
