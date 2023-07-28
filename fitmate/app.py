@@ -723,6 +723,7 @@ def profile():
 
     return render_template('profile.html', user=user, bmi=bmi, age=age)
 
+
 @app.route('/update-profile', methods=['POST'])
 @login_required
 def update_profile():
@@ -731,6 +732,7 @@ def update_profile():
     email = request.form['email']
     height = request.form['height']
     weight = request.form['weight']
+    new_password = request.form['new_password']  # New password field
 
     # Update the user's profile data in the session
     user = session.get('user')
@@ -739,6 +741,15 @@ def update_profile():
         user['email'] = email
         user['height'] = height
         user['weight'] = weight
+
+    # Check if the user provided a new password and update it in the database
+    if new_password:
+        hashed_password = generate_password_hash(new_password)
+        update_password_query = "UPDATE users SET password = %s WHERE user_id = %s"
+        values = (hashed_password, user['id'])
+        cursor.execute(update_password_query, values)
+        db_mysql.commit()
+        flash('Password updated successfully', 'success')
 
     # Save the updated user data in the session
     session['user'] = user
@@ -752,11 +763,6 @@ def update_profile():
     # Redirect to the profile page with a success message
     flash('User updated successfully', 'success')
     return redirect('/profile')
-
-
-
-
-
 
 
 if __name__ == '__main__':
