@@ -57,6 +57,42 @@
             text-decoration: underline;
             cursor: pointer;
         }
+
+        .modal {
+          display: none;
+          position: fixed;
+          z-index: 1;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: auto;
+          background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        /* Style the modal content */
+        .modal-content {
+          background-color: #f4f4f4;
+          margin: 10% auto;
+          padding: 20px;
+          border: 1px solid #888;
+          width: 60%;
+        }
+
+        /* Close button on the modal */
+        .close {
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+          color: black;
+          text-decoration: none;
+          cursor: pointer;
+        }
     </style>
 
     <script>
@@ -160,6 +196,15 @@
                 ascending = !ascending;
             });
         });
+        // Function to open the exercise form popup
+        function openExerciseForm() {
+          $("#exerciseFormModal").css("display", "block");
+        }
+
+        // Function to close the exercise form popup
+        function closeExerciseForm() {
+          $("#exerciseFormModal").css("display", "none");
+        }
     </script>
 </head>
 <body>
@@ -198,6 +243,7 @@
     <div class="search-container">
         <div class="search-container-left">
             <input type="text" id="search-input" class="search-input" placeholder="Search...">
+            <button onclick="openExerciseForm()">Add Exercise</button>
         </div>
         <div class="search-container-right">
             <select id="calories-filter" class="calories-filter">
@@ -234,7 +280,30 @@
             </select>
         </div>
     </div>
-
+    <div id="exerciseFormModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close" onclick="closeExerciseForm()">&times;</span>
+            <h2>Add Exercise</h2>
+            <form id="exerciseForm" action="/add_exercise_item" method="post">
+                <label for="exerciseActivity">Activity:</label>
+                <input type="text" id="exerciseActivity" name="exerciseActivity" required>
+    
+                <label for="exerciseCalories130">Calories (130 lb):</label>
+                <input type="number" id="exerciseCalories130" name="exerciseCalories130" required>
+                <label for="exerciseCalories155">Calories (155 lb):</label>
+                <input type="number" id="exerciseCalories155" name="exerciseCalories155" required>
+                <label for="exerciseCalories180">Calories (180 lb):</label>
+                <input type="number" id="exerciseCalories180" name="exerciseCalories180" required>
+                <label for="exerciseCalories205">Calories (205 lb):</label>
+                <input type="number" id="exerciseCalories205" name="exerciseCalories205" required>
+                <label for="exerciseCaloriesPerKg">Calories per kg:</label>
+                <input type="number" id="exerciseCaloriesPerKg" name="exerciseCaloriesPerKg" required>
+    
+                <input type="submit" value="Add">
+            </form>
+        </div>
+    </div>
     <table>
         <thead>
             <tr>
