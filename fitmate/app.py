@@ -3,7 +3,7 @@ import mysql.connector
 from pymongo import MongoClient
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import random
 
 app = Flask(__name__)
@@ -162,6 +162,8 @@ def generate_meal_plan(daily_calorie_intake, available_food_items):
 @app.route('/')
 @login_required
 def home():
+    # Get the current date
+    today = date.today()
     food_data = list(food_collection.find())
     print("Keys in a sample document:", food_data[0].keys())
     user = session.get('user')
@@ -263,7 +265,7 @@ def home():
         dp['generated_lunch'] = generated_meal_plan['lunch']
         dp['generated_dinner'] = generated_meal_plan['dinner']
 
-    return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data)
+    return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data, today=today)
 
 
 

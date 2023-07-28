@@ -114,99 +114,101 @@
 
 {% if daily_plans %}
     {% for daily_plan in daily_plans %}
-    <div>{{daily_plan}}</div>
-    <table>
-        <tr>
-            <th>Daily Plan</th>
-            <th>Meal Plan</th>
-            <th>Actual Meal</th>
-            <th>Exercise</th>
-        </tr>
-        <tr>
-            <td rowspan="3">Breakfast</td>
-            <td rowspan="3">
-                <strong>Breakfast</strong><br>
-                {% if daily_plan.generated_breakfast %}
-                    {% for meal in daily_plan.generated_breakfast %}
-                        {{ meal.food_name }} ({{ meal.calories }} calories)<br>
+        {% if daily_plan.date == today %}
+        <div>{{daily_plan}}</div>
+        <table>
+            <tr>
+                <th>Daily Plan</th>
+                <th>Meal Plan</th>
+                <th>Actual Meal</th>
+                <th>Exercise</th>
+            </tr>
+            <tr>
+                <td rowspan="3">Breakfast</td>
+                <td rowspan="3">
+                    <strong>Breakfast</strong><br>
+                    {% if daily_plan.generated_breakfast %}
+                        {% for meal in daily_plan.generated_breakfast %}
+                            {{ meal.food_name }} ({{ meal.calories }} calories)<br>
+                        {% endfor %}
+                    {% else %}
+                        No Suggestions!
+                    {% endif %}
+                </td>
+                <td rowspan="3">
+                    {% for meal in daily_plan.breakfast_meals %}
+                        {{ meal.food_name }} ({{ meal.calories_gained }} calories)
+                        <button class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')">Edit</button>
+                        <button class="add-button" onclick="openDeleteForm('{{ meal.id }}', {{ daily_plan.id }}, '{{ meal.calories_gained }}')">Delete</button>
+                        <br>
                     {% endfor %}
-                {% else %}
-                    No Suggestions!
-                {% endif %}
-            </td>
+                    <button class="add-button" onclick="openForm('actualMeal', 'Breakfast', {{ daily_plan.id }})">Add Actual Meal</button>
+                </td>
             <td rowspan="3">
-                {% for meal in daily_plan.breakfast_meals %}
-                    {{ meal.food_name }} ({{ meal.calories_gained }} calories)
-                    <button class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')">Edit</button>
-                    <button class="add-button" onclick="openDeleteForm('{{ meal.id }}', {{ daily_plan.id }}, '{{ meal.calories_gained }}')">Delete</button>
-                    <br>
-                {% endfor %}
-                <button class="add-button" onclick="openForm('actualMeal', 'Breakfast', {{ daily_plan.id }})">Add Actual Meal</button>
-            </td>
-           <td rowspan="3">
-                {% for exercise in daily_plan.exercises %}
-                    {{ exercise.exercise_type }} ({{ exercise.calories_burnt }} calories)
-                    <button class="add-button" onclick="openEditExerciseForm('{{ exercise.id }}', '{{ exercise.exercise_type }}', '{{ exercise.activity }}', '{{ exercise.description }}', '{{ exercise.calories_burnt }}', '{{ daily_plan.id }}')">Edit</button>
-                    <button class="add-button" onclick="openDeleteExerciseForm('{{ exercise.id }}', '{{ daily_plan.id }}', '{{ exercise.calories_burnt }}')">Delete</button>
-                    <br>
-                {% endfor %}
-                <button class="add-button" onclick="openExerciseForm('{{ daily_plan.id }}')">Add Exercise</button>
-            </td>
-        </tr>
-        <tr></tr>
-        <tr></tr>
-        <tr>
-            <td rowspan="3">Lunch</td>
-            <td rowspan="3">
-                <strong>Lunch</strong><br>
-                {% if daily_plan.generated_lunch %}
-                    {% for meal in daily_plan.generated_lunch %}
-                        {{ meal.food_name }} ({{ meal.calories }} calories)<br>
+                    {% for exercise in daily_plan.exercises %}
+                        {{ exercise.exercise_type }} ({{ exercise.calories_burnt }} calories)
+                        <button class="add-button" onclick="openEditExerciseForm('{{ exercise.id }}', '{{ exercise.exercise_type }}', '{{ exercise.activity }}', '{{ exercise.description }}', '{{ exercise.calories_burnt }}', '{{ daily_plan.id }}')">Edit</button>
+                        <button class="add-button" onclick="openDeleteExerciseForm('{{ exercise.id }}', '{{ daily_plan.id }}', '{{ exercise.calories_burnt }}')">Delete</button>
+                        <br>
                     {% endfor %}
-                {% else %}
-                    No Suggestions!
-                {% endif %}
-            </td>
-            <td rowspan="3">
-                {% for meal in daily_plan.lunch_meals %}
-                    {{ meal.food_name }} ({{ meal.calories_gained }} calories)
-                    <button class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')">Edit</button>
-                    <button class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')">Delete</button>
-                    <br>
-                {% endfor %}
-                <button class="add-button" onclick="openForm('actualMeal', 'Lunch', {{ daily_plan.id }})">Add Actual Meal</button>
-            </td>
-        </tr>
-        <tr></tr>
-        <tr></tr>
-        <tr>
-            <td rowspan="3">Dinner</td>
-            <td rowspan="3">
-                <strong>Dinner</strong><br>
-                {% if daily_plan.generated_dinner %}
-                    {% for meal in daily_plan.generated_dinner %}
-                        {{ meal.food_name }} ({{ meal.calories }} calories)<br>
+                    <button class="add-button" onclick="openExerciseForm('{{ daily_plan.id }}')">Add Exercise</button>
+                </td>
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr>
+                <td rowspan="3">Lunch</td>
+                <td rowspan="3">
+                    <strong>Lunch</strong><br>
+                    {% if daily_plan.generated_lunch %}
+                        {% for meal in daily_plan.generated_lunch %}
+                            {{ meal.food_name }} ({{ meal.calories }} calories)<br>
+                        {% endfor %}
+                    {% else %}
+                        No Suggestions!
+                    {% endif %}
+                </td>
+                <td rowspan="3">
+                    {% for meal in daily_plan.lunch_meals %}
+                        {{ meal.food_name }} ({{ meal.calories_gained }} calories)
+                        <button class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')">Edit</button>
+                        <button class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')">Delete</button>
+                        <br>
                     {% endfor %}
-                {% else %}
-                    No Suggestions!
-                {% endif %}
-            </td>
-            <td rowspan="3">
-                {% for meal in daily_plan.dinner_meals %}
-                    {{ meal.food_name }} ({{ meal.calories_gained }} calories)
-                    <button class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')">Edit</button>
-                    <button class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')">Delete</button>
-                    <br>
-                {% endfor %}
-                <button class="add-button" onclick="openForm('actualMeal', 'Dinner', {{ daily_plan.id }})">Add Actual Meal</button>
-            </td>
-        </tr>
-        <tr></tr>
-        <tr></tr>
-        <tr>
-            <td colspan="4" style="text-align: center">Net Calories: {{ daily_plan.net_calories }}</td>
-        </tr>
-    </table>
+                    <button class="add-button" onclick="openForm('actualMeal', 'Lunch', {{ daily_plan.id }})">Add Actual Meal</button>
+                </td>
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr>
+                <td rowspan="3">Dinner</td>
+                <td rowspan="3">
+                    <strong>Dinner</strong><br>
+                    {% if daily_plan.generated_dinner %}
+                        {% for meal in daily_plan.generated_dinner %}
+                            {{ meal.food_name }} ({{ meal.calories }} calories)<br>
+                        {% endfor %}
+                    {% else %}
+                        No Suggestions!
+                    {% endif %}
+                </td>
+                <td rowspan="3">
+                    {% for meal in daily_plan.dinner_meals %}
+                        {{ meal.food_name }} ({{ meal.calories_gained }} calories)
+                        <button class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')">Edit</button>
+                        <button class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')">Delete</button>
+                        <br>
+                    {% endfor %}
+                    <button class="add-button" onclick="openForm('actualMeal', 'Dinner', {{ daily_plan.id }})">Add Actual Meal</button>
+                </td>
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr>
+                <td colspan="4" style="text-align: center">Net Calories: {{ daily_plan.net_calories }}</td>
+            </tr>
+        </table>
+        {% endif %}
     {% endfor %}
     {% else %}
     <p>No daily plan! Create a goal now!</p>
