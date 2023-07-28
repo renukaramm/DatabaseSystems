@@ -659,24 +659,6 @@ def daily_plan():
     daily_plans = list(daily_plans.values())
 
     return render_template('dailyplan.html', user=user, daily_plans=daily_plans)
-
-def calculate_bmi(weight, height):
-    try:
-        weight = float(weight)
-        height = float(height) / 100.0  # Convert height from cm to meters
-        bmi = weight / (height ** 2)
-        return round(bmi, 2)
-    except ValueError:
-        return None
-
-def calculate_age(date_of_birth):
-    try:
-        date_of_birth = datetime.strptime(date_of_birth, '%a, %d %b %Y %H:%M:%S %Z')
-        today = datetime.today()
-        age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
-        return age
-    except ValueError:
-        return None
     
 # Inside the profile route, pass the user data to the profile.html template.
 @app.route('/profile')
@@ -684,11 +666,19 @@ def calculate_age(date_of_birth):
 def profile():
     user = session.get('user')  # Retrieve the user data from the session
 
-    # Calculate BMI using the user's weight and height
-    bmi = calculate_bmi(user['weight'], user['height'])
+    # Query the database to calculate BMI and age
+    query = "SELECT name, email, height, weight, date_of_birth, " \
+            "FLOOR(weight / ((height / 100) * (height / 100))) AS bmi, " \
+            "TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) AS age " \
+            "FROM users WHERE user_id = %s"
 
-    # Calculate age using the user's date of birth
-    age = calculate_age(user['date_of_birth'])
+    cursor.execute(query, (user['id'],))
+    user_data = cursor.fetchone()
+
+    # Extract BMI and age from the query result
+    bmi = user_data[5] if user_data[5] else None
+    age = user_data[6] if user_data[6] else None
+
     return render_template('profile.html', user=user, bmi=bmi, age=age)
 
 
