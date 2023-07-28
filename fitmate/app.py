@@ -265,7 +265,7 @@ def home():
         dp['generated_lunch'] = generated_meal_plan['lunch']
         dp['generated_dinner'] = generated_meal_plan['dinner']
 
-    return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data, today=today)
+    return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data, today=today, target_calories=target_calories)
 
 
 
