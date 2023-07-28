@@ -695,7 +695,6 @@ def profile():
 
     return render_template('profile.html', user=user, bmi=bmi, age=age)
 
-
 @app.route('/update-profile', methods=['POST'])
 @login_required
 def update_profile():
@@ -715,8 +714,17 @@ def update_profile():
 
     # Save the updated user data in the session
     session['user'] = user
+
+    # Update the user's information in the database
+    update_query = "UPDATE users SET name = %s, email = %s, height = %s, weight = %s WHERE user_id = %s"
+    values = (name, email, height, weight, user['id'])
+    cursor.execute(update_query, values)
+    db_mysql.commit()
+
+    # Redirect to the profile page with a success message
     flash('User updated successfully', 'success')
     return redirect('/profile')
+
 
 
 @app.route('/change-password', methods=['POST'])
