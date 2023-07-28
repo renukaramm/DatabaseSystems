@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, get_flashed_messages
+from flask import Flask, render_template, request, redirect, url_for, session, flash, get_flashed_messages, jsonify
 import mysql.connector
 from pymongo import MongoClient
 from functools import wraps
@@ -455,6 +455,56 @@ def add_food_item():
     food_collection.insert_one(food_item)
     return redirect('/food')
 
+@app.route('/update_food_item', methods=['POST'])
+@login_required
+def update_food_item():
+    # Get the form data from the POST request
+    food_name = request.form.get('foodNameU')
+    food_measure = request.form.get('foodMeasureU')
+    food_grams = float(request.form.get('foodGramsU'))
+    food_calories = float(request.form.get('foodCaloriesU'))
+    food_protein = float(request.form.get('foodProteinU'))
+    food_fat = float(request.form.get('foodFatU'))
+    food_satfat = float(request.form.get('foodSatfatU'))
+    food_fiber = float(request.form.get('foodFiberU'))
+    food_carbs = float(request.form.get('foodCarbsU'))
+    food_category = request.form.get('foodCategoryU')
+    # Find the food item in the database based on the unique identifier
+    existing_food_item = food_collection.find_one({'Food': food_name})
+    if existing_food_item:
+        # Update the food item data
+        existing_food_item['Food'] = food_name
+        existing_food_item['Measure'] = food_measure
+        existing_food_item['Grams'] = food_grams
+        existing_food_item['Calories'] = food_calories
+        existing_food_item['Protein'] = food_protein
+        existing_food_item['Fat'] = food_fat
+        existing_food_item['SatFat'] = food_satfat
+        existing_food_item['Fiber'] = food_fiber
+        existing_food_item['Carbs'] = food_carbs
+        existing_food_item['Category'] = food_category
+
+        # Update the document in the database
+        food_collection.update_one({'Food': food_name}, {'$set': existing_food_item})
+        return redirect('/food')
+
+@app.route('/delete_food_item', methods=['POST'])
+@login_required
+def delete_food_item():
+    # Get the form data from the POST request
+    food_name = request.form.get('foodNameU')
+    print("YESSSUIR", food_name)
+    # Find the food item in the database based on the unique identifier (food_name)
+    existing_food_item = food_collection.find_one({'Food': food_name})
+
+    if existing_food_item:
+        # Delete the food item from the database
+        food_collection.delete_one({'Food': food_name})
+        return jsonify({'message': 'Food item deleted successfully.'})
+    else:
+        # Return an error response to the client
+        return jsonify({'error': 'Food item not found.'}), 404
+    
 @app.route('/exercise')
 @login_required
 def exercise():
