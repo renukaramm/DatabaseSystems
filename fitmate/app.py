@@ -265,7 +265,7 @@ def home():
         dp['generated_lunch'] = generated_meal_plan['lunch']
         dp['generated_dinner'] = generated_meal_plan['dinner']
 
-    return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data, today=today, target_calories=target_calories)
+    return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data, today=today)
 
 
 
@@ -695,7 +695,6 @@ def profile():
 
     return render_template('profile.html', user=user, bmi=bmi, age=age)
 
-
 @app.route('/update-profile', methods=['POST'])
 @login_required
 def update_profile():
@@ -715,50 +714,20 @@ def update_profile():
 
     # Save the updated user data in the session
     session['user'] = user
+
+    # Update the user's information in the database
+    update_query = "UPDATE users SET name = %s, email = %s, height = %s, weight = %s WHERE user_id = %s"
+    values = (name, email, height, weight, user['id'])
+    cursor.execute(update_query, values)
+    db_mysql.commit()
+
+    # Redirect to the profile page with a success message
     flash('User updated successfully', 'success')
     return redirect('/profile')
 
 
-@app.route('/change-password', methods=['POST'])
-@login_required
-def change_password():
-    user = session.get('user')
 
-    # Get the submitted password data from the form
-    current_password = request.form['current_password']
-    new_password = request.form['new_password']
-    confirm_password = request.form['confirm_password']
 
-    # Check if the new password and confirm password match
-    if new_password != confirm_password:
-        flash('New password and confirm password must match', 'error')
-        return redirect('/profile')
-
-    # Retrieve the user's current hashed password from the database
-    select_query = "SELECT password FROM users WHERE user_id = %s"
-    cursor.execute(select_query, (user['id'],))
-    stored_password = cursor.fetchone()[0]
-
-    # Check if the current password matches the stored password
-    if check_password_hash(stored_password, current_password):
-        # Hash the new password before storing it in the database
-        hashed_password = generate_password_hash(new_password)
-
-        # Update the password in the database
-        update_query = "UPDATE users SET password = %s WHERE user_id = %s"
-        values = (hashed_password, user['id'])
-        cursor.execute(update_query, values)
-        db_mysql.commit()
-        print(f"Password updated: {new_password}")
-        # Redirect to the profile page with a success message
-        flash('Password updated successfully', 'success')
-        return redirect('/profile')
-
-    else:
-        # Password verification failed, show an error message
-        flash('Incorrect current password', 'error')
-        print("Flash messages:", get_flashed_messages())
-        return redirect('/profile')
 
 
 
