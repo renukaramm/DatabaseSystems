@@ -2,6 +2,8 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <title>Daily Plan</title>
 
@@ -80,8 +82,28 @@
             opacity: 0.8;
         }
     </style>
+    <script>
+        // Function to scroll back to the top of the page
+    function scrollToTop() {
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+        }
+
+        // Show the scroll-to-top button when scrolling down
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 100) {
+                $(".scroll-to-top").fadeIn();
+            } else {
+                $(".scroll-to-top").fadeOut();
+            }
+        });
+    </script>
 </head>
 <body>
+
+    <div class="scroll-to-top" onclick="scrollToTop()">
+        <i class="fa fa-arrow-up"></i>
+    </div>
+
   <div class="logo">
   <img src="{{ url_for('static', filename='logo.png') }}" alt="FitmATE Logo">
 </div>
@@ -111,6 +133,7 @@
       </div>
   </div>
 </div>
+
     <h1>Daily Meal and Exercise History</h1>
 
 {% if daily_plans %}
