@@ -140,14 +140,15 @@
   {% for daily_plan in daily_plans %}
     <table>
         <tr>
-            <th>Daily Plan {{daily_plan.date}}</th>
-            <th>Meal Plan</th>
+            <th colspan="3">GOAL: {{ goal_name }}</th>
+        </tr>
+        <tr>
+            <th>Daily Plan For {{daily_plan.date}}</th>
             <th>Actual Meal</th>
             <th>Exercise</th>
         </tr>
         <tr>
             <td rowspan="3">Breakfast</td>
-            <td rowspan="3">Empty</td>
             <td rowspan="3">
                 {% for meal in daily_plan.breakfast_meals %}
                     {{ meal.food_name }} ({{ meal.calories_gained }} calories)
@@ -165,7 +166,6 @@
         <tr></tr>
         <tr>
             <td rowspan="3">Lunch</td>
-            <td rowspan="3">Empty</td>
             <td rowspan="3">
                 {% for meal in daily_plan.lunch_meals %}
                     {{ meal.food_name }} ({{ meal.calories_gained }} calories)
@@ -177,7 +177,6 @@
         <tr></tr>
         <tr>
             <td rowspan="3">Dinner</td>
-            <td rowspan="3">Empty</td>
             <td rowspan="3">
                 {% for meal in daily_plan.dinner_meals %}
                     {{ meal.food_name }} ({{ meal.calories_gained }} calories)
@@ -188,7 +187,9 @@
         <tr></tr>
         <tr></tr>
         <tr>
-            <td colspan="4" style="text-align: center">Net Calories: {{daily_plan.net_calories}}</td>
+            <td rowspan="3">Target Calories: {{ target_calories }}</td>
+            <td rowspan="3">Net Calories: {{ daily_plan.net_calories }}</td>
+            <td rowspan="3">Calories Difference: {{ daily_plan.net_calories - target_calories }}</td>
         </tr>
     </table>
   <br><br>

@@ -244,6 +244,9 @@ def home():
 
     daily_plans = list(daily_plans.values())
 
+    # Set a default value for target_calories, this is to prevent error on homepage when there are no goals
+    target_calories = 2000
+
     # Generate meal plans for each daily plan
     for dp in daily_plans:
         goal_id = dp['goal_id']
@@ -252,20 +255,21 @@ def home():
         goal_query = "SELECT target_calories FROM goals WHERE goal_id = %s"
         cursor.execute(goal_query, (goal_id,))
         goal_data = cursor.fetchone()
-        target_calories = goal_data[0] if goal_data else 2000  # Default to 2000 calories if goal data is not available
-        print("Target Calories:", target_calories)
+        if goal_data:
+            target_calories = goal_data[0]
 
-        # Generate meal plan based on available food data
-        available_food_items = [{'food_name': item['Food'], 'calories': item['Calories']} for item in food_data]
+            # Generate meal plan based on available food data
+            available_food_items = [{'food_name': item['Food'], 'calories': item['Calories']} for item in food_data]
 
-        generated_meal_plan = generate_meal_plan(target_calories, available_food_items)
+            generated_meal_plan = generate_meal_plan(target_calories, available_food_items)
 
-        # Assign generated meal plan to the corresponding mealtime
-        dp['generated_breakfast'] = generated_meal_plan['breakfast']
-        dp['generated_lunch'] = generated_meal_plan['lunch']
-        dp['generated_dinner'] = generated_meal_plan['dinner']
+            # Assign generated meal plan to the corresponding mealtime
+            dp['generated_breakfast'] = generated_meal_plan['breakfast']
+            dp['generated_lunch'] = generated_meal_plan['lunch']
+            dp['generated_dinner'] = generated_meal_plan['dinner']
 
     return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data, today=today, target_calories=target_calories)
+
 
 
 
@@ -815,8 +819,24 @@ def daily_plan():
             daily_plans[daily_plan_id]['exercises'].append(exercise)
 
     daily_plans = list(daily_plans.values())
+    
+    # Set a default value for target_calories and goal_name, this is to prevent error on homepage when there are no goals
+    target_calories = 2000
+    goal_name = "Nameless"
 
-    return render_template('dailyplan.html', user=user, daily_plans=daily_plans)
+    for dp in daily_plans:
+        goal_id = dp['goal_id']
+
+        # Fetch the goal data to get the target calories
+        goal_query = "SELECT target_calories, goal_name FROM goals WHERE goal_id = %s"
+        cursor.execute(goal_query, (goal_id,))
+        goal_data = cursor.fetchone()
+
+        if goal_data:
+            target_calories = goal_data[0]
+            goal_name = goal_data[1]
+
+    return render_template('dailyplan.html', user=user, daily_plans=daily_plans, target_calories=target_calories, goal_name=goal_name)
     
 # Inside the profile route, pass the user data to the profile.html template.
 @app.route('/profile')
