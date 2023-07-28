@@ -450,13 +450,13 @@ def goal():
 
     return render_template('goal.html', goals=goals, user=user)
 
-def generate_daily_plans(goal_id, start_date, end_date):
+def generate_daily_plans(goal_id, start_date, end_date, target_calories):
     current_date = start_date
     delta = timedelta(days=1)
 
     while current_date <= end_date:
         # Calculate net_calories for each daily plan (initially set to 0)
-        net_calories = 0.0
+        net_calories = 0
 
         # Insert the daily plan into the database
         insert_query = "INSERT INTO daily_plan (goal_id, date, net_calories) VALUES (%s, %s, %s)"
@@ -489,7 +489,7 @@ def add_goal():
         cursor.execute(insert_query, values)
         db_mysql.commit()
         goal_id = cursor.lastrowid
-        generate_daily_plans(goal_id, start_date, end_date)
+        generate_daily_plans(goal_id, start_date, end_date, target_calories)
         return redirect('/goal')
 
     user = session.get('user')  # Retrieve the user data from the session
@@ -525,7 +525,11 @@ def delete_goal():
 
     if goal_id:
         goal_id = int(goal_id)
-
+        # Delete the dailyplans from the database
+        delete_query = "DELETE FROM daily_plan WHERE goal_id = %s"
+        values = (goal_id,)
+        cursor.execute(delete_query, values)
+        db_mysql.commit()
         # Delete the goal from the database
         delete_query = "DELETE FROM goals WHERE goal_id = %s"
         values = (goal_id,)
