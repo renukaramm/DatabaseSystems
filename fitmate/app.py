@@ -134,7 +134,13 @@ def generate_meal_plan(daily_calorie_intake, available_food_items):
     # Function to randomly select a food item from available_food_items based on calories
     def select_food_item(remaining_calories):
         candidates = [food for food in available_food_items if float(food['calories']) <= remaining_calories]
-        return random.choice(candidates) if candidates else None
+
+        if candidates:
+            selected_food = random.choice(candidates)
+            available_food_items.remove(selected_food)  # Remove the selected food item from the list
+            return selected_food
+        else:
+            return None
 
     # Generate meal plans for each meal
     for meal_time in meal_plan.keys():
@@ -156,7 +162,7 @@ def generate_meal_plan(daily_calorie_intake, available_food_items):
 @app.route('/')
 @login_required
 def home():
-    food_data = food_collection.find()
+    food_data = list(food_collection.find())
     print("Keys in a sample document:", food_data[0].keys())
     user = session.get('user')
 
@@ -246,8 +252,10 @@ def home():
         goal_data = cursor.fetchone()
         target_calories = goal_data[0] if goal_data else 2000  # Default to 2000 calories if goal data is not available
         print("Target Calories:", target_calories)
+
         # Generate meal plan based on available food data
         available_food_items = [{'food_name': item['Food'], 'calories': item['Calories']} for item in food_data]
+
         generated_meal_plan = generate_meal_plan(target_calories, available_food_items)
 
         # Assign generated meal plan to the corresponding mealtime
