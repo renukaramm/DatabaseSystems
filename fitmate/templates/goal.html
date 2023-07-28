@@ -5,6 +5,40 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
   <title>Goal</title>
   <style>
+    .goals-table {
+      border-collapse: collapse;
+      margin: 25px 0;
+      font-size: 0.9em;
+      font-family: sans-serif;
+      min-width: 400px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .goals-table th,
+    .goals-table td {
+      padding: 12px 15px;
+    }
+
+    .goals-table thead tr {
+      background-color: #13355b;
+      color: #ffffff;
+      text-align: left;
+    }
+
+    .goals-table tbody tr {
+      border-bottom: 1px solid #dddddd;
+    }
+
+    .goals-table tbody tr:nth-of-type(even) {
+      background-color: #f3f3f3;
+    }
+
+
+    .goals-table tbody tr.active-row {
+      font-weight: bold;
+      color: #13355b;
+    }
+
     .goal-container {
       display: flex;
       justify-content: center;
@@ -23,7 +57,7 @@
     }
 
     .submitted-goals-container {
-      width: 600px;
+      width: 800px;
       padding: 20px;
       border: 1px solid #ccc;
       border-radius: 4px;
@@ -46,10 +80,40 @@
       margin-bottom: 10px;
     }
 
+    .goal-form-container input[type="submit"],
+    .submitted-goals-container button {
+      background-color: #f26c47;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 15px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      flex: 1;
+    }
+
+    .goal-form-container input[type="submit"]:hover,
+    .submitted-goals-container button:hover {
+      background-color: #d64935;
+    }
+
     .goal-form-container input[type="text"],
     .goal-form-container input[type="date"],
     .goal-form-container input[type="number"],
     .goal-form-container select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+
+    
+    .modal-content input[type="text"],
+    .modal-content input[type="date"],
+    .modal-content input[type="number"],
+    .modal-content select {
       width: 100%;
       padding: 8px;
       border: 1px solid #ccc;
@@ -98,6 +162,9 @@
       border: 1px solid #888;
       width: 400px;
       border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .close {
@@ -115,10 +182,20 @@
       cursor: pointer;
     }
 
-    table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
+    table,
+    th,
+    td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+
+     .button-container {
+      display: flex;
+    }
+
+    .button-container button {
+      margin-right: 10px;
+    }
   </style>
 </head>
 
@@ -185,7 +262,7 @@
     <div class="submitted-goals-container">
       <h2>Submitted Goals</h2>
       {% if goals %}
-      <table>
+      <table class="goals-table">
         <thead>
           <tr>
             <th>Goal Name</th>
@@ -207,15 +284,18 @@
             <td>{{ goal[6] }}</td>
             <td>{{ goal[7] }}</td>
             <td>
-              <form action="/update_goal" method="POST" onsubmit="showEditGoalForm('{{ goal[0] }}', '{{ goal[2] }}', '{{ goal[3] }}', '{{ goal[6] }}', '{{ goal[7] }}', '{{ goal[4] }}', '{{ goal[5] }}'); return false;">
+              <div class="button-container">
+              <form action="/update_goal" method="POST"
+                onsubmit="showEditGoalForm('{{ goal[0] }}', '{{ goal[2] }}', '{{ goal[3] }}', '{{ goal[6] }}', '{{ goal[7] }}', '{{ goal[4] }}', '{{ goal[5] }}'); return false;">
                 <input type="hidden" name="goalId" value="{{ goal[0] }}">
-                <button class="btn btn-danger btn-sm" type="submit">Edit</button>
+                <button class="" type="submit">Edit</button>
               </form>
-    
+
               <form action="/delete_goal" method="POST" style="display: inline;">
                 <input type="hidden" name="goalId" value="{{ goal[0] }}">
-                <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                <button class="" type="submit">Delete</button>
               </form>
+            </div>
             </td>
           </tr>
           {% endfor %}
@@ -270,17 +350,17 @@
     // Modal script
     var modal = document.getElementById('editGoalModal');
     var span = document.getElementsByClassName('close')[0];
-  
+
     span.onclick = function () {
       modal.style.display = 'none';
     }
-  
+
     window.onclick = function (event) {
       if (event.target == modal) {
         modal.style.display = 'none';
       }
     }
-  
+
     // Show edit goal form with pre-filled values
     function showEditGoalForm(goalId, goalName, goalType, startDate, endDate, targetWeight, targetCalories) {
       document.getElementById('edit-goal-id').value = goalId;
@@ -290,7 +370,7 @@
       document.getElementById('edit-end-date').value = endDate;
       document.getElementById('edit-target-weight').value = targetWeight;
       document.getElementById('edit-target-calories').value = targetCalories;
-  
+
       modal.style.display = 'block';
     }
   </script>

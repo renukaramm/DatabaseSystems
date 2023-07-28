@@ -117,13 +117,13 @@ input[type="password"] {
 }
 
 input[type="submit"] {
-  background-color: #4CAF50;
+  background-color: #f26c47;
   color: white;
   cursor: pointer;
 }
 
 input[type="submit"]:hover {
-  background-color: #45a049;
+  background-color: #f26c47;
 }
 
 
