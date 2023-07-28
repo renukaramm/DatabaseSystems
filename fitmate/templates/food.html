@@ -45,6 +45,42 @@
             border-radius: 4px;
             width: 150px;
         }
+
+        .modal {
+          display: none;
+          position: fixed;
+          z-index: 1;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: auto;
+          background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        /* Style the modal content */
+        .modal-content {
+          background-color: #f4f4f4;
+          margin: 10% auto;
+          padding: 20px;
+          border: 1px solid #888;
+          width: 60%;
+        }
+
+        /* Close button on the modal */
+        .close {
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+          color: black;
+          text-decoration: none;
+          cursor: pointer;
+        }
     </style>
 
     <script>
@@ -73,6 +109,35 @@
                 });
             });
         });
+
+        // Function to open the food form popup
+        function openFoodForm() {
+          $("#foodFormModal").css("display", "block");
+        }
+
+        // Function to close the food form popup
+        function closeFoodForm() {
+          $("#foodFormModal").css("display", "none");
+        }
+
+        // Function to handle form submission (You can adjust this as per your backend implementation)
+        function addFoodItem() {
+          var foodName = $("#foodName").val();
+          var foodCategory = $("#foodCategory").val();
+          var foodCalories = $("#foodCalories").val();
+
+          // Add your logic here to submit the form data to the server and add the food item to the database
+
+          // For demonstration purposes, we'll just display an alert for now
+          alert("Food Item added successfully!");
+
+          // Close the modal after form submission
+          closeFoodForm();
+
+          // Prevent default form submission
+          return false;
+        }
+
     </script>
 </head>
 <body>
@@ -111,6 +176,7 @@
   <div class="search-filter-container">
     <div>
       <input type="text" id="search-input" class="search-input" placeholder="Search food...">
+      <button class="add-button" onclick="openFoodForm()">Add Food Item</button>
     </div>
     <div>
       <select id="category-filter" class="category-filter">
@@ -132,7 +198,54 @@
       </select>
     </div>
   </div>
+  <div id="foodFormModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close" onclick="closeFoodForm()">&times;</span>
+      <h2>Add Food Item</h2>
+      <form id="foodForm" action="/add_food_item" method="post">
+        <label for="foodName">Food:</label>
+        <input type="text" id="foodName" name="foodName" required>
 
+        <label for="foodMeasure">Measure:</label>
+        <input type="text" id="foodMeasure" name="foodMeasure" required>
+        <label for="foodGrams">Grams:</label>
+        <input type="number" id="foodGrams" name="foodGrams" required>  
+        <label for="foodCalories">Calories:</label>
+        <input type="number" id="foodCalories" name="foodCalories" required>
+        <label for="foodProtein">Protein:</label>
+        <input type="number" id="foodProtein" name="foodProtein" required>    
+        <label for="foodFat">Fat:</label>
+        <input type="number" id="foodFat" name="foodFat" required>    
+        <label for="foodSatfat">Sat Fat:</label>
+        <input type="number" id="foodSatfat" name="foodSatfat" required>    
+        <label for="foodFiber">Fiber:</label>
+        <input type="number" id="foodFiber" name="foodFiber" required>    
+        <label for="foodCarbs">Carbs:</label>
+        <input type="number" id="foodCarbs" name="foodCarbs" required>    
+        <label for="foodCategory">Category:</label>
+        <input type="text" list="categories" id="foodCategory" name="foodCategory" required>
+        <datalist id="categories">
+          <option value="Dairy products">Dairy products</option>
+          <option value="Fats">Fats, Oils, Shortenings</option>
+          <option value="Meat">Meat</option>
+          <option value="Poultry">Poultry</option>
+          <option value="Vegetables A-E">Vegetables A-E</option>
+          <option value="Vegetables F-P">Vegetables F-P</option>
+          <option value="Vegetables R-Z">Vegetables R-Z</option>
+          <option value="Fruits A-F">Fruits A-F</option>
+          <option value="Fruits G-P">Fruits G-P</option>
+          <option value="Fruits R-Z">Fruits R-Z</option>
+          <option value="Breads, cereals, fastfood,grains">Breads, cereals, fastfood,grains</option>
+          <option value="Jams, Jellies">Jams, Jellies</option>
+          <option value="Seeds and Nuts">Seeds and Nuts</option>
+          <option value="Drinks,Alcohol, Beverages">Drinks, Alcohol, Beverages</option>
+        </datalist>
+  
+        <input type="submit" value="Add">
+      </form>
+    </div>
+  </div>
   <table>
     <thead>
       <tr>

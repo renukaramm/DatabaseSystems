@@ -426,6 +426,34 @@ def food():
     # Pass the data to the template
     return render_template('food.html', food_data=food_data, user=user)
 
+@app.route('/add_food_item', methods=['POST'])
+@login_required
+def add_food_item():
+    # Get the form data from the POST request
+    food_name = request.form.get('foodName')
+    food_measure = request.form.get('foodMeasure')
+    food_grams = float(request.form.get('foodGrams'))
+    food_calories = float(request.form.get('foodCalories'))
+    food_protein = float(request.form.get('foodProtein'))
+    food_fat = float(request.form.get('foodFat'))
+    food_satfat = float(request.form.get('foodSatfat'))
+    food_fiber = float(request.form.get('foodFiber'))
+    food_carbs = float(request.form.get('foodCarbs'))
+    food_category = request.form.get('foodCategory')
+    food_item = {
+        'Food': food_name,
+        'Measure': food_measure,
+        'Grams': food_grams,
+        'Calories': food_calories,
+        'Protein': food_protein,
+        'Fat': food_fat,
+        'SatFat': food_satfat,
+        'Fiber': food_fiber,
+        'Carbs': food_carbs,
+        'Category': food_category
+    }
+    food_collection.insert_one(food_item)
+    return redirect('/food')
 
 @app.route('/exercise')
 @login_required
