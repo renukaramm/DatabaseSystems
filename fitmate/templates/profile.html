@@ -197,65 +197,84 @@
                 <input type="number" id="height" name="height" step="any" value="{{ user['height'] }}"><br><br>
                 <label for="weight">Weight (kg):</label>
                 <input type="number" id="weight" name="weight" step="any" value="{{ user['weight'] }}"><br><br>
-                <input type="submit" value="Update">
-                <!-- Add the "Change Password" button -->
-                <button onclick="openModal()">Change Password</button>
-
-                <!-- The Modal -->
-                <div id="myModal" class="modal">
-                    <!-- Modal content -->
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal()">&times;</span>
-                        <h2>Change Password</h2>
-                        <form action="/change-password" method="POST">
-                            <label for="current-password">Current Password:</label>
-                            <input type="password" id="current-password" name="current_password" ><br><br>
-                            <label for="new-password">New Password:</label>
-                            <input type="password" id="new-password" name="new_password" ><br><br>
-                            <label for="confirm_password">Confirm New Password:</label>
-                            <input type="password" id="confirm_password" name="confirm_password" ><br><br>
-                            <input type="submit" value="Change Password">
-                        </form>
-                    </div>
+                <input type="submit" value="Update"><br><br>
                 </div>
             </form>
+           
+
         </div>
+
+            <!-- Add button for changing password -->
+            <button id="change-password-btn">Change Password</button>
+    
     </div>
 
+        </body>
 
-<script>
+<!-- Modal for changing password -->
+<div class="modal" id="password-modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Change Password</h2>
+        <br>
+        <form id="password-form">
+            <label for="current-password">Current Password:</label>
+            <input type="password" id="current-password" name="current_password"><br><br>
+            <label for="new-password">New Password:</label>
+            <input type="password" id="new-password" name="new_password"><br><br>
+            <input type="submit" value="Submit">
+        </form>
+        <div id="success-message" style="display: none;">Password changed successfully!</div>
+    </div>
+</div>
 
-    // Get the modal
-    var modal = document.getElementById("myModal");
-
-    // Get the button that opens the modal
-    var btn = document.getElementsByTagName("button")[0];
-
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
-
-    // When the user clicks the button, open the modal
-    function openModal() {
-        modal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    function closeModal() {
-        modal.style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function (event) {
-        if (event.target == modal) {
+    <script>
+        // Get the modal
+        const modal = document.getElementById("password-modal");
+    
+        // Get the button that opens the modal
+        const changePasswordBtn = document.getElementById("change-password-btn");
+    
+        // Get the <span> element that closes the modal
+        const closeBtn = document.getElementsByClassName("close")[0];
+    
+        // When the user clicks the button, open the modal
+        changePasswordBtn.onclick = function () {
+            modal.style.display = "block";
+        };
+    
+        // When the user clicks on <span> (x), close the modal
+        closeBtn.onclick = function () {
             modal.style.display = "none";
-        }
-    };
+            document.getElementById("password-form").reset();
+            document.getElementById("success-message").style.display = "none";
+        };
+    
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                document.getElementById("password-form").reset();
+                document.getElementById("success-message").style.display = "none";
+            }
+        };
+    
+        document.getElementById("password-form").addEventListener("submit", function (e) {
+        e.preventDefault(); // Prevent form submission from refreshing the page
 
-    // Prevent form submission when clicking the "Change Password" button
-    document.querySelector("form").addEventListener("submit", function (event) {
-        event.preventDefault();
+        const currentPassword = document.getElementById("current-password").value;
+        const newPassword = document.getElementById("new-password").value;
+
+        // Replace this part with your actual AJAX call to update the password in the database
+        // The code below is just a demonstration of a successful password change
+        // Simulate the password change process and display the success message
+        setTimeout(function () {
+            document.getElementById("password-form").reset();
+            document.getElementById("success-message").style.display = "block";
+        }, 1000);
     });
-</script>
+    </script>    
+    </div>
 
 </body>
 
