@@ -33,7 +33,7 @@ db_mysql = mysql.connector.connect(
     password=db_password,
     database=db_name
 )
-cursor = db_mysql.cursor()
+cursor = db_mysql.cursor(buffered=True)
 
 
 def login_required(f):
@@ -55,7 +55,7 @@ def login():
         select_query = "SELECT * FROM users WHERE name = %s"
         cursor.execute(select_query, (name,))
         user = cursor.fetchone()
-
+        
         if user and check_password_hash(user[3], password):
             # User credentials are correct, store the user data in the session
             session['user'] = {
@@ -163,7 +163,7 @@ def logout():
 def generate_meal_plan():
     # Retrieve the selected mealTimeframe from the form data
     meal_timeframe = request.form.get('mealTimeframe')
-    print("etsting:", meal_timeframe)
+    print("Testing:", meal_timeframe)
 
     # Fetch the user's goal data to get the target calories
     user_id = session['user']['id']
@@ -221,13 +221,17 @@ def generate_meal_plan():
             # If there are no more suitable food items, break the loop
             break
 
-    # Prepare the data to send back to the client
-    meal_plan_data = {
+    # Convert the MongoDB document to a Python dictionary
+    meal_plan_data_dict = {
         'mealTimeframe': meal_timeframe,
         'mealPlan': meal_plan[meal_timeframe.lower()]
     }
+    print(meal_plan_data_dict)
 
-    return jsonify(meal_plan_data)
+    # Convert the data to JSON format
+    meal_plan_json = json.dumps(meal_plan_data_dict, default=str)
+
+    return meal_plan_json
 
 @app.route('/')
 @login_required
