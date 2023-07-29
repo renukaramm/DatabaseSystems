@@ -91,7 +91,6 @@
       border-radius: 4px;
       border: 1px solid #ccc;
       width: 200px;
-      background-color: #f26c47;
       color: white;
       cursor: pointer;
     }
@@ -231,7 +230,7 @@
   <div class="search-filter-container">
     <div>
       <input type="text" id="search-input" class="search-input" placeholder="Search food...">
-      <button class="add-button" onclick="openFoodForm()">Add Food Item</button>
+      <button style="background-color:#f26c47;" class="add-button" onclick="openFoodForm()">Add Food Item</button>
     </div>
     <div>
       <select id="category-filter" class="category-filter">
@@ -403,11 +402,11 @@
         <td>{{ food.Carbs }}</td>
         <td>{{ food.Category }}</td>
         <td>
-          <button class="button"
+          <button class="button" style="background-color:#F2BE22;"
             onclick="openFoodUpdateForm('{{ food.Food }}', '{{ food.Measure }}', '{{ food.Grams }}', '{{ food.Calories }}', '{{ food.Protein }}', '{{ food.Fat }}', '{{ food.SatFat }}', '{{ food.Fiber }}', '{{ food.Carbs }}', '{{ food.Category }}')"><i class="fa fa-edit"></i></button>
         </td>
         <td>
-          <button class="button" onclick="deleteFoodItem('{{ food.Food }}')"><i class="fa fa-trash"></i></button>
+          <button style="background-color:#F24C3D;" class="button" onclick="deleteFoodItem('{{ food.Food }}')"><i class="fa fa-trash"></i></button>
         </td>
       </tr>
       {% endfor %}
