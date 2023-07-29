@@ -107,58 +107,6 @@ def logout():
     # Redirect to the login page
     return redirect(url_for('login'))
 
-# def generate_meal(daily_calorie_intake, available_food_items):
-#     # The number of meals to generate (breakfast, lunch, and dinner)
-#     num_meals = 3
-
-#     # Initialize the meal plan
-#     meal_plan = {
-#         'breakfast': [],
-#         'lunch': [],
-#         'dinner': []
-#     }
-
-#     # Calculate the rough target calorie range for each meal
-#     target_calories_per_meal = daily_calorie_intake / num_meals
-#     min_calories_per_meal = target_calories_per_meal * 0.8
-#     max_calories_per_meal = target_calories_per_meal * 1.2
-
-#     # Check if there are available food items
-#     if not available_food_items:
-#         print("No available food items.")
-#         return meal_plan
-
-#     # Function to calculate the remaining calories for a specific meal
-#     def calculate_remaining_calories(meal):
-#         return max_calories_per_meal - sum(float(food['calories']) for food in meal)
-
-#     # Function to randomly select a food item from available_food_items based on calories
-#     def select_food_item(remaining_calories):
-#         candidates = [food for food in available_food_items if float(food['calories']) <= remaining_calories]
-
-#         if candidates:
-#             selected_food = random.choice(candidates)
-#             available_food_items.remove(selected_food)  # Remove the selected food item from the list
-#             return selected_food
-#         else:
-#             return None
-
-#     # Generate meal plans for each meal
-#     for meal_time in meal_plan.keys():
-#         remaining_calories = calculate_remaining_calories(meal_plan[meal_time])
-
-#         while remaining_calories > 0:
-#             selected_food = select_food_item(remaining_calories)
-
-#             if selected_food:
-#                 meal_plan[meal_time].append(selected_food)
-#                 remaining_calories = calculate_remaining_calories(meal_plan[meal_time])
-#             else:
-#                 # If there are no more suitable food items, break the loop
-#                 break
-
-#     return meal_plan
-
 @app.route('/generate_meal_plan', methods=['POST'])
 def generate_meal_plan():
     # Retrieve the selected mealTimeframe from the form data
@@ -247,7 +195,7 @@ def home():
 
     actual_meal_query = """
         SELECT dp.daily_plan_id, dp.goal_id, dp.date, dp.net_calories,
-               m.calories_gained, m.food_name, m.meal_timeframe, m.meal_id, g.goal_name
+               m.calories_gained, m.food_name, m.meal_timeframe, m.meal_id, g.goal_name, g.target_calories
         FROM daily_plan dp
         JOIN goals g ON dp.goal_id = g.goal_id
         LEFT JOIN meal m ON dp.daily_plan_id = m.daily_plan_id AND m.meal_type = 'actual'
@@ -283,14 +231,14 @@ def home():
                 'lunch_meals': [],
                 'dinner_meals': [],
                 'exercises': [],
-                'goal_name': row[8]
+                'goal_name': row[8],
+                'target_calories': row[9]
             }
 
         meal_timeframe = row[6]
         food_name = row[5]
         calories_gained = row[4]
         meal_id = row[7]
-        print("ROW:", row)
 
         meal = {'id': meal_id, 'food_name': food_name, 'calories_gained': calories_gained}
         if meal_timeframe == 'Breakfast':
@@ -321,31 +269,7 @@ def home():
 
     daily_plans = list(daily_plans.values())
 
-    # Set a default value for target_calories, this is to prevent error on homepage when there are no goals
-    target_calories = 2000
-
-    # # Generate meal plans for each daily plan
-    # for dp in daily_plans:
-    #     goal_id = dp['goal_id']
-
-    #     # Fetch the goal data to get the target calories
-    #     goal_query = "SELECT target_calories FROM goals WHERE goal_id = %s"
-    #     cursor.execute(goal_query, (goal_id,))
-    #     goal_data = cursor.fetchone()
-    #     if goal_data:
-    #         target_calories = goal_data[0]
-
-    #         # Generate meal plan based on available food data
-    #         available_food_items = [{'food_name': item['Food'], 'calories': item['Calories']} for item in food_data]
-
-    #         generated_meal_plan = generate_meal_plan(target_calories, available_food_items)
-
-    #         # Assign generated meal plan to the corresponding mealtime
-    #         dp['generated_breakfast'] = generated_meal_plan['breakfast']
-    #         dp['generated_lunch'] = generated_meal_plan['lunch']
-    #         dp['generated_dinner'] = generated_meal_plan['dinner']
-
-    return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data, exercise_data=exercise_data, today=today, target_calories=target_calories)
+    return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data, exercise_data=exercise_data, today=today)
 
 
 
@@ -540,7 +464,7 @@ def add_food_item():
 @login_required
 def update_food_item():
     # Get the form data from the POST request
-    food_name = request.form.get('foodNameU')
+    food_name = request.form.get('foodNameUp')
     food_measure = request.form.get('foodMeasureU')
     food_grams = float(request.form.get('foodGramsU'))
     food_calories = float(request.form.get('foodCaloriesU'))
@@ -550,11 +474,12 @@ def update_food_item():
     food_fiber = float(request.form.get('foodFiberU'))
     food_carbs = float(request.form.get('foodCarbsU'))
     food_category = request.form.get('foodCategoryU')
+
     # Find the food item in the database based on the unique identifier
     existing_food_item = food_collection.find_one({'Food': food_name})
+
     if existing_food_item:
         # Update the food item data
-        existing_food_item['Food'] = food_name
         existing_food_item['Measure'] = food_measure
         existing_food_item['Grams'] = food_grams
         existing_food_item['Calories'] = food_calories
@@ -569,13 +494,15 @@ def update_food_item():
         food_collection.update_one({'Food': food_name}, {'$set': existing_food_item})
 
         return redirect('/food')
+    else:
+    # Return an error response to the client
+        return jsonify({'error': 'Food item not found.'}), 404
 
 @app.route('/delete_food_item', methods=['POST'])
 @login_required
 def delete_food_item():
     # Get the form data from the POST request
     food_name = request.form.get('foodNameU')
-    print("YESSSUIR", food_name)
     # Find the food item in the database based on the unique identifier (food_name)
     existing_food_item = food_collection.find_one({'Food': food_name})
 
@@ -625,7 +552,7 @@ def add_exercise_item():
 @login_required
 def update_exercise_item():
     # Get the form data from the POST request
-    exercise_activity = request.form.get('exerciseActivityU')
+    exercise_activity = request.form.get('exerciseActivityUp')
     exercise_lb130 = float(request.form.get('exercise130lbU'))
     exercise_lb155 = float(request.form.get('exercise155lbU'))
     exercise_lb180 = float(request.form.get('exercise180lbU'))

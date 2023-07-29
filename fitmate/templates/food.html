@@ -147,6 +147,7 @@
 
     function openFoodUpdateForm(foodName, foodMeasure, foodGrams, foodCalories,
       foodProtein, foodFat, foodSatFat, foodFiber, foodCarbs, foodCategory) {
+      $("#foodNameUp").val(foodName);
       $("#foodNameU").val(foodName);
       $("#foodMeasureU").val(foodMeasure);
       $("#foodGramsU").val(foodGrams);
@@ -278,25 +279,25 @@
         <input type="text" id="foodMeasure" name="foodMeasure" required>
         <br><br>
         <label for="foodGrams">Grams:</label>
-        <input type="number" id="foodGrams" name="foodGrams" required>
+        <input type="text" id="foodGrams" name="foodGrams" required>
         <br><br>
         <label for="foodCalories">Calories:</label>
-        <input type="number" id="foodCalories" name="foodCalories" required>
+        <input type="text" id="foodCalories" name="foodCalories" required>
         <br><br>
         <label for="foodProtein">Protein:</label>
-        <input type="number" id="foodProtein" name="foodProtein" required>
+        <input type="text" id="foodProtein" name="foodProtein" required>
         <br><br>
         <label for="foodFat">Fat:</label>
-        <input type="number" id="foodFat" name="foodFat" required>
+        <input type="text" id="foodFat" name="foodFat" required>
         <br><br>
         <label for="foodSatfat">Sat Fat:</label>
-        <input type="number" id="foodSatfat" name="foodSatfat" required>
+        <input type="text" id="foodSatfat" name="foodSatfat" required>
         <br><br>
         <label for="foodFiber">Fiber:</label>
-        <input type="number" id="foodFiber" name="foodFiber" required>
+        <input type="text" id="foodFiber" name="foodFiber" required>
         <br><br>
         <label for="foodCarbs">Carbs:</label>
-        <input type="number" id="foodCarbs" name="foodCarbs" required>
+        <input type="text" id="foodCarbs" name="foodCarbs" required>
         <br><br>
         <label for="foodCategory">Category:</label>
         <input type="text" list="categories" id="foodCategory" name="foodCategory" required>
@@ -328,6 +329,7 @@
       <span class="close" onclick="closeFoodUpdateForm()">&times;</span>
       <h2>Update Food Item</h2>
       <form id="foodUpdateForm" action="/update_food_item" method="post">
+        <input type="hidden" id="foodNameUp" name="foodNameUp">
         <label for="foodNameU">Food:</label>
         <input type="text" id="foodNameU" name="foodNameU" disabled>
         <br><br>
@@ -335,25 +337,25 @@
         <input type="text" id="foodMeasureU" name="foodMeasureU" required>
         <br><br>
         <label for="foodGramsU">Grams:</label>
-        <input type="number" id="foodGramsU" name="foodGramsU" required>
+        <input type="text" id="foodGramsU" name="foodGramsU" required>
         <br><br>
         <label for="foodCaloriesU">Calories:</label>
-        <input type="number" id="foodCaloriesU" name="foodCaloriesU" required>
+        <input type="text" id="foodCaloriesU" name="foodCaloriesU" required>
         <br><br>
         <label for="foodProteinU">Protein:</label>
-        <input type="number" id="foodProteinU" name="foodProteinU" required>
+        <input type="text" id="foodProteinU" name="foodProteinU" required>
         <br><br>
         <label for="foodFatU">Fat:</label>
-        <input type="number" id="foodFatU" name="foodFatU" required>
+        <input type="text" id="foodFatU" name="foodFatU" required>
         <br><br>
         <label for="foodSatfatU">Sat Fat:</label>
-        <input type="number" id="foodSatfatU" name="foodSatfatU" required>
+        <input type="text" id="foodSatfatU" name="foodSatfatU" required>
         <br><br>
         <label for="foodFiberU">Fiber:</label>
-        <input type="number" id="foodFiberU" name="foodFiberU" required>
+        <input type="text" id="foodFiberU" name="foodFiberU" required>
         <br><br>
         <label for="foodCarbsU">Carbs:</label>
-        <input type="number" id="foodCarbsU" name="foodCarbsU" required>
+        <input type="text" id="foodCarbsU" name="foodCarbsU" required>
         <br><br>
         <label for="foodCategoryU">Category:</label>
         <input type="text" list="categories" id="foodCategoryU" name="foodCategoryU" required>

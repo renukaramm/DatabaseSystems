@@ -232,6 +232,7 @@
             $("#exerciseFormModal").css("display", "none");
         }
         function openExerciseUpdateForm(activity, lb130, lb155, lb180, lb205, caloriesPerKg) {
+            $("#exerciseActivityUp").val(activity);
             $("#exerciseActivityU").val(activity);
             $("#exercise130lbU").val(lb130);
             $("#exercise155lbU").val(lb155);
@@ -372,19 +373,19 @@
                 <input type="text" id="exerciseActivity" name="exerciseActivity" required>
                 <br><br>
                 <label for="exerciseCalories130">Calories (130 lb):</label>
-                <input type="number" id="exerciseCalories130" name="exerciseCalories130" required>
+                <input type="text" id="exerciseCalories130" name="exerciseCalories130" required>
                 <br><br>
                 <label for="exerciseCalories155">Calories (155 lb):</label>
-                <input type="number" id="exerciseCalories155" name="exerciseCalories155" required>
+                <input type="text" id="exerciseCalories155" name="exerciseCalories155" required>
                 <br><br>
                 <label for="exerciseCalories180">Calories (180 lb):</label>
-                <input type="number" id="exerciseCalories180" name="exerciseCalories180" required>
+                <input type="text" id="exerciseCalories180" name="exerciseCalories180" required>
                 <br><br>
                 <label for="exerciseCalories205">Calories (205 lb):</label>
-                <input type="number" id="exerciseCalories205" name="exerciseCalories205" required>
+                <input type="text" id="exerciseCalories205" name="exerciseCalories205" required>
                 <br><br>
                 <label for="exerciseCaloriesPerKg">Calories per kg:</label>
-                <input type="number" id="exerciseCaloriesPerKg" name="exerciseCaloriesPerKg" required>
+                <input type="text" id="exerciseCaloriesPerKg" name="exerciseCaloriesPerKg" required>
                 <br><br>
                 <input type="submit" value="Add">
             </form>
@@ -397,23 +398,24 @@
             <h2>Update Exercise Item</h2>
             <br>
             <form id="exerciseUpdateForm" action="/update_exercise_item" method="post">
+                <input type="hidden" id="exerciseActivityUp" name="exerciseActivityUp">
                 <label for="exerciseActivityU">Activity:</label>
                 <input type="text" id="exerciseActivityU" name="exerciseActivityU" disabled>
                 <br><br>
                 <label for="exercise130lbU">130 lb:</label>
-                <input type="number" id="exercise130lbU" name="exercise130lbU" required>
+                <input type="text" id="exercise130lbU" name="exercise130lbU" required>
                 <br><br>
                 <label for="exercise155lbU">155 lb:</label>
-                <input type="number" id="exercise155lbU" name="exercise155lbU" required>
+                <input type="text" id="exercise155lbU" name="exercise155lbU" required>
                 <br><br>
                 <label for="exercise180lbU">180 lb:</label>
-                <input type="number" id="exercise180lbU" name="exercise180lbU" required>
+                <input type="text" id="exercise180lbU" name="exercise180lbU" required>
                 <br><br>
                 <label for="exercise205lbU">205 lb:</label>
-                <input type="number" id="exercise205lbU" name="exercise205lbU" required>
+                <input type="text" id="exercise205lbU" name="exercise205lbU" required>
                 <br><br>
                 <label for="exerciseCaloriesPerKgU">Calories per kg:</label>
-                <input type="number" id="exerciseCaloriesPerKgU" name="exerciseCaloriesPerKgU" required>
+                <input type="text" id="exerciseCaloriesPerKgU" name="exerciseCaloriesPerKgU" required>
                 <br><br>
                 <button class="button" type="submit">Edit</button>
             </form>
