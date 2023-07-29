@@ -109,7 +109,7 @@
       margin-bottom: 10px;
     }
 
-    
+
     .modal-content input[type="text"],
     .modal-content input[type="date"],
     .modal-content input[type="number"],
@@ -157,7 +157,7 @@
 
     .modal-content {
       background-color: #fefefe;
-      margin: 20% auto;
+      margin: auto;
       padding: 20px;
       border: 1px solid #888;
       width: 400px;
@@ -165,6 +165,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
 
     .close {
@@ -189,7 +193,7 @@
       border-collapse: collapse;
     }
 
-     .button-container {
+    .button-container {
       display: flex;
     }
 
@@ -285,17 +289,17 @@
             <td>{{ goal[7] }}</td>
             <td>
               <div class="button-container">
-              <form action="/update_goal" method="POST"
-                onsubmit="showEditGoalForm('{{ goal[0] }}', '{{ goal[2] }}', '{{ goal[3] }}', '{{ goal[6] }}', '{{ goal[7] }}', '{{ goal[4] }}', '{{ goal[5] }}'); return false;">
-                <input type="hidden" name="goalId" value="{{ goal[0] }}">
-                <button class="" type="submit">Edit</button>
-              </form>
+                <form action="/update_goal" method="POST"
+                  onsubmit="showEditGoalForm('{{ goal[0] }}', '{{ goal[2] }}', '{{ goal[3] }}', '{{ goal[6] }}', '{{ goal[7] }}', '{{ goal[4] }}', '{{ goal[5] }}'); return false;">
+                  <input type="hidden" name="goalId" value="{{ goal[0] }}">
+                  <button class="" type="submit">Edit</button>
+                </form>
 
-              <form action="/delete_goal" method="POST" style="display: inline;">
-                <input type="hidden" name="goalId" value="{{ goal[0] }}">
-                <button class="" type="submit">Delete</button>
-              </form>
-            </div>
+                <form action="/delete_goal" method="POST" style="display: inline;">
+                  <input type="hidden" name="goalId" value="{{ goal[0] }}">
+                  <button class="" type="submit">Delete</button>
+                </form>
+              </div>
             </td>
           </tr>
           {% endfor %}

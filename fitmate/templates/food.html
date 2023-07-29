@@ -1,211 +1,232 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-    <title>Food</title>
+  <title>Food</title>
 
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #D8C4B6;
+    }
+
+    tr:nth-child(even) {
+      background-color: #F5EFE7;
+    }
+
+    .search-filter-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+
+    .category-filter {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 150px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      background-color: #f4f4f4;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      border: 1px solid #888;
+      width: 20%;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .button, .add-button {
+      padding: 5px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      width: 200px;
+      background-color: #f26c47;
+      color: white;
+      cursor: pointer;
+    }
+
+    .button {
+      width: 100px;
+    }
+  </style>
+
+  <script>
+    $(document).ready(function () {
+      // Function to filter the table based on category
+      $("#category-filter").change(function () {
+        var category = $(this).val();
+
+        // Show all rows if category is "All"
+        if (category === "All") {
+          $("tbody tr").show();
+        } else {
+          // Hide rows that don't match the selected category
+          $("tbody tr").hide();
+          $("tbody tr[data-category*='" + category + "']").show();
         }
+      });
 
-        th, td {
-            text-align: left;
-            padding: 8px;
-        }
+      // Function to search the table based on the input value
+      $("#search-input").on("keyup", function () {
+        var searchText = $(this).val().toLowerCase();
 
-        th {
-            background-color: #D8C4B6;
-        }
-
-        tr:nth-child(even) {
-            background-color: #F5EFE7;
-        }
-
-        .search-filter-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .search-input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
-
-        .category-filter {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 150px;
-        }
-
-        .modal {
-          display: none;
-          position: fixed;
-          z-index: 1;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-          background-color: rgba(0, 0, 0, 0.6);
-        }
-
-        .modal-content {
-          background-color: #f4f4f4;
-          margin: 10% auto;
-          padding: 20px;
-          border: 1px solid #888;
-          width: 60%;
-        }
-
-        .close {
-          color: #aaa;
-          float: right;
-          font-size: 28px;
-          font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-          color: black;
-          text-decoration: none;
-          cursor: pointer;
-        }
-    </style>
-
-    <script>
-        $(document).ready(function() {
-            // Function to filter the table based on category
-            $("#category-filter").change(function() {
-                var category = $(this).val();
-
-                // Show all rows if category is "All"
-                if (category === "All") {
-                    $("tbody tr").show();
-                } else {
-                    // Hide rows that don't match the selected category
-                    $("tbody tr").hide();
-                    $("tbody tr[data-category*='" + category + "']").show();
-                }
-            });
-
-            // Function to search the table based on the input value
-            $("#search-input").on("keyup", function() {
-                var searchText = $(this).val().toLowerCase();
-
-                // Filter rows based on search text
-                $("tbody tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1)
-                });
-            });
+        // Filter rows based on search text
+        $("tbody tr").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1)
         });
+      });
+    });
 
-        // Function to open the food form popup
-        function openFoodForm() {
-          $("#foodFormModal").css("display", "block");
-        }
+    // Function to open the food form popup
+    function openFoodForm() {
+      $("#foodFormModal").css("display", "block");
+    }
 
-        // Function to close the food form popup
-        function closeFoodForm() {
-          $("#foodFormModal").css("display", "none");
-        }
+    // Function to close the food form popup
+    function closeFoodForm() {
+      $("#foodFormModal").css("display", "none");
+    }
 
-        function openFoodUpdateForm(foodName, foodMeasure, foodGrams, foodCalories,
-        foodProtein, foodFat, foodSatFat, foodFiber, foodCarbs, foodCategory) {
-          $("#foodNameU").val(foodName);
-          $("#foodMeasureU").val(foodMeasure);
-          $("#foodGramsU").val(foodGrams);
-          $("#foodCaloriesU").val(foodCalories);
-          $("#foodProteinU").val(foodProtein);
-          $("#foodFatU").val(foodFat);
-          $("#foodSatfatU").val(foodSatFat);
-          $("#foodFiberU").val(foodFiber);
-          $("#foodCarbsU").val(foodCarbs);
-          $("#foodCategoryU").val(foodCategory);
-          $("#foodUpdateFormModal").css("display", "block");
-        }
-        function closeFoodUpdateForm() {
-          $("#foodUpdateFormModal").css("display", "none");
-        }
+    function openFoodUpdateForm(foodName, foodMeasure, foodGrams, foodCalories,
+      foodProtein, foodFat, foodSatFat, foodFiber, foodCarbs, foodCategory) {
+      $("#foodNameU").val(foodName);
+      $("#foodMeasureU").val(foodMeasure);
+      $("#foodGramsU").val(foodGrams);
+      $("#foodCaloriesU").val(foodCalories);
+      $("#foodProteinU").val(foodProtein);
+      $("#foodFatU").val(foodFat);
+      $("#foodSatfatU").val(foodSatFat);
+      $("#foodFiberU").val(foodFiber);
+      $("#foodCarbsU").val(foodCarbs);
+      $("#foodCategoryU").val(foodCategory);
+      $("#foodUpdateFormModal").css("display", "block");
+    }
+    function closeFoodUpdateForm() {
+      $("#foodUpdateFormModal").css("display", "none");
+    }
 
-        function deleteFoodItem(foodName) {
-        // Confirm with the user before proceeding with the deletion
-        if (confirm("Are you sure you want to delete this food item?")) {
-            // Make an AJAX POST request to the server
-            $.ajax({
-                type: "POST",
-                url: "/delete_food_item",
-                data: { foodNameU: foodName },
-                success: function (response) {
-                    // If the deletion is successful, reload the page to update the table
-                    location.reload();
-                },
-                error: function (error) {
-                    // If there's an error, show an alert with the error message
-                    alert("Error deleting food item: " + error.responseText);
-                }
-            });
-        }
-        // Print the value of foodName to the console
-        console.log("Food name:", foodName);
+    function deleteFoodItem(foodName) {
+      // Confirm with the user before proceeding with the deletion
+      if (confirm("Are you sure you want to delete this food item?")) {
+        // Make an AJAX POST request to the server
+        $.ajax({
+          type: "POST",
+          url: "/delete_food_item",
+          data: { foodNameU: foodName },
+          success: function (response) {
+            // If the deletion is successful, reload the page to update the table
+            location.reload();
+          },
+          error: function (error) {
+            // If there's an error, show an alert with the error message
+            alert("Error deleting food item: " + error.responseText);
+          }
+        });
+      }
+      // Print the value of foodName to the console
+      console.log("Food name:", foodName);
     }
 
 
     // Function to scroll back to the top of the page
     function scrollToTop() {
-            $("html, body").animate({ scrollTop: 0 }, "slow");
-        }
+      $("html, body").animate({ scrollTop: 0 }, "slow");
+    }
 
-        // Show the scroll-to-top button when scrolling down
-        $(window).scroll(function () {
-            if ($(this).scrollTop() > 100) {
-                $(".scroll-to-top").fadeIn();
-            } else {
-                $(".scroll-to-top").fadeOut();
-            }
-        });
-    </script>
+    // Show the scroll-to-top button when scrolling down
+    $(window).scroll(function () {
+      if ($(this).scrollTop() > 100) {
+        $(".scroll-to-top").fadeIn();
+      } else {
+        $(".scroll-to-top").fadeOut();
+      }
+    });
+  </script>
 </head>
+
 <body>
   <div class="logo">
     <img src="{{ url_for('static', filename='logo.png') }}" alt="FitmATE Logo">
   </div>
   <div class="navbar">
     <div>
-        <a href="/">Home</a>
-        <a href="/food">Food</a>
-        <a href="/exercise">Exercise</a>
-        <a href="/goal">Goal</a>
-        <div class="dropdown">
-            <button class="dropbtn">Records
-                <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown-content">
-              <a href="/records_goals">Goals</a>
-              <a href="/dailyplan">Daily Plan</a>
-            </div>
+      <a href="/">Home</a>
+      <a href="/food">Food</a>
+      <a href="/exercise">Exercise</a>
+      <a href="/goal">Goal</a>
+      <div class="dropdown">
+        <button class="dropbtn">Records
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="/records_goals">Goals</a>
+          <a href="/dailyplan">Daily Plan</a>
         </div>
+      </div>
     </div>
     <div class="dropdown">
       <button class="dropbtn"> {{ user['name'] }}
-          <i class="fa fa-caret-down"></i>
+        <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content dropdown-right">
-          <a href="/profile">Profile</a>
-          <a href="/logout">Logout</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
       </div>
-  </div>     
+    </div>
   </div>
-    
+
   <h1>Welcome to the Food page!</h1>
 
   <div class="search-filter-container">
@@ -236,7 +257,7 @@
 
   <div class="scroll-to-top" onclick="scrollToTop()">
     <i class="fa fa-arrow-up"></i>
-</div>
+  </div>
 
   <div id="foodFormModal" class="modal">
     <!-- Modal content -->
@@ -246,25 +267,34 @@
       <form id="foodForm" action="/add_food_item" method="post">
         <label for="foodName">Food:</label>
         <input type="text" id="foodName" name="foodName" required>
-
+        <br><br>
         <label for="foodMeasure">Measure:</label>
         <input type="text" id="foodMeasure" name="foodMeasure" required>
+        <br><br>
         <label for="foodGrams">Grams:</label>
-        <input type="number" id="foodGrams" name="foodGrams" required>  
+        <input type="number" id="foodGrams" name="foodGrams" required>
+        <br><br>
         <label for="foodCalories">Calories:</label>
         <input type="number" id="foodCalories" name="foodCalories" required>
+        <br><br>
         <label for="foodProtein">Protein:</label>
-        <input type="number" id="foodProtein" name="foodProtein" required>    
+        <input type="number" id="foodProtein" name="foodProtein" required>
+        <br><br>
         <label for="foodFat">Fat:</label>
-        <input type="number" id="foodFat" name="foodFat" required>    
+        <input type="number" id="foodFat" name="foodFat" required>
+        <br><br>
         <label for="foodSatfat">Sat Fat:</label>
-        <input type="number" id="foodSatfat" name="foodSatfat" required>    
+        <input type="number" id="foodSatfat" name="foodSatfat" required>
+        <br><br>
         <label for="foodFiber">Fiber:</label>
-        <input type="number" id="foodFiber" name="foodFiber" required>    
+        <input type="number" id="foodFiber" name="foodFiber" required>
+        <br><br>
         <label for="foodCarbs">Carbs:</label>
-        <input type="number" id="foodCarbs" name="foodCarbs" required>    
+        <input type="number" id="foodCarbs" name="foodCarbs" required>
+        <br><br>
         <label for="foodCategory">Category:</label>
         <input type="text" list="categories" id="foodCategory" name="foodCategory" required>
+        <br><br>
         <datalist id="categories">
           <option value="Dairy products">Dairy products</option>
           <option value="Fats">Fats, Oils, Shortenings</option>
@@ -281,7 +311,7 @@
           <option value="Seeds and Nuts">Seeds and Nuts</option>
           <option value="Drinks,Alcohol, Beverages">Drinks, Alcohol, Beverages</option>
         </datalist>
-  
+
         <input type="submit" value="Add">
       </form>
     </div>
@@ -289,51 +319,60 @@
   <div id="foodUpdateFormModal" class="modal">
     <!-- Modal content -->
     <div class="modal-content">
-        <span class="close" onclick="closeFoodUpdateForm()">&times;</span>
-        <h2>Update Food Item</h2>
-        <form id="foodUpdateForm" action="/update_food_item" method="post">
-            <label for="foodNameU">Food:</label>
-            <input type="text" id="foodNameU" name="foodNameU" required>
-
-            <label for="foodMeasureU">Measure:</label>
-            <input type="text" id="foodMeasureU" name="foodMeasureU" required>
-            <label for="foodGramsU">Grams:</label>
-            <input type="number" id="foodGramsU" name="foodGramsU" required>
-            <label for="foodCaloriesU">Calories:</label>
-            <input type="number" id="foodCaloriesU" name="foodCaloriesU" required>
-            <label for="foodProteinU">Protein:</label>
-            <input type="number" id="foodProteinU" name="foodProteinU" required>
-            <label for="foodFatU">Fat:</label>
-            <input type="number" id="foodFatU" name="foodFatU" required>
-            <label for="foodSatfatU">Sat Fat:</label>
-            <input type="number" id="foodSatfatU" name="foodSatfatU" required>
-            <label for="foodFiberU">Fiber:</label>
-            <input type="number" id="foodFiberU" name="foodFiberU" required>
-            <label for="foodCarbsU">Carbs:</label>
-            <input type="number" id="foodCarbsU" name="foodCarbsU" required>
-            <label for="foodCategoryU">Category:</label>
-            <input type="text" list="categories" id="foodCategoryU" name="foodCategoryU" required>
-            <datalist id="categories">
-              <option value="Dairy products">Dairy products</option>
-              <option value="Fats">Fats, Oils, Shortenings</option>
-              <option value="Meat">Meat</option>
-              <option value="Poultry">Poultry</option>
-              <option value="Vegetables A-E">Vegetables A-E</option>
-              <option value="Vegetables F-P">Vegetables F-P</option>
-              <option value="Vegetables R-Z">Vegetables R-Z</option>
-              <option value="Fruits A-F">Fruits A-F</option>
-              <option value="Fruits G-P">Fruits G-P</option>
-              <option value="Fruits R-Z">Fruits R-Z</option>
-              <option value="Breads, cereals, fastfood,grains">Breads, cereals, fastfood,grains</option>
-              <option value="Jams, Jellies">Jams, Jellies</option>
-              <option value="Seeds and Nuts">Seeds and Nuts</option>
-              <option value="Drinks,Alcohol, Beverages">Drinks, Alcohol, Beverages</option>
-            </datalist>
-
-            <button type="submit">Edit</button>
-        </form>
+      <span class="close" onclick="closeFoodUpdateForm()">&times;</span>
+      <h2>Update Food Item</h2>
+      <form id="foodUpdateForm" action="/update_food_item" method="post">
+        <label for="foodNameU">Food:</label>
+        <input type="text" id="foodNameU" name="foodNameU" required>
+        <br><br>
+        <label for="foodMeasureU">Measure:</label>
+        <input type="text" id="foodMeasureU" name="foodMeasureU" required>
+        <br><br>
+        <label for="foodGramsU">Grams:</label>
+        <input type="number" id="foodGramsU" name="foodGramsU" required>
+        <br><br>
+        <label for="foodCaloriesU">Calories:</label>
+        <input type="number" id="foodCaloriesU" name="foodCaloriesU" required>
+        <br><br>
+        <label for="foodProteinU">Protein:</label>
+        <input type="number" id="foodProteinU" name="foodProteinU" required>
+        <br><br>
+        <label for="foodFatU">Fat:</label>
+        <input type="number" id="foodFatU" name="foodFatU" required>
+        <br><br>
+        <label for="foodSatfatU">Sat Fat:</label>
+        <input type="number" id="foodSatfatU" name="foodSatfatU" required>
+        <br><br>
+        <label for="foodFiberU">Fiber:</label>
+        <input type="number" id="foodFiberU" name="foodFiberU" required>
+        <br><br>
+        <label for="foodCarbsU">Carbs:</label>
+        <input type="number" id="foodCarbsU" name="foodCarbsU" required>
+        <br><br>
+        <label for="foodCategoryU">Category:</label>
+        <input type="text" list="categories" id="foodCategoryU" name="foodCategoryU" required>
+        <br><br>
+        <datalist id="categories">
+          <option value="Dairy products">Dairy products</option>
+          <option value="Fats">Fats, Oils, Shortenings</option>
+          <option value="Meat">Meat</option>
+          <option value="Poultry">Poultry</option>
+          <option value="Vegetables A-E">Vegetables A-E</option>
+          <option value="Vegetables F-P">Vegetables F-P</option>
+          <option value="Vegetables R-Z">Vegetables R-Z</option>
+          <option value="Fruits A-F">Fruits A-F</option>
+          <option value="Fruits G-P">Fruits G-P</option>
+          <option value="Fruits R-Z">Fruits R-Z</option>
+          <option value="Breads, cereals, fastfood,grains">Breads, cereals, fastfood,grains</option>
+          <option value="Jams, Jellies">Jams, Jellies</option>
+          <option value="Seeds and Nuts">Seeds and Nuts</option>
+          <option value="Drinks,Alcohol, Beverages">Drinks, Alcohol, Beverages</option>
+        </datalist>
+        <br>
+        <button class="button" type="submit">Edit</button>
+      </form>
     </div>
-</div>
+  </div>
   <table>
     <thead>
       <tr>
@@ -365,14 +404,16 @@
         <td>{{ food.Carbs }}</td>
         <td>{{ food.Category }}</td>
         <td>
-          <button onclick="openFoodUpdateForm('{{ food.Food }}', '{{ food.Measure }}', '{{ food.Grams }}', '{{ food.Calories }}', '{{ food.Protein }}', '{{ food.Fat }}', '{{ food.SatFat }}', '{{ food.Fiber }}', '{{ food.Carbs }}', '{{ food.Category }}')">Update</button>
+          <button class="button"
+            onclick="openFoodUpdateForm('{{ food.Food }}', '{{ food.Measure }}', '{{ food.Grams }}', '{{ food.Calories }}', '{{ food.Protein }}', '{{ food.Fat }}', '{{ food.SatFat }}', '{{ food.Fiber }}', '{{ food.Carbs }}', '{{ food.Category }}')">Update</button>
         </td>
         <td>
-          <button onclick="deleteFoodItem('{{ food.Food }}')">Delete</button>
+          <button class="button" onclick="deleteFoodItem('{{ food.Food }}')">Delete</button>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 </body>
+
 </html>
