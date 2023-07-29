@@ -201,6 +201,14 @@
     .button-container button {
       margin-right: 10px;
     }
+
+    #editBtn {
+        background-color: #F2BE22;
+    }
+
+    #delBtn {
+        background-color: #F24C3D;
+    }
   </style>
 </head>
 
@@ -293,12 +301,12 @@
                 <form action="/update_goal" method="POST"
                   onsubmit="showEditGoalForm('{{ goal[0] }}', '{{ goal[2] }}', '{{ goal[3] }}', '{{ goal[6] }}', '{{ goal[7] }}', '{{ goal[4] }}', '{{ goal[5] }}'); return false;">
                   <input type="hidden" name="goalId" value="{{ goal[0] }}">
-                  <button class="" style="background-color:#F2BE22;" type="submit"><i class="fa fa-edit"></i></button>
+                  <button id="editBtn" class="" type="submit"><i class="fa fa-edit"></i></button>
                 </form>
 
                 <form action="/delete_goal" method="POST" style="display: inline;">
                   <input type="hidden" name="goalId" value="{{ goal[0] }}">
-                  <button class="" style="background-color:#F24C3D;" type="submit"><i class="fa fa-trash"></i></button>
+                  <button id="delBtn" class="" type="submit"><i class="fa fa-trash"></i></button>
                 </form>
               </div>
             </td>

@@ -98,6 +98,14 @@
     .button {
       width: 100px;
     }
+
+    #editBtn {
+        background-color: #F2BE22;
+    }
+
+    #delBtn {
+        background-color: #F24C3D;
+    }
   </style>
 
   <script>
@@ -402,11 +410,11 @@
         <td>{{ food.Carbs }}</td>
         <td>{{ food.Category }}</td>
         <td>
-          <button class="button" style="background-color:#F2BE22;"
+          <button id="editBtn" class="button"
             onclick="openFoodUpdateForm('{{ food.Food }}', '{{ food.Measure }}', '{{ food.Grams }}', '{{ food.Calories }}', '{{ food.Protein }}', '{{ food.Fat }}', '{{ food.SatFat }}', '{{ food.Fiber }}', '{{ food.Carbs }}', '{{ food.Category }}')"><i class="fa fa-edit"></i></button>
         </td>
         <td>
-          <button style="background-color:#F24C3D;" class="button" onclick="deleteFoodItem('{{ food.Food }}')"><i class="fa fa-trash"></i></button>
+          <button id="delBtn" class="button" onclick="deleteFoodItem('{{ food.Food }}')"><i class="fa fa-trash"></i></button>
         </td>
       </tr>
       {% endfor %}

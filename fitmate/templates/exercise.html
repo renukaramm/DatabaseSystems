@@ -111,6 +111,14 @@
         .add-exercise {
             width: 160px;
         }
+
+        #editBtn {
+            background-color: #F2BE22;
+        }
+
+        #delBtn {
+            background-color: #F24C3D;
+        }
     </style>
 
     <script>
@@ -434,11 +442,11 @@
                 <td>{{ exercise['205 lb'] }}</td>
                 <td>{{ exercise['Calories per kg'] }}</td>
                 <td>
-                    <button class="button" style="background-color:#F2BE22;"
+                    <button id="editBtn" class="button"
                         onclick="openExerciseUpdateForm('{{ exercise['Activity'] }}', '{{ exercise['130 lb'] }}', '{{ exercise['155 lb'] }}', '{{ exercise['180 lb'] }}', '{{ exercise['205 lb'] }}', '{{ exercise['Calories per kg'] }}')"><i class="fa fa-edit"></i></button>
                 </td>
                 <td>
-                    <button class="button" style="background-color:#F24C3D;" onclick="deleteExerciseItem('{{ exercise['Activity'] }}')"><i class="fa fa-trash"></i></button>
+                    <button id="delBtn" class="button" onclick="deleteExerciseItem('{{ exercise['Activity'] }}')"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>
             {% endfor %}
