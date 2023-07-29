@@ -362,7 +362,7 @@ def add_exercise():
     daily_plan_id = int(request.form.get('dailyPlanId'))
     # NEED TO CHANGE, IDK WHAT IS EXERCISE TYPE FOR
     exercise_type = 'placeholder'
-    description = 'placeholder'
+    description = request.form['description']
     # Insert the exercise into the database
     insert_query = "INSERT INTO exercise (daily_plan_id, exercise_type, activity, description, calories_burnt) " \
                    "VALUES (%s, %s, %s, %s, %s)"
@@ -385,7 +385,7 @@ def update_exercise():
     exercise_id = int(request.form['exerciseId'])
     exercise_type = 'placeholder'
     activity = request.form['editActivity']
-    description = 'placeholder'
+    description = request.form['editDescription']
     calories_burnt = float(request.form['editCaloriesBurnt'])
     # daily_plan_id = int(request.form['editDailyPlanId'])
 

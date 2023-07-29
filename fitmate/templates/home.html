@@ -264,7 +264,7 @@
         <label for="editFoodName"><b>Food Name</b></label>
         <input type="text" id="editFoodName" name="foodName" placeholder="Enter food name" required>
         <label for="editCaloriesGained"><b>Calories Gained</b></label>
-        <input type="number" id="editCaloriesGained" name="caloriesGained" placeholder="Enter calories gained" required>
+        <input type="text" id="editCaloriesGained" name="caloriesGained" placeholder="Enter calories gained" required>
         <button type="submit" class="add-button">Update Meal</button>
         <button type="button" class="add-button" onclick="closeForm('editActualMeal')">Cancel</button>
     </form>
@@ -296,6 +296,8 @@
                     <option value="{{ exercise['Activity'] }}" data-calories="{{ exercise['Calories per kg']}}">{{ exercise.Activity }}</option>
                 {% endfor %}
             </select>
+            <label for="description"><b>Description</b></label>
+            <textarea placeholder="How did it go? Share more about your activity" name="description" required></textarea>
             <label for="caloriesBurnt"><b>Calories Burnt</b></label>
             <input type="text" id="caloriesBurntInput" placeholder="Enter calories burnt" name="caloriesBurnt" required>
             <button type="submit" class="add-button">Add Exercise</button>
@@ -311,8 +313,10 @@
             <input type="hidden" id="editExerciseDailyPlanId" name="editDailyPlanId" value="">
             <label for="editActivity"><b>Activity Name</b></label>
             <input type="text" id="editActivity" name="editActivity" placeholder="Enter exercise" required>
+            <label for="editDescription"><b>Description</b></label>
+            <textarea placeholder="How did it go? Share more about your activity" id="editDescription" name="editDescription" required></textarea>
             <label for="editCaloriesBurnt"><b>Calories Burnt</b></label>
-            <input type="number" id="editCaloriesBurnt" placeholder="Enter calories burnt" name="editCaloriesBurnt" required>
+            <input type="text" id="editCaloriesBurnt" placeholder="Enter calories burnt" name="editCaloriesBurnt" required>
             <button type="submit" class="add-button">Update Exercise</button>
             <button type="button" class="add-button" onclick="closeForm('editExercise')">Cancel</button>
         </form>
@@ -389,7 +393,7 @@
             document.getElementById("updateExerciseId").value = exerciseId;
             // document.getElementById("editExerciseType").value = exerciseType;
             document.getElementById("editActivity").value = activity;
-            // document.getElementById("editDescription").value = description;
+            document.getElementById("editDescription").value = description;
             document.getElementById("editCaloriesBurnt").value = caloriesBurnt;
             document.getElementById("editExerciseDailyPlanId").value = dailyPlanId;
         }
