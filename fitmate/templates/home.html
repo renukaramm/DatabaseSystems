@@ -20,13 +20,18 @@
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #D8C4B6;
+        }
+
+        tr:nth-child(even) {
+            background-color: #F5EFE7;
         }
 
         .add-button {
-            background-color: #4CAF50;
+            background-color: #4F709C;
             color: white;
-            border: none;
+            border: white;
+            border-radius: 10px;
             padding: 5px 10px;
             text-align: center;
             text-decoration: none;
@@ -37,7 +42,7 @@
         }
 
         .add-button:hover {
-            background-color: #45a049;
+            background-color: #46648b;
         }
 
         /* CSS styling for the pop-up form */
@@ -68,7 +73,6 @@
         }
 
         .form-container button {
-            background-color: #4CAF50;
             color: white;
             padding: 14px 20px;
             margin: 8px 0;
@@ -80,6 +84,28 @@
         .form-container button:hover {
             opacity: 0.8;
         }
+
+        #editBtn {
+            background-color: #F2BE22;
+        }
+
+        #delBtn {
+            background-color: #F24C3D;
+        }
+
+        #editBtn:hover, #delBtn:hover {
+            opacity: 0.8;
+        }
+
+        #updateBtn {
+            background-color: #809b48;
+        }
+
+        #cancelBtn {
+            background-color: #d3d3d3;
+            color: #5a5a5a;
+        }
+
     </style>
     <script>
         // Function to scroll back to the top of the page
@@ -157,18 +183,18 @@
                 <td rowspan="3">
                     {% for meal in daily_plan.breakfast_meals %}
                         {{ meal.food_name }} ({{ meal.calories_gained }} calories)
-                        <button class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')">Edit</button>
-                        <button class="add-button" onclick="openDeleteForm('{{ meal.id }}', {{ daily_plan.id }}, '{{ meal.calories_gained }}')">Delete</button>
+                        <button id="editBtn" class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')"><i class="fa fa-edit"></i></button>
+                        <button id="delBtn" class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')"><i class="fa fa-trash"></i></button>
                         <br>
                     {% endfor %}
-                    <button class="add-button" onclick="openForm('actualMeal', 'Breakfast', {{ daily_plan.id }})">Add Actual Meal</button>
+                    <button class="add-button" onclick="openForm('actualMeal', 'Breakfast', '{{ daily_plan.id }}')">Add Actual Meal</button>
                 </td>
             <td rowspan="3">
                     {% for exercise in daily_plan.exercises %}
                         {{ exercise.activity}} ({{ exercise.calories_burnt }} calories)
-                        <button class="add-button" onclick="openEditExerciseForm('{{ exercise.id }}', '{{ exercise.exercise_type }}', '{{ exercise.activity }}', '{{ exercise.description }}', '{{ exercise.calories_burnt }}', '{{ daily_plan.id }}')">Edit</button>
+                        <button id="editBtn" class="add-button" onclick="openEditExerciseForm('{{ exercise.id }}', '{{ exercise.exercise_type }}', '{{ exercise.activity }}', '{{ exercise.description }}', '{{ exercise.calories_burnt }}', '{{ daily_plan.id }}')"><i class="fa fa-edit"></i></button>
                         <!-- <button class="add-button" onclick="openEditExerciseForm('{{ exercise.id }}', '{{ exercise.activity }}','{{ exercise.calories_burnt }}', '{{ daily_plan.id }}')">Edit</button> -->
-                        <button class="add-button" onclick="openDeleteExerciseForm('{{ exercise.id }}', '{{ daily_plan.id }}', '{{ exercise.calories_burnt }}')">Delete</button>
+                        <button id="delBtn" class="add-button" onclick="openDeleteExerciseForm('{{ exercise.id }}', '{{ daily_plan.id }}', '{{ exercise.calories_burnt }}')"><i class="fa fa-trash"></i></button>
                         <br>
                     {% endfor %}
                     <button class="add-button" onclick="openExerciseForm('{{ daily_plan.id }}')">Add Exercise</button>
@@ -192,11 +218,11 @@
                 <td rowspan="3">
                     {% for meal in daily_plan.lunch_meals %}
                         {{ meal.food_name }} ({{ meal.calories_gained }} calories)
-                        <button class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')">Edit</button>
-                        <button class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')">Delete</button>
+                        <button id="editBtn" class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')"><i class="fa fa-edit"></i></button>
+                        <button id="delBtn" class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')"><i class="fa fa-trash"></i></button>
                         <br>
                     {% endfor %}
-                    <button class="add-button" onclick="openForm('actualMeal', 'Lunch', {{ daily_plan.id }})">Add Actual Meal</button>
+                    <button class="add-button" onclick="openForm('actualMeal', 'Lunch', '{{ daily_plan.id }}')">Add Actual Meal</button>
                 </td>
             </tr>
             <tr></tr>
@@ -217,11 +243,11 @@
                 <td rowspan="3">
                     {% for meal in daily_plan.dinner_meals %}
                         {{ meal.food_name }} ({{ meal.calories_gained }} calories)
-                        <button class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')">Edit</button>
-                        <button class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')">Delete</button>
+                        <button id="editBtn" class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')"><i class="fa fa-edit"></i></button>
+                        <button id="delBtn" class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')"><i class="fa fa-trash"></i></button>
                         <br>
                     {% endfor %}
-                    <button class="add-button" onclick="openForm('actualMeal', 'Dinner', {{ daily_plan.id }})">Add Actual Meal</button>
+                    <button class="add-button" onclick="openForm('actualMeal', 'Dinner', '{{ daily_plan.id }}')">Add Actual Meal</button>
                 </td>
             </tr>
             <tr></tr>
@@ -238,6 +264,7 @@
     {% else %}
     <p>No daily plan! Create a goal now!</p>
 {% endif %}
+
     <!-- Pop-up form for adding actual meal -->
     <div class="form-popup" id="actualMealForm">
         <form action="/add_actual_meal" method="post" class="form-container">
@@ -254,10 +281,10 @@
             <label for="caloriesGained"><b>Calories Gained</b></label>
             <input type="text" id="caloriesGainedInput" placeholder="Enter calories gained" name="caloriesGained" required>
             <button type="submit" class="add-button">Add Meal</button>
-            <button type="button" class="add-button" onclick="closeForm('actualMeal')">Cancel</button>
+            <button type="button" id="cancelBtn" class="add-button" onclick="closeForm('actualMeal')">Cancel</button>
         </form>
     </div>
-    
+
     <!-- Pop-up form for editing actual meal -->
 <div class="form-popup" id="editActualMealForm">
     <form action="/update_actual_meal" method="post" class="form-container">
@@ -268,8 +295,8 @@
         <input type="text" id="editFoodName" name="foodName" placeholder="Enter food name" required>
         <label for="editCaloriesGained"><b>Calories Gained</b></label>
         <input type="text" id="editCaloriesGained" name="caloriesGained" placeholder="Enter calories gained" required>
-        <button type="submit" class="add-button">Update Meal</button>
-        <button type="button" class="add-button" onclick="closeForm('editActualMeal')">Cancel</button>
+        <button type="submit" id="updateBtn" class="add-button">Update Meal</button>
+        <button type="button" id="cancelBtn" class="add-button" onclick="closeForm('editActualMeal')">Cancel</button>
     </form>
 </div>
 
@@ -281,8 +308,8 @@
         <input type="hidden" id="deleteMealId" name="mealId" value="">
         <input type="hidden" id="deleteDailyPlanId" name="deleteDailyPlanId" value="">
         <input type="hidden" id="caloriesGained" name="caloriesGained" value="">
-        <button type="submit" class="add-button">Delete Meal</button>
-        <button type="button" class="add-button" onclick="closeForm('deleteActualMeal')">Cancel</button>
+        <button type="submit" id="delBtn" class="add-button">Delete Meal</button>
+        <button type="button" id="cancelBtn" class="add-button" onclick="closeForm('deleteActualMeal')">Cancel</button>
     </form>
 </div>
 
@@ -304,7 +331,7 @@
             <label for="caloriesBurnt"><b>Calories Burnt</b></label>
             <input type="text" id="caloriesBurntInput" placeholder="Enter calories burnt" name="caloriesBurnt" required>
             <button type="submit" class="add-button">Add Exercise</button>
-            <button type="button" class="add-button" onclick="closeForm('exercise')">Cancel</button>
+            <button type="button" id="cancelBtn" class="add-button" onclick="closeForm('exercise')">Cancel</button>
         </form>
     </div>
 
@@ -321,7 +348,7 @@
             <label for="editCaloriesBurnt"><b>Calories Burnt</b></label>
             <input type="text" id="editCaloriesBurnt" placeholder="Enter calories burnt" name="editCaloriesBurnt" required>
             <button type="submit" class="add-button">Update Exercise</button>
-            <button type="button" class="add-button" onclick="closeForm('editExercise')">Cancel</button>
+            <button type="button" id="cancelBtn" class="add-button" onclick="closeForm('editExercise')">Cancel</button>
         </form>
     </div>
 
@@ -334,7 +361,7 @@
             <input type="hidden" id="deleteExerciseDailyPlanId" name="deleteDailyPlanId" value="">
             <input type="hidden" id="caloriesBurnt" name="caloriesBurnt" value="">
             <button type="submit" class="add-button">Delete Exercise</button>
-            <button type="button" class="add-button" onclick="closeForm('deleteExercise')">Cancel</button>
+            <button type="button" id="cancelBtn" class="add-button" onclick="closeForm('deleteExercise')">Cancel</button>
         </form>
     </div>
 
@@ -387,14 +414,14 @@
                 document.getElementById("exerciseDailyPlanId").value = dailyPlanId;
             }
         }
-        
+
         // Populate the edit form with the existing exercise's data
         function openEditExerciseForm(exerciseId, exerciseType, activity, description, caloriesBurnt, dailyPlanId) {
             console.log("activity", activity)
             console.log("caloriesBurnt", caloriesBurnt)
             document.getElementById("editExerciseForm").style.display = "block";
             document.getElementById("updateExerciseId").value = exerciseId;
-            // document.getElementById("editExerciseType").value = exerciseType;
+            document.getElementById("editExerciseType").value = exerciseType;
             document.getElementById("editActivity").value = activity;
             document.getElementById("editDescription").value = description;
             document.getElementById("editCaloriesBurnt").value = caloriesBurnt;
