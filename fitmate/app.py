@@ -165,9 +165,10 @@ def home():
     # Get the current date
     today = date.today()
     food_data = list(food_collection.find())
-    print("Keys in a sample document:", food_data[0].keys())
+    exercise_data = list(exercise_collection.find())
+    print("Keys in a sample document:", exercise_data[0].keys())
     user = session.get('user')
-
+    print("USER:", user['weight'])
     user_id = user['id']
 
     actual_meal_query = """
@@ -268,7 +269,7 @@ def home():
             dp['generated_lunch'] = generated_meal_plan['lunch']
             dp['generated_dinner'] = generated_meal_plan['dinner']
 
-    return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data, today=today, target_calories=target_calories)
+    return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data, exercise_data=exercise_data, today=today, target_calories=target_calories)
 
 
 
@@ -356,12 +357,12 @@ def delete_actual_meal():
 @app.route('/add_exercise', methods=['POST'])
 @login_required
 def add_exercise():
-    exercise_type = request.form['exerciseType']
     activity = request.form['activity']
-    description = request.form['description']
     calories_burnt = float(request.form['caloriesBurnt'])
     daily_plan_id = int(request.form.get('dailyPlanId'))
-
+    # NEED TO CHANGE, IDK WHAT IS EXERCISE TYPE FOR
+    exercise_type = 'placeholder'
+    description = 'placeholder'
     # Insert the exercise into the database
     insert_query = "INSERT INTO exercise (daily_plan_id, exercise_type, activity, description, calories_burnt) " \
                    "VALUES (%s, %s, %s, %s, %s)"
@@ -382,11 +383,11 @@ def add_exercise():
 @login_required
 def update_exercise():
     exercise_id = int(request.form['exerciseId'])
-    exercise_type = request.form['exerciseType']
-    activity = request.form['activity']
-    description = request.form['description']
-    calories_burnt = float(request.form['caloriesBurnt'])
-    daily_plan_id = int(request.form['editDailyPlanId'])
+    exercise_type = 'placeholder'
+    activity = request.form['editActivity']
+    description = 'placeholder'
+    calories_burnt = float(request.form['editCaloriesBurnt'])
+    # daily_plan_id = int(request.form['editDailyPlanId'])
 
     # Update the exercise in the database
     update_exercise_query = "UPDATE exercise SET exercise_type = %s, activity = %s, description = %s, " \
@@ -490,6 +491,7 @@ def update_food_item():
 
         # Update the document in the database
         food_collection.update_one({'Food': food_name}, {'$set': existing_food_item})
+
         return redirect('/food')
 
 @app.route('/delete_food_item', methods=['POST'])

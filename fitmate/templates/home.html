@@ -164,8 +164,9 @@
                 </td>
             <td rowspan="3">
                     {% for exercise in daily_plan.exercises %}
-                        {{ exercise.exercise_type }} ({{ exercise.calories_burnt }} calories)
+                        {{ exercise.activity}} ({{ exercise.calories_burnt }} calories)
                         <button class="add-button" onclick="openEditExerciseForm('{{ exercise.id }}', '{{ exercise.exercise_type }}', '{{ exercise.activity }}', '{{ exercise.description }}', '{{ exercise.calories_burnt }}', '{{ daily_plan.id }}')">Edit</button>
+                        <!-- <button class="add-button" onclick="openEditExerciseForm('{{ exercise.id }}', '{{ exercise.activity }}','{{ exercise.calories_burnt }}', '{{ daily_plan.id }}')">Edit</button> -->
                         <button class="add-button" onclick="openDeleteExerciseForm('{{ exercise.id }}', '{{ daily_plan.id }}', '{{ exercise.calories_burnt }}')">Delete</button>
                         <br>
                     {% endfor %}
@@ -288,14 +289,15 @@
         <form action="/add_exercise" method="post" class="form-container">
             <h2>Add Exercise</h2>
             <input type="hidden" id="exerciseDailyPlanId" name="dailyPlanId" value="">
-            <label for="exerciseType"><b>Exercise Type</b></label>
-            <input type="text" placeholder="Enter exercise type" name="exerciseType" required>
-            <label for="activity"><b>Activity</b></label>
-            <input type="text" placeholder="Enter activity" name="activity" required>
-            <label for="description"><b>Description</b></label>
-            <textarea placeholder="Enter description" name="description" required></textarea>
+            <label for="activity"><b>Activity Name</b></label>
+            <select name="activity" onchange="updateCaloriesBurnt({{ user['weight'] }})" required>
+                <option value="" disabled selected>Select an exercise</option>
+                {% for exercise in exercise_data %}
+                    <option value="{{ exercise['Activity'] }}" data-calories="{{ exercise['Calories per kg']}}">{{ exercise.Activity }}</option>
+                {% endfor %}
+            </select>
             <label for="caloriesBurnt"><b>Calories Burnt</b></label>
-            <input type="text" placeholder="Enter calories burnt" name="caloriesBurnt" required>
+            <input type="text" id="caloriesBurntInput" placeholder="Enter calories burnt" name="caloriesBurnt" required>
             <button type="submit" class="add-button">Add Exercise</button>
             <button type="button" class="add-button" onclick="closeForm('exercise')">Cancel</button>
         </form>
@@ -307,14 +309,10 @@
             <h2>Edit Exercise</h2>
             <input type="hidden" id="updateExerciseId" name="exerciseId" value="">
             <input type="hidden" id="editExerciseDailyPlanId" name="editDailyPlanId" value="">
-            <label for="editExerciseType"><b>Exercise Type</b></label>
-            <input type="text" id="editExerciseType" name="exerciseType" placeholder="Enter exercise type" required>
-            <label for="editActivity"><b>Activity</b></label>
-            <input type="text" id="editActivity" name="activity" placeholder="Enter activity" required>
-            <label for="editDescription"><b>Description</b></label>
-            <textarea id="editDescription" name="description" placeholder="Enter description" required></textarea>
+            <label for="editActivity"><b>Activity Name</b></label>
+            <input type="text" id="editActivity" name="editActivity" placeholder="Enter exercise" required>
             <label for="editCaloriesBurnt"><b>Calories Burnt</b></label>
-            <input type="text" id="editCaloriesBurnt" name="caloriesBurnt" placeholder="Enter calories burnt" required>
+            <input type="number" id="caloriesBurntInput" placeholder="Enter calories burnt" name="editCaloriesBurnt" required>
             <button type="submit" class="add-button">Update Exercise</button>
             <button type="button" class="add-button" onclick="closeForm('editExercise')">Cancel</button>
         </form>
@@ -382,14 +380,16 @@
                 document.getElementById("exerciseDailyPlanId").value = dailyPlanId;
             }
         }
-
+        
         // Populate the edit form with the existing exercise's data
         function openEditExerciseForm(exerciseId, exerciseType, activity, description, caloriesBurnt, dailyPlanId) {
+            console.log("activity", activity)
+            console.log("caloriesBurnt", caloriesBurnt)
             document.getElementById("editExerciseForm").style.display = "block";
             document.getElementById("updateExerciseId").value = exerciseId;
-            document.getElementById("editExerciseType").value = exerciseType;
+            // document.getElementById("editExerciseType").value = exerciseType;
             document.getElementById("editActivity").value = activity;
-            document.getElementById("editDescription").value = description;
+            // document.getElementById("editDescription").value = description;
             document.getElementById("editCaloriesBurnt").value = caloriesBurnt;
             document.getElementById("editExerciseDailyPlanId").value = dailyPlanId;
         }
@@ -414,6 +414,21 @@
             } else {
                 // If no option is selected, clear the calories gained input field
                 document.getElementById('caloriesGainedInput').value = '';
+            }
+        }
+        function updateCaloriesBurnt(userWeight) {
+            // Get the selected option from the dropdown
+            const selectedOption = document.querySelector('select[name="activity"] option:checked');
+            if (selectedOption) {
+                // Get the calories data attribute of the selected option
+                const calories = selectedOption.getAttribute('data-calories');
+
+                // Update the calories gained input field with the calories value
+                document.getElementById('caloriesBurntInput').value = calories * userWeight;
+
+            } else {
+                // If no option is selected, clear the calories gained input field
+                document.getElementById('caloriesBurntInput').value = '';
             }
         }
     </script>
