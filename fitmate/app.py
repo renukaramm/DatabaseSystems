@@ -269,6 +269,21 @@ def home():
 
     daily_plans = list(daily_plans.values())
 
+    # Function to round calorie values to 2 decimal places
+    def round_calories(value):
+        return round(value, 2)
+
+    # Round the calorie values in the daily_plans dictionary
+    for plan in daily_plans:
+        plan['net_calories'] = round_calories(plan['net_calories'])
+
+        for meal_list in [plan['breakfast_meals'], plan['lunch_meals'], plan['dinner_meals']]:
+            for meal in meal_list:
+                meal['calories_gained'] = round_calories(meal['calories_gained'])
+
+        for exercise in plan['exercises']:
+            exercise['calories_burnt'] = round_calories(exercise['calories_burnt'])
+
     return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data, exercise_data=exercise_data, today=today)
 
 
