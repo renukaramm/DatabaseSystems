@@ -24,7 +24,7 @@ food_collection = db_mongo.food
 db_host = 'localhost'
 db_user = 'root'
 db_password = '1234'
-db_name = 'fitmATER'
+db_name = 'fitmATE'
 
 # Create a MySQL connection and cursor
 db_mysql = mysql.connector.connect(
