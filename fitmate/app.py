@@ -247,7 +247,7 @@ def home():
 
     actual_meal_query = """
         SELECT dp.daily_plan_id, dp.goal_id, dp.date, dp.net_calories,
-               m.calories_gained, m.food_name, m.meal_timeframe, m.meal_id
+               m.calories_gained, m.food_name, m.meal_timeframe, m.meal_id, g.goal_name
         FROM daily_plan dp
         JOIN goals g ON dp.goal_id = g.goal_id
         LEFT JOIN meal m ON dp.daily_plan_id = m.daily_plan_id AND m.meal_type = 'actual'
@@ -282,13 +282,15 @@ def home():
                 'breakfast_meals': [],
                 'lunch_meals': [],
                 'dinner_meals': [],
-                'exercises': []
+                'exercises': [],
+                'goal_name': row[8]
             }
 
         meal_timeframe = row[6]
         food_name = row[5]
         calories_gained = row[4]
         meal_id = row[7]
+        print("ROW:", row)
 
         meal = {'id': meal_id, 'food_name': food_name, 'calories_gained': calories_gained}
         if meal_timeframe == 'Breakfast':
