@@ -112,10 +112,21 @@
             text-align: left;
             margin: 0px auto 0px 60px;
         } 
+
+        .grid-container2 { 
+            display: grid; 
+            grid-template-columns: 40% 60%;
+            text-align: left;
+            margin: 0px auto 0px 40px;
+        } 
+
         .grid-child { 
             margin: 5px 0px;
         }
 
+        .exercise-info {
+    text-align: center;
+}
     </style>
     <script>
         // Function to scroll back to the top of the page
@@ -169,8 +180,10 @@
 {% if daily_plans %}
     {% for daily_plan in daily_plans %}
         {% if daily_plan.date == today %}
-        <div>{{daily_plan}}</div>
         <table>
+            <tr>
+                <th style="background-color: #46648b; color: white;" colspan="4">GOAL: {{ daily_plan.goal_name }}</th>
+            </tr>
             <tr>
                 <th>Daily Plan</th>
                 <th>Meal Plan</th>
@@ -180,34 +193,34 @@
             <tr>
                 <td rowspan="3">Breakfast</td>
                 <td rowspan="3" class="meal-plan-cell" data-meal-timeframe="Breakfast">
-                    <strong>Breakfast</strong><br>
-                    {% if daily_plan.generated_breakfast %}
-                        {% for meal in daily_plan.generated_breakfast %}
-                            <div class="grid-container">
-                                <div class="grid-child">{{ meal.food_name }}</div> 
-                                <div class="grid-child">({{ meal.calories }} calories)</div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        No Suggestions!
-                    {% endif %}
+                    <!-- plan will be generated when function is called -->
                     <button class="add-button" onclick="generateMealPlan('Breakfast', '{{ daily_plan.id }}')">Generate Meal Plan</button>
                 </td>
                 <td rowspan="3">
                     {% for meal in daily_plan.breakfast_meals %}
-                        {{ meal.food_name }} ({{ meal.calories_gained }} calories)
-                        <button id="editBtn" class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')"><i class="fa fa-edit"></i></button>
-                        <button id="delBtn" class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')"><i class="fa fa-trash"></i></button>
+                        <div class="grid-container2">
+                            <div class="grid-child">{{ meal.food_name }}</div>
+                            <div class="grid-child">
+                                ({{ meal.calories_gained }} calories)
+                                <button id="editBtn" class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')"><i class="fa fa-edit"></i></button>
+                                <button id="delBtn" class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')"><i class="fa fa-trash"></i></button>
+                            </div>
+                        </div>
                         <br>
                     {% endfor %}
                     <button class="add-button" onclick="openForm('actualMeal', 'Breakfast', '{{ daily_plan.id }}')">Add Actual Meal</button>
                 </td>
-            <td rowspan="3">
+            <td rowspan="9" colspan="3">
                     {% for exercise in daily_plan.exercises %}
-                        {{ exercise.activity}} ({{ exercise.calories_burnt }} calories)
-                        <button id="editBtn" class="add-button" onclick="openEditExerciseForm('{{ exercise.id }}', '{{ exercise.exercise_type }}', '{{ exercise.activity }}', '{{ exercise.description }}', '{{ exercise.calories_burnt }}', '{{ daily_plan.id }}')"><i class="fa fa-edit"></i></button>
-                        <!-- <button class="add-button" onclick="openEditExerciseForm('{{ exercise.id }}', '{{ exercise.activity }}','{{ exercise.calories_burnt }}', '{{ daily_plan.id }}')">Edit</button> -->
-                        <button id="delBtn" class="add-button" onclick="openDeleteExerciseForm('{{ exercise.id }}', '{{ daily_plan.id }}', '{{ exercise.calories_burnt }}')"><i class="fa fa-trash"></i></button>
+                        <div class="grid-container2 exercise-info">
+                            <div class="grid-child">{{ exercise.activity}}</div>
+                            <div class="grid-child">
+                                ({{ exercise.calories_burnt }} calories)
+                                <button id="editBtn" class="add-button" onclick="openEditExerciseForm('{{ exercise.id }}', '{{ exercise.exercise_type }}', '{{ exercise.activity }}', '{{ exercise.description }}', '{{ exercise.calories_burnt }}', '{{ daily_plan.id }}')"><i class="fa fa-edit"></i></button>
+                                <!-- <button class="add-button" onclick="openEditExerciseForm('{{ exercise.id }}', '{{ exercise.activity }}','{{ exercise.calories_burnt }}', '{{ daily_plan.id }}')">Edit</button> -->
+                                <button id="delBtn" class="add-button" onclick="openDeleteExerciseForm('{{ exercise.id }}', '{{ daily_plan.id }}', '{{ exercise.calories_burnt }}')"><i class="fa fa-trash"></i></button>
+                            </div>
+                        </div>
                         <br>
                     {% endfor %}
                     <button class="add-button" onclick="openExerciseForm('{{ daily_plan.id }}')">Add Exercise</button>
@@ -218,24 +231,19 @@
             <tr>
                 <td rowspan="3">Lunch</td>
                 <td rowspan="3" class="meal-plan-cell" data-meal-timeframe="Lunch">
-                    <strong>Lunch</strong><br>
-                    {% if daily_plan.generated_lunch %}
-                        {% for meal in daily_plan.generated_lunch %}
-                            <div class="grid-container">
-                                <div class="grid-child">{{ meal.food_name }}</div> 
-                                <div class="grid-child">({{ meal.calories }} calories)</div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        No Suggestions!
-                    {% endif %}
+                    <!-- plan will be generated when function is called -->
                     <button class="add-button" onclick="generateMealPlan('Lunch', '{{ daily_plan.id }}')">Generate Meal Plan</button>
                 </td>
                 <td rowspan="3">
                     {% for meal in daily_plan.lunch_meals %}
-                        {{ meal.food_name }} ({{ meal.calories_gained }} calories)
-                        <button id="editBtn" class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')"><i class="fa fa-edit"></i></button>
-                        <button id="delBtn" class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')"><i class="fa fa-trash"></i></button>
+                        <div class="grid-container2">
+                            <div class="grid-child">{{ meal.food_name }}</div>
+                            <div class="grid-child">
+                                ({{ meal.calories_gained }} calories)
+                                <button id="editBtn" class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')"><i class="fa fa-edit"></i></button>
+                                <button id="delBtn" class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')"><i class="fa fa-trash"></i></button>
+                            </div>
+                        </div>
                         <br>
                     {% endfor %}
                     <button class="add-button" onclick="openForm('actualMeal', 'Lunch', '{{ daily_plan.id }}')">Add Actual Meal</button>
@@ -246,24 +254,19 @@
             <tr>
                 <td rowspan="3">Dinner</td>
                 <td rowspan="3" class="meal-plan-cell" data-meal-timeframe="Dinner">
-                    <strong>Dinner</strong><br>
-                    {% if daily_plan.generated_dinner %}
-                        {% for meal in daily_plan.generated_dinner %}
-                            <div class="grid-container">
-                                <div class="grid-child">{{ meal.food_name }}</div> 
-                                <div class="grid-child">({{ meal.calories }} calories)</div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        No Suggestions!
-                    {% endif %}
+                    <!-- plan will be generated when function is called -->
                     <button class="add-button" onclick="generateMealPlan('Dinner', '{{ daily_plan.id }}')">Generate Meal Plan</button>
                 </td>
                 <td rowspan="3">
                     {% for meal in daily_plan.dinner_meals %}
-                        {{ meal.food_name }} ({{ meal.calories_gained }} calories)
-                        <button id="editBtn" class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')"><i class="fa fa-edit"></i></button>
-                        <button id="delBtn" class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')"><i class="fa fa-trash"></i></button>
+                        <div class="grid-container2">
+                            <div class="grid-child">{{ meal.food_name }}</div>
+                            <div class="grid-child">
+                                ({{ meal.calories_gained }} calories)
+                                <button id="editBtn" class="add-button" onclick="openEditForm('{{ meal.id }}', '{{ meal.food_name }}', '{{ meal.calories_gained }}', '{{ daily_plan.id }}')"><i class="fa fa-edit"></i></button>
+                                <button id="delBtn" class="add-button" onclick="openDeleteForm('{{ meal.id }}', '{{ daily_plan.id }}', '{{ meal.calories_gained }}')"><i class="fa fa-trash"></i></button>
+                            </div>
+                        </div>
                         <br>
                     {% endfor %}
                     <button class="add-button" onclick="openForm('actualMeal', 'Dinner', '{{ daily_plan.id }}')">Add Actual Meal</button>
@@ -366,7 +369,7 @@
             <textarea placeholder="How did it go? Share more about your activity" id="editDescription" name="editDescription" required></textarea>
             <label for="editCaloriesBurnt"><b>Calories Burnt</b></label>
             <input type="text" id="editCaloriesBurnt" placeholder="Enter calories burnt" name="editCaloriesBurnt" required>
-            <button type="submit" class="add-button">Update Exercise</button>
+            <button type="submit" id="updateBtn" class="add-button">Update Exercise</button>
             <button type="button" id="cancelBtn" class="add-button" onclick="closeForm('editExercise')">Cancel</button>
         </form>
     </div>
@@ -509,7 +512,10 @@
                             if (mealPlanData && mealPlanData.mealPlan && mealPlanData.mealPlan.length > 0) {
                                 let mealPlanHTML = "<strong>" + mealTimeframe + "</strong><br>";
                                 mealPlanData.mealPlan.forEach((meal) => {
-                                    mealPlanHTML += `${meal.Food} (${meal.Calories} calories)<br>`;
+                                    mealPlanHTML += `<div class="grid-container">
+                                        <div class="grid-child">${meal.Food}</div>
+                                        <div class="grid-child">(${meal.Calories} calories)</div>
+                                    </div>`;
                                 });
                                 mealPlanContainer.innerHTML = mealPlanHTML;
                             } else {
@@ -518,7 +524,7 @@
                             // Add back the "Generate Meal Plan" button to the container
                             const generateButton = document.createElement("button");
                             generateButton.className = "add-button";
-                            generateButton.textContent = "Generate Meal Plan";
+                            generateButton.textContent = "Regenerate Meal Plan";
                             generateButton.setAttribute("onclick", `generateMealPlan('${mealTimeframe}', '${dailyPlanId}')`);
                             mealPlanContainer.appendChild(generateButton);
                         } else {

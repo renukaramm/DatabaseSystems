@@ -3,6 +3,7 @@
 
 <head>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <title>Goal</title>
   <style>
     .goals-table {
@@ -20,8 +21,8 @@
     }
 
     .goals-table thead tr {
-      background-color: #13355b;
-      color: #ffffff;
+      background-color: #D8C4B6;
+      color: black;
       text-align: left;
     }
 
@@ -51,7 +52,7 @@
       padding: 20px;
       border: 1px solid #ccc;
       border-radius: 4px;
-      background-color: #f9f9f9;
+      background-color: #F5EFE7;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       margin-right: 20px;
     }
@@ -200,6 +201,14 @@
     .button-container button {
       margin-right: 10px;
     }
+
+    #editBtn {
+        background-color: #F2BE22;
+    }
+
+    #delBtn {
+        background-color: #F24C3D;
+    }
   </style>
 </head>
 
@@ -242,14 +251,14 @@
         <input type="text" id="goal-name" name="goal-name" required>
         <label for="goal-type">Goal Type:</label>
         <select id="goal-type" name="goal-type" required>
-          <option value="Weight gain">General Fitness</option>
-          <option value="Bulk">Fat Loss</option>
-          <option value="Weight gain">Muscle Gain</option>
-          <option value="Weight gain">Get Stronger</option>
-          <option value="Weight gain">Build Endurance</option>
-          <option value="Weight gain">Tone Up</option>
-          <option value="Weight gain">Improve Flexibility</option>
-          <option value="Weight gain">Improve Speed</option>
+          <option value="General Fitness">General Fitness</option>
+          <option value="Fat Loss">Fat Loss</option>
+          <option value="Muscle Gain">Muscle Gain</option>
+          <option value="Get Stronger">Get Stronger</option>
+          <option value="Build Endurance">Build Endurance</option>
+          <option value="Tone Up">Tone Up</option>
+          <option value="Improve Flexibility">Improve Flexibility</option>
+          <option value="Improve Speed">Improve Speed</option>
         </select>
         <label for="start-date">Start Date:</label>
         <input type="date" id="start-date" name="start-date" required>
@@ -292,12 +301,12 @@
                 <form action="/update_goal" method="POST"
                   onsubmit="showEditGoalForm('{{ goal[0] }}', '{{ goal[2] }}', '{{ goal[3] }}', '{{ goal[6] }}', '{{ goal[7] }}', '{{ goal[4] }}', '{{ goal[5] }}'); return false;">
                   <input type="hidden" name="goalId" value="{{ goal[0] }}">
-                  <button class="" type="submit">Edit</button>
+                  <button id="editBtn" class="" type="submit"><i class="fa fa-edit"></i></button>
                 </form>
 
                 <form action="/delete_goal" method="POST" style="display: inline;">
                   <input type="hidden" name="goalId" value="{{ goal[0] }}">
-                  <button class="" type="submit">Delete</button>
+                  <button id="delBtn" class="" type="submit"><i class="fa fa-trash"></i></button>
                 </form>
               </div>
             </td>
@@ -323,14 +332,14 @@
         <br><br>
         <label for="edit-goal-type">Goal Type:</label>
         <select id="edit-goal-type" name="goalType" required>
-          <option value="Weight gain">General Fitness</option>
-          <option value="Bulk">Fat Loss</option>
-          <option value="Weight gain">Muscle Gain</option>
-          <option value="Weight gain">Get Stronger</option>
-          <option value="Weight gain">Build Endurance</option>
-          <option value="Weight gain">Tone Up</option>
-          <option value="Weight gain">Improve Flexibility</option>
-          <option value="Weight gain">Improve Speed</option>
+          <option value="General Fitness">General Fitness</option>
+          <option value="Fat Loss">Fat Loss</option>
+          <option value="Muscle Gain">Muscle Gain</option>
+          <option value="Get Stronger">Get Stronger</option>
+          <option value="Build Endurance">Build Endurance</option>
+          <option value="Tone Up">Tone Up</option>
+          <option value="Improve Flexibility">Improve Flexibility</option>
+          <option value="Improve Speed">Improve Speed</option>
         </select>
         <br><br>
         <label for="edit-start-date">Start Date:</label>

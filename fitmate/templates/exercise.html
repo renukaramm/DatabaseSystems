@@ -111,6 +111,14 @@
         .add-exercise {
             width: 160px;
         }
+
+        #editBtn {
+            background-color: #F2BE22;
+        }
+
+        #delBtn {
+            background-color: #F24C3D;
+        }
     </style>
 
     <script>
@@ -390,7 +398,7 @@
             <br>
             <form id="exerciseUpdateForm" action="/update_exercise_item" method="post">
                 <label for="exerciseActivityU">Activity:</label>
-                <input type="text" id="exerciseActivityU" name="exerciseActivityU" required>
+                <input type="text" id="exerciseActivityU" name="exerciseActivityU" disabled>
                 <br><br>
                 <label for="exercise130lbU">130 lb:</label>
                 <input type="number" id="exercise130lbU" name="exercise130lbU" required>
@@ -434,11 +442,11 @@
                 <td>{{ exercise['205 lb'] }}</td>
                 <td>{{ exercise['Calories per kg'] }}</td>
                 <td>
-                    <button class="button"
+                    <button id="editBtn" class="button"
                         onclick="openExerciseUpdateForm('{{ exercise['Activity'] }}', '{{ exercise['130 lb'] }}', '{{ exercise['155 lb'] }}', '{{ exercise['180 lb'] }}', '{{ exercise['205 lb'] }}', '{{ exercise['Calories per kg'] }}')"><i class="fa fa-edit"></i></button>
                 </td>
                 <td>
-                    <button class="button" onclick="deleteExerciseItem('{{ exercise['Activity'] }}')"><i class="fa fa-trash"></i></button>
+                    <button id="delBtn" class="button" onclick="deleteExerciseItem('{{ exercise['Activity'] }}')"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>
             {% endfor %}
