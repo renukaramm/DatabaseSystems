@@ -180,17 +180,7 @@
             <tr>
                 <td rowspan="3">Breakfast</td>
                 <td rowspan="3" class="meal-plan-cell" data-meal-timeframe="Breakfast">
-                    <strong>Breakfast</strong><br>
-                    {% if daily_plan.generated_breakfast %}
-                        {% for meal in daily_plan.generated_breakfast %}
-                            <div class="grid-container">
-                                <div class="grid-child">{{ meal.food_name }}</div> 
-                                <div class="grid-child">({{ meal.calories }} calories)</div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        No Suggestions!
-                    {% endif %}
+                    <!-- plan will be generated when function is called -->
                     <button class="add-button" onclick="generateMealPlan('Breakfast', '{{ daily_plan.id }}')">Generate Meal Plan</button>
                 </td>
                 <td rowspan="3">
@@ -218,17 +208,7 @@
             <tr>
                 <td rowspan="3">Lunch</td>
                 <td rowspan="3" class="meal-plan-cell" data-meal-timeframe="Lunch">
-                    <strong>Lunch</strong><br>
-                    {% if daily_plan.generated_lunch %}
-                        {% for meal in daily_plan.generated_lunch %}
-                            <div class="grid-container">
-                                <div class="grid-child">{{ meal.food_name }}</div> 
-                                <div class="grid-child">({{ meal.calories }} calories)</div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        No Suggestions!
-                    {% endif %}
+                    <!-- plan will be generated when function is called -->
                     <button class="add-button" onclick="generateMealPlan('Lunch', '{{ daily_plan.id }}')">Generate Meal Plan</button>
                 </td>
                 <td rowspan="3">
@@ -509,7 +489,10 @@
                             if (mealPlanData && mealPlanData.mealPlan && mealPlanData.mealPlan.length > 0) {
                                 let mealPlanHTML = "<strong>" + mealTimeframe + "</strong><br>";
                                 mealPlanData.mealPlan.forEach((meal) => {
-                                    mealPlanHTML += `${meal.Food} (${meal.Calories} calories)<br>`;
+                                    mealPlanHTML += `<div class="grid-container">
+                                        <div class="grid-child">${meal.Food}</div>
+                                        <div class="grid-child">(${meal.Calories} calories)</div>
+                                    </div>`;
                                 });
                                 mealPlanContainer.innerHTML = mealPlanHTML;
                             } else {
