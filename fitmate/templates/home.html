@@ -301,6 +301,7 @@
 <div class="form-popup" id="actualMealForm">
     <form action="/add_actual_meal" method="post" class="form-container">
         <h2>Add Actual Meal</h2>
+        <br>
         <input type="hidden" id="actualMealTimeframe" name="mealTimeframe" value="">
         <input type="hidden" id="dailyPlanId" name="dailyPlanId" value="">
         <label for="foodName"><b>Food Name</b></label><br>
@@ -310,9 +311,11 @@
                 <option value="{{ food.Food }}" data-calories="{{ food.Calories }}">{{ food.Food }}</option>
             {% endfor %}
         </select>
+        <br><br>
         <label for="caloriesGained"><b>Calories Gained</b></label>
         <input type="text" id="caloriesGainedInput" placeholder="Enter calories gained" name="caloriesGained" required>
-        <button type="submit" class="add-button">Add Meal</button>
+        <br><br>
+        <button type="submit" class="add-button" style="background-color: #f26c47;">Add Meal</button>
         <button type="button" id="cancelBtn" class="add-button" onclick="closeForm('actualMeal')">Cancel</button>
     </form>
 </div>
@@ -349,6 +352,7 @@
 <div class="form-popup" id="exerciseForm">
     <form action="/add_exercise" method="post" class="form-container">
         <h2>Add Exercise</h2>
+        <br><br>
         <input type="hidden" id="exerciseDailyPlanId" name="dailyPlanId" value="">
         <label for="activity"><b>Activity Name</b></label>
         <select name="activity" onchange="updateCaloriesBurnt({{ user['weight'] }})" required>
@@ -357,11 +361,14 @@
                 <option value="{{ exercise['Activity'] }}" data-calories="{{ exercise['Calories per kg']}}">{{ exercise.Activity }}</option>
             {% endfor %}
         </select>
+        <br><br>
         <label for="description"><b>Description</b></label>
         <textarea placeholder="How did it go? Share more about your activity" name="description" required></textarea>
+        <br><br>
         <label for="caloriesBurnt"><b>Calories Burnt</b></label>
         <input type="text" id="caloriesBurntInput" placeholder="Enter calories burnt" name="caloriesBurnt" required>
-        <button type="submit" class="add-button">Add Exercise</button>
+        <br><br>
+        <button type="submit" class="add-button" style="background-color: #f26c47;">Add Exercise</button>
         <button type="button" id="cancelBtn" class="add-button" onclick="closeForm('exercise')">Cancel</button>
     </form>
 </div>
