@@ -816,14 +816,19 @@ def records_goals():
 @app.route('/dailyplan')
 @login_required
 def daily_plan():
-    user = session.get('user')  # Retrieve the user data from the session
+    user = session.get('user')
 
     user_id = user['id']
-    # Fetch the daily plans with associated meals and calories gained from the database
+
+    # Retrieve the filter parameters from the URL query parameters
+    goal_name_filter = request.args.get('goal_name')
+    date_filter = request.args.get('date')
+    net_calories_filter = request.args.get('net_calories_filter')
+
     actual_meal_query = """
         SELECT dp.daily_plan_id, dp.goal_id, dp.date, dp.net_calories,
                m.calories_gained, m.food_name, m.meal_timeframe, m.meal_id,
-               g.goal_name, g.target_calories  -- Include the goal_name and target_calories columns
+               g.goal_name, g.target_calories
         FROM daily_plan dp
         JOIN goals g ON dp.goal_id = g.goal_id
         LEFT JOIN meal m ON dp.daily_plan_id = m.daily_plan_id AND m.meal_type = 'actual'
@@ -838,13 +843,41 @@ def daily_plan():
         WHERE g.user_id = %s
     """
 
-    values = (user_id,)  # Pass user_id as a tuple
+    goal_query = """
+        SELECT DISTINCT goal_name
+        FROM goals
+        WHERE user_id = %s
+    """
+
+    values = (user_id,)
+
+    # Modify the actual_meal_query based on the filter parameters
+    if goal_name_filter:
+        actual_meal_query += " AND g.goal_name = %s"
+        exercise_query += " AND g.goal_name = %s"
+        values += (goal_name_filter,)
+
+    if date_filter:
+        actual_meal_query += " AND dp.date = %s"
+        exercise_query += " AND dp.date = %s"
+        values += (date_filter,)
+
+    # Add the comparison filters for net calories
+    if net_calories_filter == "higher":
+        actual_meal_query += " AND dp.net_calories > (SELECT AVG(net_calories) FROM daily_plan)"
+        exercise_query += " AND dp.net_calories > (SELECT AVG(net_calories) FROM daily_plan)"
+    elif net_calories_filter == "lower":
+        actual_meal_query += " AND dp.net_calories < (SELECT AVG(net_calories) FROM daily_plan)"
+        exercise_query += " AND dp.net_calories < (SELECT AVG(net_calories) FROM daily_plan)"
 
     cursor.execute(actual_meal_query, values)
     rows1 = cursor.fetchall()
 
     cursor.execute(exercise_query, values)
     rows2 = cursor.fetchall()
+
+    cursor.execute(goal_query, (user_id,))
+    rows3 = cursor.fetchall()
 
     daily_plans = {}
     for row in rows1:
@@ -897,9 +930,12 @@ def daily_plan():
             # Append the exercise to the correct daily plan using daily_plan_id as the key
             daily_plans[daily_plan_id]['exercises'].append(exercise)
 
+    goal_names = [row[0] for row in rows3]
+
     daily_plans = list(daily_plans.values())
 
-    return render_template('dailyplan.html', user=user, daily_plans=daily_plans)
+    return render_template('dailyplan.html', user=user, daily_plans=daily_plans, goal_names=goal_names,
+                           selected_goal=goal_name_filter, selected_date=date_filter, net_calories_filter=net_calories_filter)
 
 
     
