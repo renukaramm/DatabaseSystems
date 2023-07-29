@@ -751,11 +751,6 @@ def delete_goal():
 
     if goal_id:
         goal_id = int(goal_id)
-        # Delete the dailyplans from the database
-        delete_query = "DELETE FROM daily_plan WHERE goal_id = %s"
-        values = (goal_id,)
-        cursor.execute(delete_query, values)
-        db_mysql.commit()
         # Delete the goal from the database
         delete_query = "DELETE FROM goals WHERE goal_id = %s"
         values = (goal_id,)

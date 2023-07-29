@@ -28,7 +28,7 @@ CREATE TABLE daily_plan (
 	date DATE NOT NULL,
     net_calories DOUBLE NOT NULL,
     PRIMARY KEY (daily_plan_id),
-    FOREIGN KEY (goal_id) REFERENCES goals (goal_id)
+    FOREIGN KEY (goal_id) REFERENCES goals (goal_id) ON DELETE CASCADE
 );
 CREATE TABLE meal (
     meal_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
