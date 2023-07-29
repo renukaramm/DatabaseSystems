@@ -138,9 +138,10 @@
 
 {% if daily_plans %}
   {% for daily_plan in daily_plans %}
+     <div>{{daily_plan}}</div>
     <table>
         <tr>
-            <th colspan="3">GOAL: {{ goal_name }}</th>
+            <th colspan="3">GOAL: {{ daily_plan.goal_name }}</th>
         </tr>
         <tr>
             <th>Daily Plan For {{daily_plan.date}}</th>
@@ -187,9 +188,9 @@
         <tr></tr>
         <tr></tr>
         <tr>
-            <td rowspan="3">Target Calories: {{ target_calories }}</td>
+            <td rowspan="3">Target Calories: {{ daily_plan.target_calories }}</td>
             <td rowspan="3">Net Calories: {{ daily_plan.net_calories }}</td>
-            <td rowspan="3">Calories Difference: {{ daily_plan.net_calories - target_calories }}</td>
+            <td rowspan="3">Calories Difference: {{ daily_plan.net_calories - daily_plan.target_calories }}</td>
         </tr>
     </table>
   <br><br>

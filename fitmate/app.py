@@ -821,21 +821,22 @@ def daily_plan():
     user_id = user['id']
     # Fetch the daily plans with associated meals and calories gained from the database
     actual_meal_query = """
-            SELECT dp.daily_plan_id, dp.goal_id, dp.date, dp.net_calories,
-                   m.calories_gained, m.food_name, m.meal_timeframe, m.meal_id
-            FROM daily_plan dp
-            JOIN goals g ON dp.goal_id = g.goal_id
-            LEFT JOIN meal m ON dp.daily_plan_id = m.daily_plan_id AND m.meal_type = 'actual'
-            WHERE g.user_id = %s
-        """
+        SELECT dp.daily_plan_id, dp.goal_id, dp.date, dp.net_calories,
+               m.calories_gained, m.food_name, m.meal_timeframe, m.meal_id,
+               g.goal_name, g.target_calories  -- Include the goal_name and target_calories columns
+        FROM daily_plan dp
+        JOIN goals g ON dp.goal_id = g.goal_id
+        LEFT JOIN meal m ON dp.daily_plan_id = m.daily_plan_id AND m.meal_type = 'actual'
+        WHERE g.user_id = %s
+    """
 
     exercise_query = """
-            SELECT dp.daily_plan_id, e.exercise_id, e.exercise_type, e.activity, e.description, e.calories_burnt
-            FROM daily_plan dp
-            JOIN goals g ON dp.goal_id = g.goal_id
-            LEFT JOIN exercise e ON dp.daily_plan_id = e.daily_plan_id
-            WHERE g.user_id = %s
-        """
+        SELECT dp.daily_plan_id, e.exercise_id, e.exercise_type, e.activity, e.description, e.calories_burnt
+        FROM daily_plan dp
+        JOIN goals g ON dp.goal_id = g.goal_id
+        LEFT JOIN exercise e ON dp.daily_plan_id = e.daily_plan_id
+        WHERE g.user_id = %s
+    """
 
     values = (user_id,)  # Pass user_id as a tuple
 
@@ -854,6 +855,8 @@ def daily_plan():
                 'goal_id': row[1],  # Access the column value by index
                 'date': row[2],  # Access the column value by index
                 'net_calories': row[3],  # Access the column value by index
+                'goal_name': row[8],  # Access the goal_name column value by index
+                'target_calories': row[9],  # Access the target_calories column value by index
                 'breakfast_meals': [],
                 'lunch_meals': [],
                 'dinner_meals': [],
@@ -895,24 +898,10 @@ def daily_plan():
             daily_plans[daily_plan_id]['exercises'].append(exercise)
 
     daily_plans = list(daily_plans.values())
-    
-    # Set a default value for target_calories and goal_name, this is to prevent error on homepage when there are no goals
-    target_calories = 2000
-    goal_name = "Nameless"
 
-    for dp in daily_plans:
-        goal_id = dp['goal_id']
+    return render_template('dailyplan.html', user=user, daily_plans=daily_plans)
 
-        # Fetch the goal data to get the target calories
-        goal_query = "SELECT target_calories, goal_name FROM goals WHERE goal_id = %s"
-        cursor.execute(goal_query, (goal_id,))
-        goal_data = cursor.fetchone()
 
-        if goal_data:
-            target_calories = goal_data[0]
-            goal_name = goal_data[1]
-
-    return render_template('dailyplan.html', user=user, daily_plans=daily_plans, target_calories=target_calories, goal_name=goal_name)
     
 # Inside the profile route, pass the user data to the profile.html template.
 @app.route('/profile')
