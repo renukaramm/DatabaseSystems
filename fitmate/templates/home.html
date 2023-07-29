@@ -169,8 +169,11 @@
 {% if daily_plans %}
     {% for daily_plan in daily_plans %}
         {% if daily_plan.date == today %}
-        <div>{{daily_plan}}</div>
+        <div><br><br></div>
         <table>
+            <tr>
+                <th colspan="4">GOAL: {{ daily_plan.goal_name }}</th>
+            </tr>
             <tr>
                 <th>Daily Plan</th>
                 <th>Meal Plan</th>
@@ -501,7 +504,7 @@
                             // Add back the "Generate Meal Plan" button to the container
                             const generateButton = document.createElement("button");
                             generateButton.className = "add-button";
-                            generateButton.textContent = "Generate Meal Plan";
+                            generateButton.textContent = "Regenerate Meal Plan";
                             generateButton.setAttribute("onclick", `generateMealPlan('${mealTimeframe}', '${dailyPlanId}')`);
                             mealPlanContainer.appendChild(generateButton);
                         } else {
