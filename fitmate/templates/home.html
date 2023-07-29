@@ -152,6 +152,7 @@
                     {% else %}
                         No Suggestions!
                     {% endif %}
+                    <button class="add-button" onclick="generateMealPlan('Breakfast', '{{ daily_plan.id }}')">Generate Meal Plan</button>
                 </td>
                 <td rowspan="3">
                     {% for meal in daily_plan.breakfast_meals %}
@@ -186,6 +187,7 @@
                     {% else %}
                         No Suggestions!
                     {% endif %}
+                    <button class="add-button" onclick="generateMealPlan('Lunch')">Generate Meal Plan</button>
                 </td>
                 <td rowspan="3">
                     {% for meal in daily_plan.lunch_meals %}
@@ -210,6 +212,7 @@
                     {% else %}
                         No Suggestions!
                     {% endif %}
+                    <button class="add-button" onclick="generateMealPlan('Dinner')">Generate Meal Plan</button>
                 </td>
                 <td rowspan="3">
                     {% for meal in daily_plan.dinner_meals %}
@@ -435,6 +438,38 @@
                 document.getElementById('caloriesBurntInput').value = '';
             }
         }
+        function generateMealPlan(mealTimeframe, dailyPlanId) {
+        // Make an AJAX request to the server to generate the meal plan
+        $.ajax({
+            type: "POST",
+            url: "/generate_meal_plan",
+            data: {
+                mealTimeframe: mealTimeframe,
+                // You can pass any additional data you need here, such as dailyPlanId
+                // For example: dailyPlanId: dailyPlanId
+            },
+            success: function (data) {
+                // Parse the JSON data received from the server
+                const mealPlanData = JSON.parse(data);
+
+                // Update the HTML elements with the generated meal plan data
+                const mealPlanContainer = document.getElementById(mealTimeframe.toLowerCase() + "-meal-plan");
+                mealPlanContainer.innerHTML = ""; // Clear previous content
+
+                if (mealPlanData.mealPlan.length === 0) {
+                    mealPlanContainer.innerHTML = "No Suggestions!";
+                } else {
+                    mealPlanData.mealPlan.forEach((meal) => {
+                        mealPlanContainer.innerHTML += `${meal.food_name} (${meal.calories} calories)<br>`;
+                    });
+                }
+            },
+            error: function (error) {
+                // Handle any errors that occur during the AJAX request
+                console.error("Error generating meal plan:", error);
+            },
+        });
+    }
     </script>
 
 </body>

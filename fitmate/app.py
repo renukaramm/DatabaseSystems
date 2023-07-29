@@ -5,6 +5,7 @@ from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta, date
 import random
+import json
 
 app = Flask(__name__)
 app.secret_key = 'G\x11\xd9\x9aC\xafi\xe8^.hf\x81PDb}4M\xea\x8e\x7f\xa9\x90'
@@ -106,7 +107,78 @@ def logout():
     # Redirect to the login page
     return redirect(url_for('login'))
 
-def generate_meal_plan(daily_calorie_intake, available_food_items):
+# def generate_meal(daily_calorie_intake, available_food_items):
+#     # The number of meals to generate (breakfast, lunch, and dinner)
+#     num_meals = 3
+
+#     # Initialize the meal plan
+#     meal_plan = {
+#         'breakfast': [],
+#         'lunch': [],
+#         'dinner': []
+#     }
+
+#     # Calculate the rough target calorie range for each meal
+#     target_calories_per_meal = daily_calorie_intake / num_meals
+#     min_calories_per_meal = target_calories_per_meal * 0.8
+#     max_calories_per_meal = target_calories_per_meal * 1.2
+
+#     # Check if there are available food items
+#     if not available_food_items:
+#         print("No available food items.")
+#         return meal_plan
+
+#     # Function to calculate the remaining calories for a specific meal
+#     def calculate_remaining_calories(meal):
+#         return max_calories_per_meal - sum(float(food['calories']) for food in meal)
+
+#     # Function to randomly select a food item from available_food_items based on calories
+#     def select_food_item(remaining_calories):
+#         candidates = [food for food in available_food_items if float(food['calories']) <= remaining_calories]
+
+#         if candidates:
+#             selected_food = random.choice(candidates)
+#             available_food_items.remove(selected_food)  # Remove the selected food item from the list
+#             return selected_food
+#         else:
+#             return None
+
+#     # Generate meal plans for each meal
+#     for meal_time in meal_plan.keys():
+#         remaining_calories = calculate_remaining_calories(meal_plan[meal_time])
+
+#         while remaining_calories > 0:
+#             selected_food = select_food_item(remaining_calories)
+
+#             if selected_food:
+#                 meal_plan[meal_time].append(selected_food)
+#                 remaining_calories = calculate_remaining_calories(meal_plan[meal_time])
+#             else:
+#                 # If there are no more suitable food items, break the loop
+#                 break
+
+#     return meal_plan
+
+@app.route('/generate_meal_plan', methods=['POST'])
+def generate_meal_plan():
+    # Retrieve the selected mealTimeframe from the form data
+    meal_timeframe = request.form.get('mealTimeframe')
+    print("etsting:", meal_timeframe)
+
+    # Fetch the user's goal data to get the target calories
+    user_id = session['user']['id']
+    goal_query = "SELECT target_calories FROM goals WHERE user_id = %s"
+    cursor.execute(goal_query, (user_id,))
+    goal_data = cursor.fetchone()
+    if goal_data:
+        target_calories = goal_data[0]
+    else:
+        # Set a default value for target_calories if no goal data is found
+        target_calories = 2000
+
+    # Fetch the available food data from the MongoDB collection
+    food_data = list(food_collection.find())
+
     # The number of meals to generate (breakfast, lunch, and dinner)
     num_meals = 3
 
@@ -118,46 +190,44 @@ def generate_meal_plan(daily_calorie_intake, available_food_items):
     }
 
     # Calculate the rough target calorie range for each meal
-    target_calories_per_meal = daily_calorie_intake / num_meals
+    target_calories_per_meal = target_calories / num_meals
     min_calories_per_meal = target_calories_per_meal * 0.8
     max_calories_per_meal = target_calories_per_meal * 1.2
 
-    # Check if there are available food items
-    if not available_food_items:
-        print("No available food items.")
-        return meal_plan
-
     # Function to calculate the remaining calories for a specific meal
     def calculate_remaining_calories(meal):
-        return max_calories_per_meal - sum(float(food['calories']) for food in meal)
+        return max_calories_per_meal - sum(float(food['Calories']) for food in meal)
 
     # Function to randomly select a food item from available_food_items based on calories
     def select_food_item(remaining_calories):
-        candidates = [food for food in available_food_items if float(food['calories']) <= remaining_calories]
+        candidates = [food for food in food_data if float(food['Calories']) <= remaining_calories]
 
         if candidates:
             selected_food = random.choice(candidates)
-            available_food_items.remove(selected_food)  # Remove the selected food item from the list
+            food_data.remove(selected_food)  # Remove the selected food item from the list
             return selected_food
         else:
             return None
 
-    # Generate meal plans for each meal
-    for meal_time in meal_plan.keys():
-        remaining_calories = calculate_remaining_calories(meal_plan[meal_time])
+    # Generate meal plans for the selected mealTimeframe
+    remaining_calories = max_calories_per_meal
+    while remaining_calories > 0:
+        selected_food = select_food_item(remaining_calories)
 
-        while remaining_calories > 0:
-            selected_food = select_food_item(remaining_calories)
+        if selected_food:
+            meal_plan[meal_timeframe.lower()].append(selected_food)
+            remaining_calories = calculate_remaining_calories(meal_plan[meal_timeframe.lower()])
+        else:
+            # If there are no more suitable food items, break the loop
+            break
 
-            if selected_food:
-                meal_plan[meal_time].append(selected_food)
-                remaining_calories = calculate_remaining_calories(meal_plan[meal_time])
-            else:
-                # If there are no more suitable food items, break the loop
-                break
+    # Prepare the data to send back to the client
+    meal_plan_data = {
+        'mealTimeframe': meal_timeframe,
+        'mealPlan': meal_plan[meal_timeframe.lower()]
+    }
 
-    return meal_plan
-
+    return jsonify(meal_plan_data)
 
 @app.route('/')
 @login_required
@@ -248,26 +318,26 @@ def home():
     # Set a default value for target_calories, this is to prevent error on homepage when there are no goals
     target_calories = 2000
 
-    # Generate meal plans for each daily plan
-    for dp in daily_plans:
-        goal_id = dp['goal_id']
+    # # Generate meal plans for each daily plan
+    # for dp in daily_plans:
+    #     goal_id = dp['goal_id']
 
-        # Fetch the goal data to get the target calories
-        goal_query = "SELECT target_calories FROM goals WHERE goal_id = %s"
-        cursor.execute(goal_query, (goal_id,))
-        goal_data = cursor.fetchone()
-        if goal_data:
-            target_calories = goal_data[0]
+    #     # Fetch the goal data to get the target calories
+    #     goal_query = "SELECT target_calories FROM goals WHERE goal_id = %s"
+    #     cursor.execute(goal_query, (goal_id,))
+    #     goal_data = cursor.fetchone()
+    #     if goal_data:
+    #         target_calories = goal_data[0]
 
-            # Generate meal plan based on available food data
-            available_food_items = [{'food_name': item['Food'], 'calories': item['Calories']} for item in food_data]
+    #         # Generate meal plan based on available food data
+    #         available_food_items = [{'food_name': item['Food'], 'calories': item['Calories']} for item in food_data]
 
-            generated_meal_plan = generate_meal_plan(target_calories, available_food_items)
+    #         generated_meal_plan = generate_meal_plan(target_calories, available_food_items)
 
-            # Assign generated meal plan to the corresponding mealtime
-            dp['generated_breakfast'] = generated_meal_plan['breakfast']
-            dp['generated_lunch'] = generated_meal_plan['lunch']
-            dp['generated_dinner'] = generated_meal_plan['dinner']
+    #         # Assign generated meal plan to the corresponding mealtime
+    #         dp['generated_breakfast'] = generated_meal_plan['breakfast']
+    #         dp['generated_lunch'] = generated_meal_plan['lunch']
+    #         dp['generated_dinner'] = generated_meal_plan['dinner']
 
     return render_template('home.html', user=user, daily_plans=daily_plans, food_data=food_data, exercise_data=exercise_data, today=today, target_calories=target_calories)
 
