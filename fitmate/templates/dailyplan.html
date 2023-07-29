@@ -140,6 +140,34 @@
 
     <h1>Daily Meal and Exercise History</h1>
 
+<!-- Add filters section -->
+<div class="filters">
+    <form action="/dailyplan" method="get">
+        <label for="goal_name">Filter by Goal Name:</label>
+        <select name="goal_name" id="goal_name">
+            <option value="">All</option>
+            {% for goal_names in goal_names %}
+                <option value="{{ goal_names }}"
+                {% if goal_names == selected_goal %}selected{% endif %}>{{ goal_names }}</option>
+            {% endfor %}
+        </select>
+        <label for="date">Filter by Date:</label>
+        <input type="date" name="date" id="date" value="{{ selected_date }}">
+        <!-- New filter for net calories comparison -->
+        <label for="net_calories_filter">Net Calories:</label>
+        <select name="net_calories_filter" id="net_calories_filter">
+            <option value="">All</option>
+            <option value="higher" {% if net_calories_filter == 'higher' %}selected{% endif %}>Higher Than Target</option>
+            <option value="lower" {% if net_calories_filter == 'lower' %}selected{% endif %}>Lower Than Target</option>
+        </select>
+        <input type="submit" value="Apply Filters">
+        <!-- Clear filter button -->
+        <a href="/dailyplan"><button type="button">Clear Filters</button></a>
+    </form>
+</div>
+
+
+
 {% if daily_plans %}
   {% for daily_plan in daily_plans %}
      <div>{{daily_plan}}</div>
@@ -200,7 +228,7 @@
   <br><br>
 {% endfor %}
 {% else %}
-    <p>No daily plan! Create a goal now!</p>
+    <p>No daily plan!</p>
 {% endif %}
 </body>
 </html>
