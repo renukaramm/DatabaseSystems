@@ -736,14 +736,48 @@ def update_goal():
     start_date = request.form['startDate']
     end_date = request.form['endDate']
 
-
     # Update the goal in the database
     update_query = "UPDATE goals SET goal_name = %s, goal_type = %s, target_weight = %s, target_calories = %s, start_date = %s, end_date = %s WHERE goal_id = %s"
     values = (goal_name, goal_type, target_weight, target_calories, start_date, end_date, goal_id)
     cursor.execute(update_query, values)
     db_mysql.commit()
 
+    # Call the function to update daily plans
+    update_daily_plans(goal_id, start_date, end_date, target_calories)
+
     return redirect('/goal')
+
+
+def update_daily_plans(goal_id, new_start_date, new_end_date, target_calories):
+    # Convert new_start_date and new_end_date to datetime.date objects
+    new_start_date = datetime.strptime(new_start_date, '%Y-%m-%d').date()
+    new_end_date = datetime.strptime(new_end_date, '%Y-%m-%d').date()
+
+    # Retrieve the associated daily plans from the database
+    get_daily_plans_query = "SELECT daily_plan_id, date FROM daily_plan WHERE goal_id = %s"
+    cursor.execute(get_daily_plans_query, (goal_id,))
+    daily_plans = cursor.fetchall()
+
+    # Create a set of existing plan dates for easier comparison
+    existing_dates = set(plan[1] for plan in daily_plans)
+
+    # Delete any daily plans that fall outside the new goal range
+    for plan in daily_plans:
+        plan_date = plan[1]
+        if plan_date < new_start_date or plan_date > new_end_date:
+            delete_plan_query = "DELETE FROM daily_plan WHERE daily_plan_id = %s"
+            cursor.execute(delete_plan_query, (plan[0],))
+            db_mysql.commit()
+
+    # Add new daily plans for the extended range if necessary
+    current_date = new_start_date
+    while current_date <= new_end_date:
+        if current_date not in existing_dates:
+            # Create a new daily plan
+            create_plan_query = "INSERT INTO daily_plan (goal_id, date, net_calories) VALUES (%s, %s, 0)"
+            cursor.execute(create_plan_query, (goal_id, current_date))
+            db_mysql.commit()
+        current_date += timedelta(days=1)
 
 
 @app.route('/delete_goal', methods=['POST'])
