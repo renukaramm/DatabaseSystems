@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -13,7 +14,8 @@
             width: 100%;
         }
 
-        th, td {
+        th,
+        td {
             text-align: left;
             padding: 8px;
         }
@@ -60,46 +62,61 @@
         }
 
         .modal {
-          display: none;
-          position: fixed;
-          z-index: 1;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-          background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
         }
 
         /* Style the modal content */
         .modal-content {
-          background-color: #f4f4f4;
-          margin: 10% auto;
-          padding: 20px;
-          border: 1px solid #888;
-          width: 60%;
+            background-color: #f4f4f4;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 20%;
         }
 
         /* Close button on the modal */
         .close {
-          color: #aaa;
-          float: right;
-          font-size: 28px;
-          font-weight: bold;
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
         }
 
         .close:hover,
         .close:focus {
-          color: black;
-          text-decoration: none;
-          cursor: pointer;
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .button, .add-exercise {
+            padding: 5px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 160px;
+            background-color: #f26c47;
+            color: white;
+            cursor: pointer;
+        }
+
+        .add-exercise {
+            width: 160px;
         }
     </style>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Function to filter the table based on calories per kg
-            $("#calories-filter").change(function() {
+            $("#calories-filter").change(function () {
                 var filterOption = $(this).val();
 
                 // Show all rows if filter option is "All"
@@ -108,53 +125,53 @@
                 } else if (filterOption === "0to0.5") {
                     // Hide rows with calories per kg greater than 1.00000
                     $("tbody tr").hide();
-                    $("tbody tr").filter(function() {
+                    $("tbody tr").filter(function () {
                         var calories = parseFloat($(this).attr("data-calories"));
                         return calories > 0.00000 && calories <= 0.50000;
                     }).show();
                 } else if (filterOption === "0.5to1") {
                     // Hide rows with calories per kg greater than 1.00000
                     $("tbody tr").hide();
-                    $("tbody tr").filter(function() {
+                    $("tbody tr").filter(function () {
                         var calories = parseFloat($(this).attr("data-calories"));
                         return calories > 0.50000 && calories <= 1.00000;
                     }).show();
                 } else if (filterOption === "1to1.5") {
                     // Hide rows with calories per kg greater than 1.00000
                     $("tbody tr").hide();
-                    $("tbody tr").filter(function() {
+                    $("tbody tr").filter(function () {
                         var calories = parseFloat($(this).attr("data-calories"));
                         return calories > 1.00000 && calories <= 1.50000;
                     }).show();
                 } else if (filterOption === "1.5to2") {
                     // Hide rows with calories per kg greater than 1.00000
                     $("tbody tr").hide();
-                    $("tbody tr").filter(function() {
+                    $("tbody tr").filter(function () {
                         var calories = parseFloat($(this).attr("data-calories"));
                         return calories > 1.50000 && calories <= 2.00000;
                     }).show();
                 } else if (filterOption === "2to2.5") {
                     // Hide rows with calories per kg greater than 1.00000
                     $("tbody tr").hide();
-                    $("tbody tr").filter(function() {
+                    $("tbody tr").filter(function () {
                         var calories = parseFloat($(this).attr("data-calories"));
                         return calories > 2.00000 && calories <= 2.50000;
                     }).show();
                 } else if (filterOption === "2.5to3") {
                     // Hide rows with calories per kg greater than 1.00000
                     $("tbody tr").hide();
-                    $("tbody tr").filter(function() {
+                    $("tbody tr").filter(function () {
                         var calories = parseFloat($(this).attr("data-calories"));
                         return calories > 2.50000 && calories <= 3.00000;
                     }).show();
                 } else if (filterOption === "moreThan3") {
                     // Hide rows with calories per kg greater than 1.00000
                     $("tbody tr").hide();
-                    $("tbody tr").filter(function() {
+                    $("tbody tr").filter(function () {
                         var calories = parseFloat($(this).attr("data-calories"));
                         return calories > 3.00000;
                     }).show();
-                }else {
+                } else {
                     // Hide rows that don't match the selected filter option
                     $("tbody tr").hide();
                     $("tbody td:contains('" + filterOption + "')").closest("tr").show();
@@ -162,21 +179,21 @@
             });
 
             // Function to search the table based on the input value
-            $("#search-input").on("keyup", function() {
+            $("#search-input").on("keyup", function () {
                 var searchText = $(this).val().toLowerCase();
 
                 // Filter rows based on search text
-                $("tbody tr").filter(function() {
+                $("tbody tr").filter(function () {
                     $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1)
                 });
             });
 
             // Sort the table based on the "Calories per kg" column when header is clicked
             var ascending = true; // Flag to keep track of sorting order
-            $("#calories-th").click(function() {
+            $("#calories-th").click(function () {
                 var rows = $("tbody tr").get();
 
-                rows.sort(function(a, b) {
+                rows.sort(function (a, b) {
                     var aValue = parseFloat($(a).attr("data-calories"));
                     var bValue = parseFloat($(b).attr("data-calories"));
 
@@ -189,7 +206,7 @@
 
                 // Clear the existing table and add the sorted rows back
                 $("tbody").empty();
-                $.each(rows, function(index, row) {
+                $.each(rows, function (index, row) {
                     $("tbody").append(row);
                 });
 
@@ -199,12 +216,12 @@
         });
         // Function to open the exercise form popup
         function openExerciseForm() {
-          $("#exerciseFormModal").css("display", "block");
+            $("#exerciseFormModal").css("display", "block");
         }
 
         // Function to close the exercise form popup
         function closeExerciseForm() {
-          $("#exerciseFormModal").css("display", "none");
+            $("#exerciseFormModal").css("display", "none");
         }
         function openExerciseUpdateForm(activity, lb130, lb155, lb180, lb205, caloriesPerKg) {
             $("#exerciseActivityU").val(activity);
@@ -244,7 +261,7 @@
 
 
         // Function to scroll back to the top of the page
-    function scrollToTop() {
+        function scrollToTop() {
             $("html, body").animate({ scrollTop: 0 }, "slow");
         }
 
@@ -258,6 +275,7 @@
         });
     </script>
 </head>
+
 <body>
     <div class="logo">
         <img src="{{ url_for('static', filename='logo.png') }}" alt="FitmATE Logo">
@@ -286,29 +304,29 @@
                 <a href="/profile">Profile</a>
                 <a href="/logout">Logout</a>
             </div>
-        </div>    
+        </div>
     </div>
 
     <div class="scroll-to-top" onclick="scrollToTop()">
         <i class="fa fa-arrow-up"></i>
     </div>
-    
+
     <h1>Welcome to the Exercise Page!</h1>
 
     <div class="search-container">
         <div class="search-container-left">
             <input type="text" id="search-input" class="search-input" placeholder="Search...">
-            <button onclick="openExerciseForm()">Add Exercise</button>
+            <button class="add-exercise" onclick="openExerciseForm()">Add Exercise</button>
         </div>
         <div class="search-container-right">
             <select id="calories-filter" class="calories-filter">
                 <option value="All">All</option>
-                <option value="0to0.5">0 < Calories <= 0.5</option>
-                <option value="0.5to1">0.5 < Calories <= 1</option>
-                <option value="1to1.5">1 < Calories <= 1.5</option>
-                <option value="1.5to2">1.5 < Calories <= 2</option>
-                <option value="2to2.5">2 < Calories <= 2.5</option>
-                <option value="2.5to3">2.5 < Calories <= 3</option>
+                <option value="0to0.5">0 < Calories <=0.5</option>
+                <option value="0.5to1">0.5 < Calories <=1</option>
+                <option value="1to1.5">1 < Calories <=1.5</option>
+                <option value="1.5to2">1.5 < Calories <=2</option>
+                <option value="2to2.5">2 < Calories <=2.5</option>
+                <option value="2.5to3">2.5 < Calories <=3</option>
                 <option value="moreThan3">Calories > 3</option>
                 <option value="Cycling">Cycling</option>
                 <option value="Calisthenics">Calisthenics</option>
@@ -340,21 +358,26 @@
         <div class="modal-content">
             <span class="close" onclick="closeExerciseForm()">&times;</span>
             <h2>Add Exercise</h2>
+            <br>
             <form id="exerciseForm" action="/add_exercise_item" method="post">
                 <label for="exerciseActivity">Activity:</label>
                 <input type="text" id="exerciseActivity" name="exerciseActivity" required>
-    
+                <br><br>
                 <label for="exerciseCalories130">Calories (130 lb):</label>
                 <input type="number" id="exerciseCalories130" name="exerciseCalories130" required>
+                <br><br>
                 <label for="exerciseCalories155">Calories (155 lb):</label>
                 <input type="number" id="exerciseCalories155" name="exerciseCalories155" required>
+                <br><br>
                 <label for="exerciseCalories180">Calories (180 lb):</label>
                 <input type="number" id="exerciseCalories180" name="exerciseCalories180" required>
+                <br><br>
                 <label for="exerciseCalories205">Calories (205 lb):</label>
                 <input type="number" id="exerciseCalories205" name="exerciseCalories205" required>
+                <br><br>
                 <label for="exerciseCaloriesPerKg">Calories per kg:</label>
                 <input type="number" id="exerciseCaloriesPerKg" name="exerciseCaloriesPerKg" required>
-    
+                <br><br>
                 <input type="submit" value="Add">
             </form>
         </div>
@@ -364,22 +387,27 @@
         <div class="modal-content">
             <span class="close" onclick="closeExerciseUpdateForm()">&times;</span>
             <h2>Update Exercise Item</h2>
+            <br>
             <form id="exerciseUpdateForm" action="/update_exercise_item" method="post">
                 <label for="exerciseActivityU">Activity:</label>
                 <input type="text" id="exerciseActivityU" name="exerciseActivityU" required>
-    
+                <br><br>
                 <label for="exercise130lbU">130 lb:</label>
                 <input type="number" id="exercise130lbU" name="exercise130lbU" required>
+                <br><br>
                 <label for="exercise155lbU">155 lb:</label>
                 <input type="number" id="exercise155lbU" name="exercise155lbU" required>
+                <br><br>
                 <label for="exercise180lbU">180 lb:</label>
                 <input type="number" id="exercise180lbU" name="exercise180lbU" required>
+                <br><br>
                 <label for="exercise205lbU">205 lb:</label>
                 <input type="number" id="exercise205lbU" name="exercise205lbU" required>
+                <br><br>
                 <label for="exerciseCaloriesPerKgU">Calories per kg:</label>
                 <input type="number" id="exerciseCaloriesPerKgU" name="exerciseCaloriesPerKgU" required>
-    
-                <button type="submit">Edit</button>
+                <br><br>
+                <button class="button" type="submit">Edit</button>
             </form>
         </div>
     </div>
@@ -406,14 +434,16 @@
                 <td>{{ exercise['205 lb'] }}</td>
                 <td>{{ exercise['Calories per kg'] }}</td>
                 <td>
-                    <button onclick="openExerciseUpdateForm('{{ exercise['Activity'] }}', '{{ exercise['130 lb'] }}', '{{ exercise['155 lb'] }}', '{{ exercise['180 lb'] }}', '{{ exercise['205 lb'] }}', '{{ exercise['Calories per kg'] }}')">Update</button>
+                    <button class="button"
+                        onclick="openExerciseUpdateForm('{{ exercise['Activity'] }}', '{{ exercise['130 lb'] }}', '{{ exercise['155 lb'] }}', '{{ exercise['180 lb'] }}', '{{ exercise['205 lb'] }}', '{{ exercise['Calories per kg'] }}')">Update</button>
                 </td>
                 <td>
-                    <button onclick="deleteExerciseItem('{{ exercise['Activity'] }}')">Delete</button>
+                    <button class="button" onclick="deleteExerciseItem('{{ exercise['Activity'] }}')">Delete</button>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </body>
+
 </html>
