@@ -3,6 +3,7 @@
 
 <head>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <title>Goal</title>
   <style>
     .goals-table {
@@ -20,8 +21,8 @@
     }
 
     .goals-table thead tr {
-      background-color: #13355b;
-      color: #ffffff;
+      background-color: #D8C4B6;
+      color: black;
       text-align: left;
     }
 
@@ -51,7 +52,7 @@
       padding: 20px;
       border: 1px solid #ccc;
       border-radius: 4px;
-      background-color: #f9f9f9;
+      background-color: #F5EFE7;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       margin-right: 20px;
     }
@@ -292,12 +293,12 @@
                 <form action="/update_goal" method="POST"
                   onsubmit="showEditGoalForm('{{ goal[0] }}', '{{ goal[2] }}', '{{ goal[3] }}', '{{ goal[6] }}', '{{ goal[7] }}', '{{ goal[4] }}', '{{ goal[5] }}'); return false;">
                   <input type="hidden" name="goalId" value="{{ goal[0] }}">
-                  <button class="" type="submit">Edit</button>
+                  <button class="" type="submit"><i class="fa fa-edit"></i></button>
                 </form>
 
                 <form action="/delete_goal" method="POST" style="display: inline;">
                   <input type="hidden" name="goalId" value="{{ goal[0] }}">
-                  <button class="" type="submit">Delete</button>
+                  <button class="" type="submit"><i class="fa fa-trash"></i></button>
                 </form>
               </div>
             </td>
