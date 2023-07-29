@@ -13,7 +13,7 @@ app.secret_key = 'G\x11\xd9\x9aC\xafi\xe8^.hf\x81PDb}4M\xea\x8e\x7f\xa9\x90'
 # Create a MongoClient and connect to your MongoDB server
 client = MongoClient()
 
-# Connect to the 'fitmATE' database YESSSSSSSSSSSSIR
+# Connect to the 'fitmATE' database
 db_mongo = client.fitmATE
 
 # Get a reference to the collections
@@ -24,7 +24,7 @@ food_collection = db_mongo.food
 db_host = 'localhost'
 db_user = 'root'
 db_password = '1234'
-db_name = 'fitmATE'
+db_name = 'fitmATER'
 
 # Create a MySQL connection and cursor
 db_mysql = mysql.connector.connect(
@@ -111,7 +111,7 @@ def logout():
 def generate_meal_plan():
     # Retrieve the selected mealTimeframe from the form data
     meal_timeframe = request.form.get('mealTimeframe')
-    print("Testing:", meal_timeframe)
+
 
     # Fetch the user's goal data to get the target calories
     user_id = session['user']['id']
@@ -174,7 +174,7 @@ def generate_meal_plan():
         'mealTimeframe': meal_timeframe,
         'mealPlan': meal_plan[meal_timeframe.lower()]
     }
-    print(meal_plan_data_dict)
+
 
     # Convert the data to JSON format
     meal_plan_json = json.dumps(meal_plan_data_dict, default=str)
@@ -188,9 +188,7 @@ def home():
     today = date.today()
     food_data = list(food_collection.find())
     exercise_data = list(exercise_collection.find())
-    print("Keys in a sample document:", exercise_data[0].keys())
     user = session.get('user')
-    print("USER:", user['weight'])
     user_id = user['id']
 
     actual_meal_query = """
@@ -594,7 +592,6 @@ def update_exercise_item():
 def delete_exercise_item():
     # Get the form data from the POST request
     exercise_activity = request.form.get('exerciseActivityU')
-    print("YESSSUIR", exercise_activity)
     # Find the exercise item in the database based on the unique identifier (exercise_activity)
     existing_exercise_item = exercise_collection.find_one({'Activity': exercise_activity})
 
