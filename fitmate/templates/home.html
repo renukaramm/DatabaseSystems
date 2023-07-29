@@ -124,6 +124,9 @@
             margin: 5px 0px;
         }
 
+        .exercise-info {
+    text-align: center;
+}
     </style>
     <script>
         // Function to scroll back to the top of the page
@@ -177,10 +180,9 @@
 {% if daily_plans %}
     {% for daily_plan in daily_plans %}
         {% if daily_plan.date == today %}
-        <div><br><br></div>
         <table>
             <tr>
-                <th colspan="4">GOAL: {{ daily_plan.goal_name }}</th>
+                <th style="background-color: #46648b; color: white;" colspan="4">GOAL: {{ daily_plan.goal_name }}</th>
             </tr>
             <tr>
                 <th>Daily Plan</th>
@@ -208,9 +210,9 @@
                     {% endfor %}
                     <button class="add-button" onclick="openForm('actualMeal', 'Breakfast', '{{ daily_plan.id }}')">Add Actual Meal</button>
                 </td>
-            <td rowspan="3">
+            <td rowspan="9" colspan="3">
                     {% for exercise in daily_plan.exercises %}
-                        <div class="grid-container2">
+                        <div class="grid-container2 exercise-info">
                             <div class="grid-child">{{ exercise.activity}}</div>
                             <div class="grid-child">
                                 ({{ exercise.calories_burnt }} calories)
